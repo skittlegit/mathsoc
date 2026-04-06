@@ -1,0 +1,54 @@
+{
+  "year": "2024",
+  "sections": [
+    {
+      "label": "Faculty Mentors",
+      "members": [
+        { "name": "Biswarup Biswas", "role": "Club Mentor", "img": "biswarupbiswas.png" },
+        { "name": "Meraj Alam", "role": "Club Mentor", "img": "merajalam.png" }
+      ]
+    },
+    {
+      "label": "Core Leadership",
+      "members": [
+        { "name": "Utkarsh Mangal", "role": "President", "img": "utkarshmangal.png" },
+        { "name": "Saiankit Shankar", "role": "Vice President", "img": "ankitreddy.png" },
+        { "name": "Shourya Thakur", "role": "Head of Subject Groups", "img": "shourya.png" },
+        { "name": "Venkat Vinesh Kumar Reddy", "role": "Logistics Head", "img": "venkat.png" },
+        { "name": "Seerat Chatha", "role": "Social Media Head", "img": "seerat.jpeg" },
+        { "name": "Pranav Reddy Mitta", "role": "Design Head", "img": "pranav.png" },
+        { "name": "Dev Bhandiya", "role": "Finance Head", "img": "dev.png" }
+      ]
+    },
+    {
+      "label": "Subject Group Leads",
+      "members": [
+        { "name": "Amithi Shangari", "role": "Data Science & AI/ML", "img": "amithi.jpeg" },
+        { "name": "Poojan Patel", "role": "Cryptography", "img": "poojan.png" },
+        { "name": "Nihaal Patnaik", "role": "Financial Mathematics", "img": "nihaal.jpg" }
+      ]
+    },
+    {
+      "label": "Executive Team",
+      "members": [
+        { "name": "Aashna Reddy", "role": "Executive", "img": "aashna.jpeg" },
+        { "name": "Abhinav Jata", "role": "Executive", "img": "aj.png" },
+        { "name": "Geetika Pachauri", "role": "Content Team", "img": "geethika.jpg" },
+        { "name": "Hinduja", "role": "Design Team", "img": "hinduja2.jpg" },
+        { "name": "Nitin Sailapathi", "role": "Executive", "img": "nitin.jpeg" },
+        { "name": "Mohan Pritam K", "role": "Executive", "img": "mohan.jpg" },
+        { "name": "Pearl Mendapara", "role": "Executive", "img": "pearl.jpg" },
+        { "name": "Suhas Vadlapatla", "role": "Social Media Team", "img": "suhas.jpg" },
+        { "name": "Shriyans Bachu", "role": "Finance Team", "img": "bachu.jpg" },
+        { "name": "Ucchishth Singh", "role": "Executive", "img": "ucchishth.png" },
+        { "name": "Uddish", "role": "Executive", "img": "uddish.png" }
+      ]
+    },
+    {
+      "label": "Honorary Members",
+      "members": [
+        { "name": "Bobba Dilip Reddy", "role": "Math Wizard", "img": "dilip.jpg" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "year": "2023",
+  "sections": [
+    {
+      "label": "Founding Team",
+      "members": [
+        { "name": "Utkarsh Mangal", "role": "President", "img": "utkarsh.png" },
+        { "name": "Ankit", "role": "Vice President", "img": "ankit.png" },
+        { "name": "Chirag", "role": "Core Member", "img": "chirag.png" },
+        { "name": "Abhirath", "role": "Core Member", "img": "abhirath.png" },
+        { "name": "Nethra", "role": "Core Member", "img": "nethra.png" },
+        { "name": "Spoorthi", "role": "Core Member", "img": "spoorthi.png" },
+        { "name": "Shrivat", "role": "Core Member", "img": "shrivat.png" },
+        { "name": "Srivat", "role": "Core Member", "img": "srivat.png" },
+        { "name": "Sumedha", "role": "Core Member", "img": "sumedha.png" },
+        { "name": "Tamish", "role": "Core Member", "img": "tamish.png" },
+        { "name": "Varun", "role": "Core Member", "img": "varun.png" },
+        { "name": "Vrish", "role": "Core Member", "img": "vrish.png" },
+        { "name": "Wagh", "role": "Core Member", "img": "wagh.png" }
+      ]
+    },
+    {
+      "label": "Honorary Members",
+      "members": [
+        { "name": "Bobba Dilip Reddy", "role": "Math Wizard", "img": "dilip.png" },
+        { "name": "Madhav Basur", "role": "Maddy", "img": "madhav.png" }
+      ]
+    }
+  ]
+}

@@ -7,7 +7,9 @@ const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const MENU_LINKS = [
   { label: "Events", href: "/events" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Team", href: "/team" },
+  { label: "Blackjack", href: "/blackjack" },
   { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/contact" },
 ];

@@ -7,16 +7,18 @@ import { useRef, useState } from "react";
 
 const SITE_LINKS = [
   { label: "Events", href: "/events" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Team", href: "/team" },
+  { label: "Blackjack", href: "/blackjack" },
   { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/contact" },
 ];
 
 const SOCIAL_LINKS = [
-  { label: "Instagram", href: "#" },
-  { label: "Discord", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "GitHub", href: "#" },
+  { label: "Instagram", href: "https://www.instagram.com/mathsoc.mu/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/mathematics-club-mu/" },
+  { label: "WhatsApp", href: "https://chat.whatsapp.com/BLmgzpyLnvs3iXC8LYHxun" },
+  { label: "Discord", href: "https://discord.gg/XAZKKrBQCC" },
 ];
 
 export default function Footer() {
@@ -119,7 +121,7 @@ export default function Footer() {
                       className="link-underline hover:text-white transition-colors duration-300"
                       style={{
                         fontSize: "0.82rem",
-                        color: "rgba(255,255,255,0.2)",
+                        color: "rgba(255,255,255,0.5)",
                       }}
                     >
                       {link.label}
@@ -150,7 +152,7 @@ export default function Footer() {
                       className="link-underline hover:text-white transition-colors duration-300"
                       style={{
                         fontSize: "0.82rem",
-                        color: "rgba(255,255,255,0.2)",
+                        color: "rgba(255,255,255,0.5)",
                       }}
                     >
                       {link.label}
@@ -170,10 +172,10 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <div className="w-5 h-5 relative">
               <Image
-                src="/logo.svg"
+                src="/mathsoclogowhite.png"
                 alt="MathSoc"
                 fill
-                style={{ objectFit: "contain", filter: "invert(1)" }}
+                style={{ objectFit: "contain" }}
               />
             </div>
             <span
@@ -184,7 +186,7 @@ export default function Footer() {
                 textTransform: "uppercase",
               }}
             >
-              Mathematics Society
+              Mahindra University
             </span>
           </div>
           <p
@@ -195,7 +197,7 @@ export default function Footer() {
               textTransform: "uppercase",
             }}
           >
-            © 2026 MathSoc. All rights reserved.
+            © 2025 MathSoc, Mahindra University. All rights reserved.
           </p>
         </div>
       </div>

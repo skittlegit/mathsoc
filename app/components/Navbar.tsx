@@ -8,7 +8,9 @@ import MenuOverlay from "./MenuOverlay";
 
 const NAV_LINKS = [
   { label: "Events", href: "/events" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Team", href: "/team" },
+  { label: "Blackjack", href: "/blackjack" },
   { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/contact" },
 ];
@@ -39,25 +41,24 @@ export default function Navbar() {
           }}
         />
 
-        {/* Left: Logo + spaced name */}
+        {/* Left: Logo + name */}
         <Link href="/" className="flex items-center gap-2.5">
           <div className="w-7 h-7 relative shrink-0">
             <Image
-              src="/logo.svg"
+              src="/mathsoclogowhite.png"
               alt="MathSoc"
               fill
-              style={{ objectFit: "contain", filter: "invert(1)" }}
+              style={{ objectFit: "contain" }}
             />
           </div>
           <span
-            className="text-white font-medium hidden sm:block"
+            className="text-white font-semibold hidden sm:block"
             style={{
-              fontSize: "0.68rem",
-              letterSpacing: "0.4em",
-              textTransform: "uppercase",
+              fontSize: "0.82rem",
+              letterSpacing: "0.05em",
             }}
           >
-            M a t h S o c
+            MathSoc
           </span>
         </Link>
 
@@ -75,8 +76,8 @@ export default function Navbar() {
                 className="hidden md:block link-underline hover:text-white transition-colors duration-300"
                 style={{
                   fontSize: "0.58rem",
-                  letterSpacing: "0.22em",
-                  color: "rgba(255,255,255,0.3)",
+                  letterSpacing: "0.18em",
+                  color: "rgba(255,255,255,0.6)",
                   textTransform: "uppercase",
                 }}
               >

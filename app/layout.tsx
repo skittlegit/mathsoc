@@ -33,12 +33,12 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full grain">
-        {/* Fixed background gradient — all pages */}
+        {/* Fixed background gradient — single-corner (bottom-right) */}
         <div
           className="pointer-events-none fixed inset-0 z-0"
           style={{
             background:
-              "linear-gradient(180deg, #000000 0%, #000000 30%, #000510 50%, #000c2d 75%, #001060 100%)",
+              "radial-gradient(ellipse 70% 80% at 100% 100%, #001a6e 0%, #000c2d 28%, #000510 55%, #000000 75%)",
           }}
         />
         <Navbar />
