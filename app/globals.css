@@ -1,54 +1,8 @@
 @import "tailwindcss";
 
-:root {
-  --bg-black: #000000;
-  --bg-deep: #010309;
-  --bg-navy: #000a1f;
-  --bg-blue: #001050;
-  --accent: #0030cc;
-  --accent-bright: #0044ff;
-  --text-primary: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.5);
-  --text-muted: rgba(255, 255, 255, 0.25);
-  --border: rgba(255, 255, 255, 0.07);
-}
-
 @theme inline {
-  --color-bg-black: var(--bg-black);
-  --color-bg-deep: var(--bg-deep);
-  --color-bg-navy: var(--bg-navy);
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-jetbrains-mono);
-}
-
-/* ── Marquee ── */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* ── Slow drift for math symbols ── */
-@keyframes drift {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-18px) rotate(5deg); }
-}
-
-/* ── Scale in ── */
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* ── Pulse glow ── */
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.7; }
-}
-
-/* ── Slide-up fade ── */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(60px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 html {
@@ -56,27 +10,72 @@ html {
 }
 
 body {
-  background: #000000;
-  color: #ffffff;
+  background: #000;
+  color: #fff;
   font-family: var(--font-space-grotesk), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: rgba(0, 48, 204, 0.5);
+  background: rgba(0, 40, 180, 0.35);
   color: #fff;
 }
 
+/* ── Marquee ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 .marquee-track {
-  animation: marquee 40s linear infinite;
+  display: flex;
+  animation: marquee 50s linear infinite;
   will-change: transform;
 }
 
-.drift { animation: drift 8s ease-in-out infinite; }
+.marquee-track:hover {
+  animation-play-state: paused;
+}
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
+/* ── Film grain (very subtle) ── */
+.grain::after {
+  content: "";
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.25;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 2px; }
 ::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #001050; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #0030cc; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 1px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.1); }
+
+/* ── Link hover underline ── */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.2);
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
