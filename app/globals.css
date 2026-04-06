@@ -1,26 +1,95 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-base: #040817;
+  --bg-surface: #070f2b;
+  --bg-raised: #0d1a45;
+  --accent: #2250ff;
+  --accent-light: #5578ff;
+  --accent-glow: rgba(34, 80, 255, 0.25);
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-raised: var(--bg-raised);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Marquee scroll ─── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── Ambient float for math symbols ─── */
+@keyframes floatA {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.18; }
+  50%       { transform: translateY(-28px) rotate(8deg); opacity: 0.32; }
+}
+@keyframes floatB {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.14; }
+  50%       { transform: translateY(-20px) rotate(-6deg); opacity: 0.28; }
+}
+@keyframes floatC {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.12; }
+  50%       { transform: translateY(-34px) rotate(10deg); opacity: 0.22; }
+}
+
+/* ─── Fade in up ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Glow pulse ─── */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(1.08); }
+}
+
+/* ─── Horizontal scan line blink ─── */
+@keyframes scanline {
+  0%   { opacity: 0.03; }
+  50%  { opacity: 0.07; }
+  100% { opacity: 0.03; }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Utility: marquee track */
+.marquee-track {
+  animation: marquee 30s linear infinite;
+  will-change: transform;
+}
+
+/* Utility: float variants */
+.float-a { animation: floatA 7s ease-in-out infinite; }
+.float-b { animation: floatB 9s ease-in-out infinite; }
+.float-c { animation: floatC 11s ease-in-out infinite; }
+
+/* Utility: fade-up entry */
+.fade-up { animation: fadeUp 0.8s ease-out both; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--bg-raised); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }

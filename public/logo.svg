@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" fill="none">
+  <!-- Lowercase bold m letterform -->
+  <path d="
+    M 28 440
+    L 28 170
+    C 28 105 68 72 118 72
+    C 148 72 172 84 188 108
+    C 204 84 228 72 258 72
+    C 308 72 348 105 348 170
+    L 348 440
+    L 280 440
+    L 280 182
+    C 280 160 268 148 252 148
+    C 236 148 224 160 224 182
+    L 224 440
+    L 156 440
+    L 156 182
+    C 156 160 144 148 128 148
+    C 112 148 100 160 100 182
+    L 100 440
+    Z
+  " fill="currentColor"/>
+  <!-- Stylized J overlapping right side, with diagonal top cut -->
+  <path d="
+    M 308 72
+    L 448 72
+    L 412 148
+    L 412 330
+    C 412 408 352 448 278 448
+    C 236 448 210 432 210 408
+    L 278 408
+    C 296 408 344 400 344 330
+    L 344 148
+    Z
+  " fill="currentColor"/>
+  <!-- Diagonal slash cut to create the J overlap detail -->
+  <polygon points="308,72 380,72 344,148 308,148" fill="#1a1a2e"/>
+</svg>
