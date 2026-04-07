@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   motion,
-  useInView,
   AnimatePresence,
 } from "framer-motion";
 import BlackjackGame from "./components/BlackjackGame";
@@ -156,40 +155,7 @@ function Reveal({
   );
 }
 
-/* ═══════════════════════════════════════════════
-   MANIFESTO TEXT — word-by-word opacity
-═══════════════════════════════════════════════ */
 
-function ManifestoText({ text }: { text: string }) {
-  const ref = useRef<HTMLHeadingElement>(null);
-  const isInView = useInView(ref, { once: false, amount: 0.25 });
-  const words = text.split(" ");
-
-  return (
-    <h2
-      ref={ref}
-      style={{
-        fontSize: "clamp(1rem, 2.2vw, 1.5rem)",
-        letterSpacing: "0.3em",
-        textTransform: "uppercase",
-        lineHeight: 2.5,
-        fontWeight: 500,
-      }}
-    >
-      {words.map((word, i) => (
-        <motion.span
-          key={i}
-          initial={{ opacity: 0.08 }}
-          animate={isInView ? { opacity: 0.72 } : { opacity: 0.08 }}
-          transition={{ duration: 0.45, delay: i * 0.04, ease: "easeOut" }}
-          style={{ display: "inline-block", marginRight: "0.45em" }}
-        >
-          {word}
-        </motion.span>
-      ))}
-    </h2>
-  );
-}
 
 /* ═══════════════════════════════════════════════
    FLOATING MATH SYMBOLS
@@ -350,7 +316,7 @@ export default function Home() {
         <div className="relative z-10 md:flex-1 flex flex-col justify-center items-center px-7 md:px-14 pb-14 md:py-0">
           <motion.div
             className="w-full"
-            style={{ maxWidth: 440 }}
+            style={{ maxWidth: 540 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 3.0, duration: 0.9, ease }}
@@ -360,39 +326,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ INTRO ═══ */}
-      <section className="px-7 md:px-14 py-24 md:py-36">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-12 items-start">
+      {/* ═══ WHO WE ARE ═══ */}
+      <section
+        className="px-7 md:px-14 py-36 md:py-56"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+      >
+        <div className="max-w-5xl mx-auto">
           <Reveal>
-            <p
+            <span
               style={{
-                fontSize: "clamp(1rem, 1.7vw, 1.2rem)",
-                lineHeight: 2,
-                color: "rgba(255,255,255,0.65)",
+                display: "block",
+                fontSize: "0.52rem",
+                letterSpacing: "0.4em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.18)",
+                marginBottom: "2rem",
               }}
             >
-              We&apos;re MathSoc. The Mathematics Society at{" "}
-              <span style={{ color: "rgba(255,255,255,0.9)" }}>Mahindra University</span>.
-              A community of passionate individuals united by their love for mathematical
-              sciences — fostering curiosity, excellence, and exploration beyond the
-              classroom.
-            </p>
-          </Reveal>
-          <Reveal direction="fade" delay={0.3} className="hidden md:flex justify-end">
-            <span className="select-none" style={{ fontSize: "7rem", color: "rgba(255,255,255,0.04)", lineHeight: 1 }}>
-              ∑
+              Who We Are
             </span>
           </Reveal>
-        </div>
-      </section>
-
-      {/* ═══ MANIFESTO ═══ */}
-      <section
-        className="px-7 md:px-14 py-32 md:py-48"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-      >
-        <div className="max-w-6xl mx-auto">
-          <ManifestoText text="No spectators. Just passionate mathematicians fostering curiosity, proving theorems, and making bold moves for beautiful problems and mathematical discovery." />
+          <Reveal delay={0.12}>
+            <p
+              style={{
+                fontSize: "clamp(1.5rem, 2.8vw, 2.1rem)",
+                lineHeight: 1.65,
+                color: "rgba(255,255,255,0.72)",
+                fontWeight: 400,
+                maxWidth: "28ch",
+              }}
+            >
+              We&apos;re{" "}
+              <span style={{ color: "rgba(255,255,255,0.95)", fontWeight: 600 }}>MathSoc</span>{" "}
+              — the Mathematics Society at Mahindra University. A community united by
+              curiosity, rigor, and a passion for mathematical sciences beyond the classroom.
+            </p>
+          </Reveal>
         </div>
       </section>
 

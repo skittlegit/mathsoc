@@ -322,9 +322,14 @@ export default function GalleryClient({
               column-count: 3 !important;
             }
           }
-          @media (min-width: 1024px) {
+          @media (min-width: 900px) {
             .masonry-grid {
               column-count: 4 !important;
+            }
+          }
+          @media (min-width: 1280px) {
+            .masonry-grid {
+              column-count: 5 !important;
             }
           }
         `}</style>
@@ -339,7 +344,7 @@ export default function GalleryClient({
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-20px" }}
-                transition={{ duration: 0.5, delay: (i % 8) * 0.03 }}
+                transition={{ duration: 0.5, delay: (i % 5) * 0.03 }}
                 onClick={() => setLightboxIdx(i)}
                 style={{
                   marginBottom: 6,

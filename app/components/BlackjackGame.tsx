@@ -43,7 +43,7 @@ function handValue(cs: Card[]): number {
 function isBlackjack(cs: Card[]) { return cs.length === 2 && handValue(cs) === 21; }
 
 /* ─────────── Card dimensions ─────────── */
-const W = 52, H = 76;
+const W = 68, H = 100;
 
 /* ─────────── Placeholder card ─────────── */
 function PlaceholderCard() {
@@ -51,8 +51,8 @@ function PlaceholderCard() {
     <div style={{
       width: W, height: H, flexShrink: 0,
       background: "rgba(255,255,255,0.02)",
-      border: "1px dashed rgba(255,255,255,0.06)",
-      borderRadius: 6,
+      border: "1px dashed rgba(255,255,255,0.08)",
+      borderRadius: 8,
       display: "flex", alignItems: "center", justifyContent: "center",
     }}>
       <span style={{ fontSize: "1rem", color: "rgba(255,255,255,0.06)", fontWeight: 300 }}>?</span>
@@ -69,19 +69,20 @@ function HiddenCard({ delay = 0 }: { delay?: number }) {
       transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
-        background: "linear-gradient(145deg, #0a1530, #0d1a3d)",
-        border: "1px solid rgba(255,255,255,0.06)",
-        borderRadius: 6,
+        background: "linear-gradient(145deg, #080f28, #0c1840)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: 8,
+        boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}
     >
       <div style={{
-        width: 22, height: 22,
-        border: "1px solid rgba(255,255,255,0.06)",
-        borderRadius: 3,
+        width: 30, height: 30,
+        border: "1px solid rgba(255,255,255,0.09)",
+        borderRadius: 4,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.08)" }}>?</span>
+        <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.1)" }}>?</span>
       </div>
     </motion.div>
   );
@@ -98,27 +99,27 @@ function FaceCard({ card, delay = 0 }: { card: Card; delay?: number }) {
       transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
-        background: "#f5f5f0",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: 6,
-        padding: "4px 5px",
+        background: "linear-gradient(150deg, #fafaf6 0%, #eeeee6 100%)",
+        border: "1px solid rgba(255,255,255,0.2)",
+        borderRadius: 8,
+        padding: "6px 8px",
         position: "relative",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.5)",
+        boxShadow: "0 8px 28px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.85)",
         display: "flex", flexDirection: "column",
       }}
     >
       <div style={{ lineHeight: 1 }}>
-        <div style={{ fontSize: "0.72rem", fontWeight: 700, color: col }}>{card.rank}</div>
-        <div style={{ fontSize: "0.55rem", color: col, marginTop: -1 }}>{card.suit}</div>
+        <div style={{ fontSize: "0.92rem", fontWeight: 700, color: col }}>{card.rank}</div>
+        <div style={{ fontSize: "0.65rem", color: col, marginTop: -1 }}>{card.suit}</div>
       </div>
       <div style={{
         position: "absolute", inset: 0,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: "1.35rem", color: col, opacity: 0.5,
+        fontSize: "1.85rem", color: col, opacity: 0.4,
       }}>{card.suit}</div>
-      <div style={{ position: "absolute", bottom: 4, right: 5, transform: "rotate(180deg)", lineHeight: 1 }}>
-        <div style={{ fontSize: "0.72rem", fontWeight: 700, color: col }}>{card.rank}</div>
-        <div style={{ fontSize: "0.55rem", color: col, marginTop: -1 }}>{card.suit}</div>
+      <div style={{ position: "absolute", bottom: 5, right: 6, transform: "rotate(180deg)", lineHeight: 1 }}>
+        <div style={{ fontSize: "0.92rem", fontWeight: 700, color: col }}>{card.rank}</div>
+        <div style={{ fontSize: "0.65rem", color: col, marginTop: -1 }}>{card.suit}</div>
       </div>
     </motion.div>
   );
@@ -138,8 +139,8 @@ function GameBtn({
       onClick={onClick}
       disabled={disabled}
       style={{
-        padding: "10px 22px",
-        fontSize: "0.5rem",
+        padding: "12px 28px",
+        fontSize: "0.54rem",
         letterSpacing: "0.2em",
         textTransform: "uppercase",
         fontWeight: 600,

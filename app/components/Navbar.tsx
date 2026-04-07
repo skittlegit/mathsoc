@@ -86,14 +86,13 @@ export default function Navbar() {
           ))}
           <button
             onClick={() => setMenuOpen(true)}
-            className="text-white font-semibold cursor-pointer bg-transparent border-none hover:opacity-50 transition-opacity duration-300"
-            style={{
-              fontSize: "0.6rem",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-            }}
+            className="cursor-pointer bg-transparent border-none flex flex-col items-end justify-center hover:opacity-60 transition-opacity duration-300"
+            style={{ width: 32, height: 32, gap: "5px", padding: "5px 0" }}
+            aria-label="Open menu"
           >
-            Menu
+            <span style={{ display: "block", width: 22, height: 1.5, background: "rgba(255,255,255,0.75)", borderRadius: 2 }} />
+            <span style={{ display: "block", width: 14, height: 1.5, background: "rgba(255,255,255,0.75)", borderRadius: 2 }} />
+            <span style={{ display: "block", width: 22, height: 1.5, background: "rgba(255,255,255,0.75)", borderRadius: 2 }} />
           </button>
         </div>
       </motion.nav>
