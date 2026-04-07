@@ -41,8 +41,8 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full grain">
-        {/* Fixed ambient background — extends behind iOS safe areas via fixed-bg class */}
-        <div className="pointer-events-none fixed inset-0 z-0 fixed-bg" style={{ background: "#000922" }}>
+        {/* Fixed ambient background — multi-layer depth */}
+        <div className="pointer-events-none fixed inset-0 z-0" style={{ background: "#000" }}>
           {/* Bottom-right: deep blue glow */}
           <div
             style={{
