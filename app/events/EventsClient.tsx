@@ -73,6 +73,12 @@ function EventRow({ ev, index }: { ev: EventItem; index: number }) {
         </p>
       </div>
 
+      {ev.photo && (
+        <div className="shrink-0 hidden sm:block" style={{ width: 72, height: 54, overflow: "hidden", flexShrink: 0 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ev.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        </div>
+      )}
       <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path

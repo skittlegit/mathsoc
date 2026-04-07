@@ -11,6 +11,7 @@ export interface EventItem {
   location: string;
   desc: string;
   tag: string;
+  photo?: string;
 }
 
 async function getEvents(): Promise<EventItem[]> {

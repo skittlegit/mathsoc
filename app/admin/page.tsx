@@ -11,6 +11,7 @@ interface EventItem {
   location: string;
   desc: string;
   tag: string;
+  photo?: string;
 }
 
 const TAGS = ["Competition", "Academic", "Orientation"];
@@ -24,6 +25,7 @@ const emptyEvent: EventItem = {
   location: "",
   desc: "",
   tag: "Competition",
+  photo: "",
 };
 
 function slugify(text: string, year: number) {
@@ -287,7 +289,7 @@ export default function AdminPage() {
               />
             </div>
 
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 16 }}>
               <label style={labelStyle}>Description</label>
               <textarea
                 style={{ ...inputStyle, minHeight: 100, resize: "vertical" }}
@@ -295,6 +297,16 @@ export default function AdminPage() {
                 onChange={(e) => setForm({ ...form, desc: e.target.value })}
                 placeholder="Event description..."
                 required
+              />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={labelStyle}>Photo URL (optional)</label>
+              <input
+                style={inputStyle}
+                value={form.photo ?? ""}
+                onChange={(e) => setForm({ ...form, photo: e.target.value })}
+                placeholder="https://... or /images/..."
               />
             </div>
 

@@ -311,10 +311,6 @@ export default function GalleryClient({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35, duration: 0.7 }}
-        style={{
-          columnCount: 2,
-          columnGap: 6,
-        }}
       >
         <style jsx>{`
           @media (min-width: 640px) {

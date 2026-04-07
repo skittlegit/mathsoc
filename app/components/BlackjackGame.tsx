@@ -43,7 +43,8 @@ function handValue(cs: Card[]): number {
 function isBlackjack(cs: Card[]) { return cs.length === 2 && handValue(cs) === 21; }
 
 /* ─────────── Card dimensions ─────────── */
-const W = 68, H = 100;
+const W = 52, H = 76;
+const STACK_OFFSET = 24;
 
 /* ─────────── Placeholder card ─────────── */
 function PlaceholderCard() {
@@ -51,8 +52,8 @@ function PlaceholderCard() {
     <div style={{
       width: W, height: H, flexShrink: 0,
       background: "rgba(255,255,255,0.02)",
-      border: "1px dashed rgba(255,255,255,0.08)",
-      borderRadius: 8,
+      border: "1px dashed rgba(255,255,255,0.06)",
+      borderRadius: 6,
       display: "flex", alignItems: "center", justifyContent: "center",
     }}>
       <span style={{ fontSize: "1rem", color: "rgba(255,255,255,0.06)", fontWeight: 300 }}>?</span>
@@ -69,20 +70,19 @@ function HiddenCard({ delay = 0 }: { delay?: number }) {
       transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
-        background: "linear-gradient(145deg, #080f28, #0c1840)",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: 8,
-        boxShadow: "0 4px 16px rgba(0,0,0,0.55)",
+        background: "linear-gradient(145deg, #0a1530, #0d1a3d)",
+        border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 6,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}
     >
       <div style={{
-        width: 30, height: 30,
-        border: "1px solid rgba(255,255,255,0.09)",
-        borderRadius: 4,
+        width: 22, height: 22,
+        border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 3,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.1)" }}>?</span>
+        <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.08)" }}>?</span>
       </div>
     </motion.div>
   );
@@ -99,27 +99,27 @@ function FaceCard({ card, delay = 0 }: { card: Card; delay?: number }) {
       transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
-        background: "linear-gradient(150deg, #fafaf6 0%, #eeeee6 100%)",
-        border: "1px solid rgba(255,255,255,0.2)",
-        borderRadius: 8,
-        padding: "6px 8px",
+        background: "#f5f5f0",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: 6,
+        padding: "4px 5px",
         position: "relative",
-        boxShadow: "0 8px 28px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.85)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.5)",
         display: "flex", flexDirection: "column",
       }}
     >
       <div style={{ lineHeight: 1 }}>
-        <div style={{ fontSize: "0.92rem", fontWeight: 700, color: col }}>{card.rank}</div>
-        <div style={{ fontSize: "0.65rem", color: col, marginTop: -1 }}>{card.suit}</div>
+        <div style={{ fontSize: "0.72rem", fontWeight: 700, color: col }}>{card.rank}</div>
+        <div style={{ fontSize: "0.55rem", color: col, marginTop: -1 }}>{card.suit}</div>
       </div>
       <div style={{
         position: "absolute", inset: 0,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: "1.85rem", color: col, opacity: 0.4,
+        fontSize: "1.35rem", color: col, opacity: 0.5,
       }}>{card.suit}</div>
-      <div style={{ position: "absolute", bottom: 5, right: 6, transform: "rotate(180deg)", lineHeight: 1 }}>
-        <div style={{ fontSize: "0.92rem", fontWeight: 700, color: col }}>{card.rank}</div>
-        <div style={{ fontSize: "0.65rem", color: col, marginTop: -1 }}>{card.suit}</div>
+      <div style={{ position: "absolute", bottom: 4, right: 5, transform: "rotate(180deg)", lineHeight: 1 }}>
+        <div style={{ fontSize: "0.72rem", fontWeight: 700, color: col }}>{card.rank}</div>
+        <div style={{ fontSize: "0.55rem", color: col, marginTop: -1 }}>{card.suit}</div>
       </div>
     </motion.div>
   );
@@ -139,8 +139,8 @@ function GameBtn({
       onClick={onClick}
       disabled={disabled}
       style={{
-        padding: "12px 28px",
-        fontSize: "0.54rem",
+        padding: "10px 22px",
+        fontSize: "0.5rem",
         letterSpacing: "0.2em",
         textTransform: "uppercase",
         fontWeight: 600,
@@ -299,18 +299,20 @@ export default function BlackjackGame() {
             minWidth: 16, textAlign: "right",
           }}>{dv}</span>
         </div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <div style={{ position: "relative", height: H, minWidth: W + STACK_OFFSET }}>
           {phase === "idle" ? (
             <>
-              <PlaceholderCard />
-              <PlaceholderCard />
+              <div style={{ position: "absolute", left: 0, zIndex: 1 }}><PlaceholderCard /></div>
+              <div style={{ position: "absolute", left: STACK_OFFSET, zIndex: 2 }}><PlaceholderCard /></div>
             </>
           ) : (
-            dealer.map((c, i) =>
-              phase === "playing" && i === 1
-                ? <HiddenCard key={c.id} delay={i * 0.08} />
-                : <FaceCard key={c.id} card={c} delay={i * 0.08} />
-            )
+            dealer.map((c, i) => (
+              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, zIndex: i + 1 }}>
+                {phase === "playing" && i === 1
+                  ? <HiddenCard delay={i * 0.08} />
+                  : <FaceCard card={c} delay={i * 0.08} />}
+              </div>
+            ))
           )}
         </div>
       </div>
@@ -329,14 +331,18 @@ export default function BlackjackGame() {
             minWidth: 16, textAlign: "right",
           }}>{pv}</span>
         </div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <div style={{ position: "relative", height: H, minWidth: W + STACK_OFFSET }}>
           {phase === "idle" ? (
             <>
-              <PlaceholderCard />
-              <PlaceholderCard />
+              <div style={{ position: "absolute", left: 0, zIndex: 1 }}><PlaceholderCard /></div>
+              <div style={{ position: "absolute", left: STACK_OFFSET, zIndex: 2 }}><PlaceholderCard /></div>
             </>
           ) : (
-            player.map((c, i) => <FaceCard key={c.id} card={c} delay={i * 0.08} />)
+            player.map((c, i) => (
+              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, zIndex: i + 1 }}>
+                <FaceCard card={c} delay={i * 0.08} />
+              </div>
+            ))
           )}
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   motion,
   AnimatePresence,
@@ -207,12 +208,23 @@ function FloatingSymbols() {
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [eventPhoto, setEventPhoto] = useState<{ photo: string; full: string } | null>(null);
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   useEffect(() => {
     document.body.style.overflow = loading ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [loading]);
+
+  useEffect(() => {
+    fetch("/api/events")
+      .then((r) => r.json())
+      .then((events: Array<{ photo?: string; full: string }>) => {
+        const ev = events.find((e) => e.photo);
+        if (ev?.photo) setEventPhoto({ photo: ev.photo, full: ev.full });
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLoadingComplete = useCallback(() => setLoading(false), []);
 
@@ -331,37 +343,76 @@ export default function Home() {
         className="px-7 md:px-14 py-36 md:py-56"
         style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
       >
-        <div className="max-w-5xl mx-auto">
-          <Reveal>
-            <span
-              style={{
-                display: "block",
-                fontSize: "0.52rem",
-                letterSpacing: "0.4em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.18)",
-                marginBottom: "2rem",
-              }}
-            >
-              Who We Are
-            </span>
-          </Reveal>
-          <Reveal delay={0.12}>
-            <p
-              style={{
-                fontSize: "clamp(1.5rem, 2.8vw, 2.1rem)",
-                lineHeight: 1.65,
-                color: "rgba(255,255,255,0.72)",
-                fontWeight: 400,
-                maxWidth: "28ch",
-              }}
-            >
-              We&apos;re{" "}
-              <span style={{ color: "rgba(255,255,255,0.95)", fontWeight: 600 }}>MathSoc</span>{" "}
-              — the Mathematics Society at Mahindra University. A community united by
-              curiosity, rigor, and a passion for mathematical sciences beyond the classroom.
-            </p>
-          </Reveal>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-16 md:gap-24 items-start">
+            <div>
+              <Reveal>
+                <div className="flex items-center gap-6 mb-8">
+                  <span
+                    style={{
+                      fontSize: "0.56rem",
+                      letterSpacing: "0.4em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,255,255,0.35)",
+                    }}
+                  >
+                    Who We Are
+                  </span>
+                </div>
+              </Reveal>
+              <Reveal delay={0.12}>
+                <p
+                  style={{
+                    fontSize: "clamp(1.5rem, 2.8vw, 2.1rem)",
+                    lineHeight: 1.65,
+                    color: "rgba(255,255,255,0.72)",
+                    fontWeight: 400,
+                    maxWidth: "28ch",
+                  }}
+                >
+                  We&apos;re{" "}
+                  <span style={{ color: "rgba(255,255,255,0.95)", fontWeight: 600 }}>MathSoc</span>{" "}
+                  — the Mathematics Society at Mahindra University. A community united by
+                  curiosity, rigor, and a passion for mathematical sciences beyond the classroom.
+                </p>
+              </Reveal>
+            </div>
+            <Reveal direction="fade" delay={0.25}>
+              <Link href="/events" className="block group">
+                <div
+                  style={{
+                    width: "100%",
+                    aspectRatio: "3/4",
+                    overflow: "hidden",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    position: "relative",
+                    background: "rgba(255,255,255,0.018)",
+                  }}
+                >
+                  {eventPhoto ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={eventPhoto.photo}
+                      alt={eventPhoto.full}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    />
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ fontSize: "5rem", color: "rgba(255,255,255,0.04)" }}>∑</span>
+                    </div>
+                  )}
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 16px 16px", background: "linear-gradient(to top, rgba(0,0,0,0.75), transparent)" }}>
+                    <p style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", marginBottom: 4 }}>
+                      {eventPhoto ? eventPhoto.full : "Our Events"}
+                    </p>
+                    <p className="group-hover:opacity-100 transition-opacity" style={{ fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", opacity: 0.7 }}>
+                      View All →
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </Reveal>
+          </div>
         </div>
       </section>
 

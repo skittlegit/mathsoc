@@ -10,6 +10,7 @@ export interface EventItem {
   location: string;
   desc: string;
   tag: string;
+  photo?: string;
 }
 
 const DATA_PATH = path.join(process.cwd(), "data", "events.json");
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
     location: String(location).slice(0, 100),
     desc: String(desc).slice(0, 1000),
     tag: String(tag).slice(0, 50),
+    ...(body.photo ? { photo: String(body.photo).slice(0, 500) } : {}),
   };
 
   if (existing >= 0) {
