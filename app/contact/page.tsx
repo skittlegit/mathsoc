@@ -53,7 +53,7 @@ export default function ContactPage() {
       </div>
 
       <div className="px-7 md:px-14 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-20">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-12 md:gap-20">
           {/* Form */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}

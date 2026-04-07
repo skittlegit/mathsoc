@@ -235,8 +235,8 @@ export default function Home() {
       </AnimatePresence>
 
       {/* ═══ HERO — Split: Brand (left) + Blackjack (right) ═══ */}
-      <section className="relative min-h-screen flex flex-col md:flex-row overflow-x-hidden">
-        {/* Full-hero dot grid */}
+      <section className="relative overflow-x-hidden">
+        {/* Full-hero dot grid — stays full-bleed via absolute */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -246,95 +246,94 @@ export default function Home() {
           }}
         />
 
-        {/* ── LEFT: Branding ── */}
-        <div className="relative z-10 md:w-[46%] flex flex-col justify-center px-7 md:px-14 pt-32 pb-10 md:py-0">
-          {/* Floating symbols on the left only */}
-          <FloatingSymbols />
+        {/* Both sides constrained to same max-width as Events/Resources */}
+        <div className="relative z-10 min-h-screen px-7 md:px-14 max-w-6xl mx-auto flex flex-col md:flex-row">
 
-          {/* Title */}
-          <motion.h1
-            className="font-bold select-none"
-            style={{
-              fontSize: "clamp(2.4rem, 6vw, 5.8rem)",
-              letterSpacing: "0.02em",
-              lineHeight: 1.05,
-              color: "rgba(255,255,255,0.95)",
-            }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.9, duration: 0.9, ease }}
-          >
-            The Mathematics<br />Society
-          </motion.h1>
+          {/* ── LEFT: Branding ── */}
+          <div className="relative flex-1 flex flex-col justify-center pt-32 pb-10 md:py-0 min-h-[60vh] md:min-h-0">
+            {/* Floating symbols on the left only */}
+            <FloatingSymbols />
 
-          {/* Tagline */}
-          <motion.p
-            className="mt-5"
-            style={{
-              fontSize: "0.62rem",
-              letterSpacing: "0.18em",
-              color: "rgba(255,255,255,0.32)",
-              fontFamily: "var(--font-jetbrains-mono)",
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 3.2, duration: 0.8 }}
-          >
-            @ Mahindra University
-          </motion.p>
+            {/* Title */}
+            <motion.h1
+              className="font-bold select-none"
+              style={{
+                fontSize: "clamp(2.4rem, 6vw, 5.8rem)",
+                letterSpacing: "0.02em",
+                lineHeight: 1.05,
+                color: "rgba(255,255,255,0.95)",
+              }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.9, duration: 0.9, ease }}
+            >
+              The Mathematics<br />Society
+            </motion.h1>
 
-          {/* Est. */}
-          <motion.p
-            className="mt-2"
-            style={{
-              fontSize: "0.44rem",
-              letterSpacing: "0.3em",
-              color: "rgba(255,255,255,0.14)",
-              textTransform: "uppercase",
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 3.4, duration: 0.8 }}
-          >
-            Est. 2023
-          </motion.p>
+            {/* Tagline */}
+            <motion.p
+              className="mt-5"
+              style={{
+                fontSize: "0.62rem",
+                letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.32)",
+                fontFamily: "var(--font-jetbrains-mono)",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 3.2, duration: 0.8 }}
+            >
+              @ Mahindra University
+            </motion.p>
 
-          {/* Scroll indicator */}
-          <motion.div
-            className="mt-16 flex items-center gap-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 3.7, duration: 1 }}
-            style={{ color: "rgba(255,255,255,0.18)" }}
-          >
-            <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>
-              Scroll to explore
-            </span>
+            {/* Est. */}
+            <motion.p
+              className="mt-2"
+              style={{
+                fontSize: "0.44rem",
+                letterSpacing: "0.3em",
+                color: "rgba(255,255,255,0.14)",
+                textTransform: "uppercase",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 3.4, duration: 0.8 }}
+            >
+              Est. 2023
+            </motion.p>
+
+            {/* Scroll indicator */}
             <motion.div
-              style={{ width: 32, height: 1, background: "rgba(255,255,255,0.2)" }}
-              animate={{ scaleX: [1, 0.4, 1] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </motion.div>
-        </div>
+              className="mt-16 flex items-center gap-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 3.7, duration: 1 }}
+              style={{ color: "rgba(255,255,255,0.18)" }}
+            >
+              <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>
+                Scroll to explore
+              </span>
+              <motion.div
+                style={{ width: 32, height: 1, background: "rgba(255,255,255,0.2)" }}
+                animate={{ scaleX: [1, 0.4, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.div>
+          </div>
 
-        {/* Thin vertical divider */}
-        <div
-          className="hidden md:block self-stretch w-px my-24"
-          style={{ background: "rgba(255,255,255,0.05)" }}
-        />
+          {/* ── RIGHT: Blackjack ── */}
+          <div className="flex flex-col justify-center items-center pb-14 md:py-0 md:pl-10 md:w-[45%]">
+            <motion.div
+              className="w-full"
+              style={{ maxWidth: 300 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3.0, duration: 0.9, ease }}
+            >
+              <BlackjackGame />
+            </motion.div>
+          </div>
 
-        {/* ── RIGHT: Blackjack ── */}
-        <div className="relative z-10 md:w-[36%] flex flex-col justify-center items-center px-7 md:px-10 pb-14 md:py-0">
-          <motion.div
-            className="w-full"
-            style={{ maxWidth: 300 }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.0, duration: 0.9, ease }}
-          >
-            <BlackjackGame />
-          </motion.div>
         </div>
       </section>
 
@@ -380,9 +379,9 @@ export default function Home() {
             <Reveal direction="fade" delay={0.25}>
               <Link href="/events" className="block group">
                 <div
+                  className="h-56 md:h-auto md:aspect-[3/4]"
                   style={{
                     width: "100%",
-                    aspectRatio: "3/4",
                     overflow: "hidden",
                     border: "1px solid rgba(255,255,255,0.07)",
                     position: "relative",

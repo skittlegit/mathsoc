@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { EventItem } from "./page";
 
@@ -9,13 +10,14 @@ const FILTERS = ["All", "Competition", "Academic", "Orientation"];
 
 function EventRow({ ev, index }: { ev: EventItem; index: number }) {
   return (
+    <Link href={`/events/${ev.id}`} className="block">
     <motion.div
       initial={{ opacity: 0, x: -24 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       transition={{ duration: 0.45, delay: index * 0.04, ease }}
       whileHover={{ x: 8, backgroundColor: "rgba(255,255,255,0.012)" }}
-      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-8"
+      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-8 cursor-pointer"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
     >
       <div className="shrink-0 w-36">
@@ -91,6 +93,7 @@ function EventRow({ ev, index }: { ev: EventItem; index: number }) {
         </svg>
       </div>
     </motion.div>
+    </Link>
   );
 }
 

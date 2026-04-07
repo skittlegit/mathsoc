@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface EventItem {
   id: string;
@@ -12,6 +12,8 @@ interface EventItem {
   desc: string;
   tag: string;
   photo?: string;
+  content?: string;
+  gallery?: string[];
 }
 
 const TAGS = ["Competition", "Academic", "Orientation"];
@@ -26,6 +28,8 @@ const emptyEvent: EventItem = {
   desc: "",
   tag: "Competition",
   photo: "",
+  content: "",
+  gallery: [],
 };
 
 function slugify(text: string, year: number) {
@@ -40,6 +44,9 @@ function slugify(text: string, year: number) {
 }
 
 export default function AdminPage() {
+  const [authed, setAuthed] = useState(false);
+  const [pwdInput, setPwdInput] = useState("");
+  const [pwdError, setPwdError] = useState(false);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [form, setForm] = useState<EventItem>({ ...emptyEvent });
   const [editing, setEditing] = useState(false);
@@ -47,6 +54,19 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadFile = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    if (!res.ok) throw new Error("Upload failed");
+    const { url } = await res.json();
+    return url as string;
+  };
 
   const showToast = (msg: string, type: "ok" | "err" = "ok") => {
     setToast({ msg, type });
@@ -77,6 +97,7 @@ export default function AdminPage() {
     const payload = {
       ...form,
       id: form.id || slugify(form.title, form.year),
+      gallery: Array.isArray(form.gallery) ? form.gallery : [],
     };
 
     try {
@@ -101,7 +122,7 @@ export default function AdminPage() {
   };
 
   const startEdit = (ev: EventItem) => {
-    setForm({ ...ev });
+    setForm({ ...ev, gallery: ev.gallery ?? [] });
     setEditing(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -147,6 +168,74 @@ export default function AdminPage() {
     color: "rgba(255,255,255,0.3)",
     marginBottom: "6px",
   };
+
+  /* ─── Password gate ─── */
+  if (!authed) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-7">
+        <span
+          style={{
+            fontSize: "0.5rem",
+            letterSpacing: "0.4em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.18)",
+            marginBottom: 32,
+            display: "block",
+          }}
+        >
+          Admin Panel
+        </span>
+        <div style={{ width: "100%", maxWidth: 340 }}>
+          <label style={labelStyle}>Password</label>
+          <input
+            type="password"
+            value={pwdInput}
+            autoFocus
+            onChange={(e) => { setPwdInput(e.target.value); setPwdError(false); }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                if (pwdInput === "geometrystinks") setAuthed(true);
+                else setPwdError(true);
+              }
+            }}
+            style={{
+              ...inputStyle,
+              borderColor: pwdError ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.08)",
+            }}
+            placeholder="Enter password"
+          />
+          {pwdError && (
+            <p style={{ fontSize: "0.65rem", color: "rgb(252,165,165)", marginTop: 8 }}>
+              Incorrect password.
+            </p>
+          )}
+          <button
+            onClick={() => {
+              if (pwdInput === "geometrystinks") setAuthed(true);
+              else setPwdError(true);
+            }}
+            style={{
+              marginTop: 16,
+              width: "100%",
+              padding: "11px",
+              fontSize: "0.62rem",
+              fontWeight: 600,
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: "4px",
+              color: "rgba(255,255,255,0.7)",
+              cursor: "pointer",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
+          >
+            Access
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-32 md:pt-44 pb-24">
@@ -300,14 +389,170 @@ export default function AdminPage() {
               />
             </div>
 
-            <div style={{ marginBottom: 20 }}>
-              <label style={labelStyle}>Photo URL (optional)</label>
+            <div style={{ marginBottom: 16 }}>
+              <label style={labelStyle}>Cover Photo (optional)</label>
+              {/* File upload */}
+              <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8 }}>
+                <button
+                  type="button"
+                  disabled={uploadingCover}
+                  onClick={() => coverInputRef.current?.click()}
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "0.65rem",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: "4px",
+                    color: "rgba(255,255,255,0.6)",
+                    cursor: uploadingCover ? "not-allowed" : "pointer",
+                    opacity: uploadingCover ? 0.5 : 1,
+                    fontFamily: "var(--font-space-grotesk)",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                  }}
+                >
+                  {uploadingCover ? "Uploading..." : "Upload Image"}
+                </button>
+                <input
+                  ref={coverInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setUploadingCover(true);
+                    try {
+                      const url = await uploadFile(file);
+                      setForm((f) => ({ ...f, photo: url }));
+                    } catch {
+                      showToast("Cover upload failed", "err");
+                    } finally {
+                      setUploadingCover(false);
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                {form.photo && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={form.photo}
+                    alt="Cover preview"
+                    style={{ height: 48, width: 72, objectFit: "cover", borderRadius: 3, border: "1px solid rgba(255,255,255,0.08)" }}
+                  />
+                )}
+              </div>
+              {/* Manual URL fallback */}
               <input
-                style={inputStyle}
+                style={{ ...inputStyle, fontSize: "0.75rem" }}
                 value={form.photo ?? ""}
                 onChange={(e) => setForm({ ...form, photo: e.target.value })}
-                placeholder="https://... or /images/..."
+                placeholder="Or paste a URL directly..."
               />
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={labelStyle}>Full Content (optional — appears on the event detail page)</label>
+              <textarea
+                style={{ ...inputStyle, minHeight: 160, resize: "vertical" }}
+                value={form.content ?? ""}
+                onChange={(e) => setForm({ ...form, content: e.target.value })}
+                placeholder="Write the full event description here. Use blank lines between paragraphs."
+              />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={labelStyle}>Gallery Images (optional)</label>
+              {/* Upload button */}
+              <div style={{ marginBottom: 10 }}>
+                <button
+                  type="button"
+                  disabled={uploadingGallery}
+                  onClick={() => galleryInputRef.current?.click()}
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "0.65rem",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: "4px",
+                    color: "rgba(255,255,255,0.6)",
+                    cursor: uploadingGallery ? "not-allowed" : "pointer",
+                    opacity: uploadingGallery ? 0.5 : 1,
+                    fontFamily: "var(--font-space-grotesk)",
+                  }}
+                >
+                  {uploadingGallery ? "Uploading..." : "Add Images"}
+                </button>
+                <input
+                  ref={galleryInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  style={{ display: "none" }}
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files ?? []);
+                    if (!files.length) return;
+                    setUploadingGallery(true);
+                    try {
+                      const urls = await Promise.all(files.map(uploadFile));
+                      setForm((f) => ({ ...f, gallery: [...(f.gallery ?? []), ...urls] }));
+                    } catch {
+                      showToast("One or more uploads failed", "err");
+                    } finally {
+                      setUploadingGallery(false);
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </div>
+              {/* Thumbnail list */}
+              {(form.gallery ?? []).length > 0 && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+                  {(form.gallery ?? []).map((url, i) => (
+                    <div key={i} style={{ position: "relative" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={`Gallery ${i + 1}`}
+                        style={{ height: 64, width: 96, objectFit: "cover", borderRadius: 3, border: "1px solid rgba(255,255,255,0.08)", display: "block" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((f) => ({ ...f, gallery: (f.gallery ?? []).filter((_, j) => j !== i) }))
+                        }
+                        style={{
+                          position: "absolute",
+                          top: 2,
+                          right: 2,
+                          width: 18,
+                          height: 18,
+                          borderRadius: "50%",
+                          background: "rgba(0,0,0,0.7)",
+                          border: "none",
+                          color: "rgba(255,255,255,0.8)",
+                          fontSize: "0.7rem",
+                          lineHeight: 1,
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        aria-label="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.18)", marginTop: 2 }}>
+                {(form.gallery ?? []).length} image{(form.gallery ?? []).length !== 1 ? "s" : ""} added
+              </p>
             </div>
 
             <div style={{ display: "flex", gap: 10 }}>

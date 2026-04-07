@@ -11,6 +11,8 @@ export interface EventItem {
   desc: string;
   tag: string;
   photo?: string;
+  content?: string;
+  gallery?: string[];
 }
 
 const DATA_PATH = path.join(process.cwd(), "data", "events.json");
@@ -48,6 +50,10 @@ export async function POST(request: Request) {
     desc: String(desc).slice(0, 1000),
     tag: String(tag).slice(0, 50),
     ...(body.photo ? { photo: String(body.photo).slice(0, 500) } : {}),
+    ...(body.content ? { content: String(body.content).slice(0, 8000) } : {}),
+    ...(body.gallery && Array.isArray(body.gallery)
+      ? { gallery: (body.gallery as unknown[]).slice(0, 100).map((u) => String(u).slice(0, 500)) }
+      : {}),
   };
 
   if (existing >= 0) {

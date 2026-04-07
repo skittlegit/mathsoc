@@ -259,15 +259,15 @@ export default function GalleryClient({
   return (
     <div style={{ paddingTop: 72, minHeight: "100vh" }}>
       {/* Header */}
-      <div className="px-7 md:px-14" style={{ paddingTop: 48, paddingBottom: 24 }}>
+      <div className="px-7 md:px-14 max-w-6xl mx-auto" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease }}
           style={{
-            fontSize: "0.48rem",
+            fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.25)",
+            color: "rgba(255,255,255,0.2)",
             textTransform: "uppercase",
             display: "block",
             marginBottom: 10,
@@ -276,24 +276,24 @@ export default function GalleryClient({
           Photos &amp; Videos
         </motion.span>
         <motion.h1
-          className="font-bold uppercase"
+          className="font-bold uppercase mt-6"
           style={{
-            fontSize: "clamp(2.2rem, 7vw, 6rem)",
-            letterSpacing: "0.08em",
-            color: "rgba(255,255,255,0.88)",
+            fontSize: "clamp(3.5rem, 11vw, 9rem)",
+            letterSpacing: "0.15em",
+            color: "rgba(255,255,255,0.9)",
             lineHeight: 0.9,
-            marginBottom: 8,
+            marginBottom: 16,
           }}
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.7, ease }}
+          transition={{ delay: 0.1, duration: 0.8, ease }}
         >
           Gallery
         </motion.h1>
         <motion.p
           style={{
-            fontSize: "0.48rem",
-            letterSpacing: "0.12em",
+            fontSize: "0.56rem",
+            letterSpacing: "0.2em",
             color: "rgba(255,255,255,0.18)",
             textTransform: "uppercase",
           }}
@@ -301,13 +301,13 @@ export default function GalleryClient({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.6 }}
         >
-          {images.length} photos · {videos.length} videos · click to view
+          {images.length} photos &middot; {videos.length} videos &middot; click to view
         </motion.p>
       </div>
 
-      {/* Masonry grid */}
+      {/* Masonry grid — full bleed, only tiny side padding */}
       <motion.div
-        className="px-3 md:px-7 pb-16"
+        className="px-4 sm:px-6 pb-16"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35, duration: 0.7 }}

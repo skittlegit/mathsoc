@@ -44,7 +44,6 @@ function isBlackjack(cs: Card[]) { return cs.length === 2 && handValue(cs) === 2
 
 /* ─────────── Card dimensions ─────────── */
 const W = 52, H = 76;
-const STACK_OFFSET = 24;
 
 /* ─────────── Placeholder card ─────────── */
 function PlaceholderCard() {
@@ -227,13 +226,7 @@ export default function BlackjackGame() {
   const dv = phase === "done" && dealer.length ? handValue(dealer) : 0;
 
   return (
-    <div style={{
-      width: "100%",
-      background: "rgba(255,255,255,0.016)",
-      border: "1px solid rgba(255,255,255,0.055)",
-      borderRadius: 10,
-      padding: "20px 18px 18px",
-    }}>
+    <div style={{ width: "100%" }}>
       {/* Header — idle shows "Start a new game", playing shows score */}
       <div style={{ marginBottom: 18, textAlign: "center" }}>
         <AnimatePresence mode="wait">
@@ -305,19 +298,14 @@ export default function BlackjackGame() {
             minWidth: 16, textAlign: "right",
           }}>{dv}</span>
         </div>
-        <div style={{ position: "relative", height: H + STACK_OFFSET * 3 }}>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", minHeight: H }}>
           {phase === "idle" ? (
-            <>
-              <div style={{ position: "absolute", left: 0, top: 0, zIndex: 1 }}><PlaceholderCard /></div>
-              <div style={{ position: "absolute", left: STACK_OFFSET, top: 0, zIndex: 2 }}><PlaceholderCard /></div>
-            </>
+            <><PlaceholderCard /><PlaceholderCard /></>
           ) : (
             dealer.map((c, i) => (
-              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, top: 0, zIndex: i + 1 }}>
-                {phase === "playing" && i === 1
-                  ? <HiddenCard delay={i * 0.08} />
-                  : <FaceCard card={c} delay={i * 0.08} />}
-              </div>
+              phase === "playing" && i === 1
+                ? <HiddenCard key={c.id} delay={i * 0.08} />
+                : <FaceCard key={c.id} card={c} delay={i * 0.08} />
             ))
           )}
         </div>
@@ -337,17 +325,12 @@ export default function BlackjackGame() {
             minWidth: 16, textAlign: "right",
           }}>{pv}</span>
         </div>
-        <div style={{ position: "relative", height: H + STACK_OFFSET * 3 }}>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", minHeight: H }}>
           {phase === "idle" ? (
-            <>
-              <div style={{ position: "absolute", left: 0, top: 0, zIndex: 1 }}><PlaceholderCard /></div>
-              <div style={{ position: "absolute", left: STACK_OFFSET, top: 0, zIndex: 2 }}><PlaceholderCard /></div>
-            </>
+            <><PlaceholderCard /><PlaceholderCard /></>
           ) : (
             player.map((c, i) => (
-              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, top: 0, zIndex: i + 1 }}>
-                <FaceCard card={c} delay={i * 0.08} />
-              </div>
+              <FaceCard key={c.id} card={c} delay={i * 0.08} />
             ))
           )}
         </div>

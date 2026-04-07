@@ -66,13 +66,14 @@ export default function Navbar() {
           {NAV_LINKS.map((link, i) => (
             <motion.div
               key={link.label}
+              className="hidden md:block"
               initial={{ opacity: 0, y: -16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + i * 0.08, duration: 0.6 }}
             >
               <Link
                 href={link.href}
-                className="hidden md:block link-underline hover:text-white transition-colors duration-300"
+                className="link-underline hover:text-white transition-colors duration-300"
                 style={{
                   fontSize: "0.58rem",
                   letterSpacing: "0.18em",

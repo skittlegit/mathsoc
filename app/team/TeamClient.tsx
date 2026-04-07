@@ -312,7 +312,7 @@ export default function TeamClient({
 
   return (
     <div style={{ paddingTop: 72, minHeight: "100vh" }}>
-      <div className="px-7 md:px-14" style={{ paddingTop: 48, paddingBottom: 20 }}>
+      <div className="px-7 md:px-14 max-w-6xl mx-auto" style={{ paddingTop: 48, paddingBottom: 20 }}>
         {/* Header */}
         <motion.span
           initial={{ opacity: 0, x: -20 }}
@@ -320,9 +320,9 @@ export default function TeamClient({
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{
             display: "block",
-            fontSize: "0.48rem",
+            fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.25)",
+            color: "rgba(255,255,255,0.2)",
             textTransform: "uppercase",
             marginBottom: 10,
           }}
@@ -335,8 +335,8 @@ export default function TeamClient({
           transition={{ delay: 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="font-bold uppercase"
           style={{
-            fontSize: "clamp(2.2rem, 7vw, 6rem)",
-            letterSpacing: "0.08em",
+            fontSize: "clamp(3.5rem, 11vw, 9rem)",
+            letterSpacing: "0.15em",
             lineHeight: 0.9,
             color: "rgba(255,255,255,0.88)",
             marginBottom: 16,
@@ -400,7 +400,7 @@ export default function TeamClient({
       </div>
 
       {/* Team grid */}
-      <div className="px-7 md:px-14" style={{ paddingBottom: 80 }}>
+      <div className="px-7 md:px-14 max-w-6xl mx-auto" style={{ paddingBottom: 80 }}>
         {activeYear && dataByYear[activeYear] && (
           <YearSection year={activeYear} data={dataByYear[activeYear]} />
         )}

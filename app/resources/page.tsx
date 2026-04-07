@@ -120,7 +120,7 @@ function ResourceSection({
   return (
     <motion.div
       ref={ref}
-      className="mb-24"
+      className="mb-14 md:mb-24"
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay: index * 0.1, ease }}
@@ -198,9 +198,9 @@ function ResourceSection({
 
 export default function ResourcesPage() {
   return (
-    <div className="pt-32 md:pt-44 pb-24">
+    <div className="pt-24 md:pt-44 pb-24">
       {/* Page Hero */}
-      <div className="px-7 md:px-14 max-w-6xl mx-auto mb-20">
+      <div className="px-7 md:px-14 max-w-6xl mx-auto mb-10 md:mb-20">
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
