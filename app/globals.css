@@ -8,15 +8,27 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  /* fills Safari safe-area zones (status bar top, home indicator bottom)
+     with the site's dark blue — visible because viewport-fit=cover is set */
+  background-color: #000922;
 }
 
 body {
-  background: #000;
+  background: transparent;
   color: #fff;
   font-family: var(--font-space-grotesk), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  /* safe-area padding so content never hides behind iOS bars */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* pull the fixed ambient background fully behind status/home bars */
+.fixed-bg {
+  top: calc(-1 * env(safe-area-inset-top, 0px));
+  bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
 }
 
 ::selection {

@@ -41,8 +41,8 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full grain">
-        {/* Fixed ambient background — multi-layer depth */}
-        <div className="pointer-events-none fixed inset-0 z-0" style={{ background: "#000" }}>
+        {/* Fixed ambient background — extends behind iOS safe areas via fixed-bg class */}
+        <div className="pointer-events-none fixed inset-0 z-0 fixed-bg" style={{ background: "#000922" }}>
           {/* Bottom-right: deep blue glow */}
           <div
             style={{
@@ -72,26 +72,6 @@ export default function RootLayout({
           />
         </div>
         <Navbar />
-        {/* Safe-area top strip — bleeds gradient into iOS status bar */}
-        <div
-          className="fixed top-0 left-0 right-0 z-[55] pointer-events-none"
-          style={{
-            height: "env(safe-area-inset-top, 0px)",
-            background: "rgba(0,2,14,0.92)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-          }}
-        />
-        {/* Safe-area bottom strip — bleeds gradient into iOS home indicator */}
-        <div
-          className="fixed bottom-0 left-0 right-0 z-[55] pointer-events-none"
-          style={{
-            height: "env(safe-area-inset-bottom, 0px)",
-            background: "rgba(0,2,14,0.92)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-          }}
-        />
         <main className="relative z-10">{children}</main>
         <Footer />
       </body>
