@@ -25,9 +25,6 @@ export const metadata: Metadata = {
   title: "MathSoc — Mathematics Society",
   description:
     "The official Mathematics Society. Where curiosity becomes proof and problems become art.",
-  appleWebApp: {
-    statusBarStyle: "black-translucent",
-  },
 };
 
 export default function RootLayout({
