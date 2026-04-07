@@ -23,6 +23,11 @@ body {
   color: #fff;
 }
 
+/* ── Gallery scroll — hide scrollbar ── */
+.gallery-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── Marquee ── */
 @keyframes marquee {
   from { transform: translateX(0); }

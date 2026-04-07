@@ -2,28 +2,40 @@
   "year": "2023",
   "sections": [
     {
-      "label": "Founding Team",
+      "label": "Faculty Mentors",
       "members": [
-        { "name": "Utkarsh Mangal", "role": "President", "img": "utkarsh.png" },
-        { "name": "Ankit", "role": "Vice President", "img": "ankit.png" },
-        { "name": "Chirag", "role": "Core Member", "img": "chirag.png" },
-        { "name": "Abhirath", "role": "Core Member", "img": "abhirath.png" },
-        { "name": "Nethra", "role": "Core Member", "img": "nethra.png" },
-        { "name": "Spoorthi", "role": "Core Member", "img": "spoorthi.png" },
-        { "name": "Shrivat", "role": "Core Member", "img": "shrivat.png" },
-        { "name": "Srivat", "role": "Core Member", "img": "srivat.png" },
-        { "name": "Sumedha", "role": "Core Member", "img": "sumedha.png" },
-        { "name": "Tamish", "role": "Core Member", "img": "tamish.png" },
-        { "name": "Varun", "role": "Core Member", "img": "varun.png" },
-        { "name": "Vrish", "role": "Core Member", "img": "vrish.png" },
-        { "name": "Wagh", "role": "Core Member", "img": "wagh.png" }
+        { "name": "Biswarup Biswas", "role": "Club Mentor", "img": "/team/2024/biswarupbiswas.png", "linkedin": "https://www.linkedin.com/in/biswarup-biswas-428a60230/", "email": "biswarup.biswas@mahindrauniversity.edu.in" },
+        { "name": "Meraj Alam", "role": "Club Mentor", "img": "/team/2024/merajalam.png", "linkedin": "https://www.linkedin.com/in/meraj-alam-96711b223/", "email": "meraj.alam@mahindrauniversity.edu.in" }
       ]
     },
     {
-      "label": "Honorary Members",
+      "label": "Core Leads",
       "members": [
-        { "name": "Bobba Dilip Reddy", "role": "Math Wizard", "img": "dilip.png" },
-        { "name": "Madhav Basur", "role": "Maddy", "img": "madhav.png" }
+        { "name": "Nethra Naveen", "role": "President", "img": "nethra.png", "instagram": "https://www.instagram.com/nethrabean/", "linkedin": "https://www.linkedin.com/in/nethra-naveen-391317240/", "email": "se22ucam015@mahindrauniversity.edu.in" },
+        { "name": "Abhirath", "role": "Vice President", "img": "abhirath.png", "instagram": "https://www.instagram.com/ankit.reddy_/", "linkedin": "https://www.linkedin.com/in/saiankit-shankar/", "email": "se21ucam013@mahindrauniversity.edu.in" },
+        { "name": "Tamish Jain", "role": "Head of Subject Groups", "img": "tamish.png", "instagram": "https://www.instagram.com/tamish.j/", "email": "se21uari166@mahindrauniversity.edu.in" },
+        { "name": "Vrishiketu Singhania", "role": "Logistics & Finance Head", "img": "vrish.png", "instagram": "https://www.instagram.com/vrishketu_singhania/", "email": "se22ucam012@mahindrauniversity.edu.in" },
+        { "name": "Utkarsh Mangal", "role": "Social Media & Content Head", "img": "utkarsh.png", "instagram": "https://www.instagram.com/_utkarsh_mangal/", "linkedin": "https://www.linkedin.com/in/utkarsh-mangal2/", "email": "se22ucam015@mahindrauniversity.edu.in" },
+        { "name": "Spoorthi Vattem", "role": "Design Head", "img": "spoorthi.png", "instagram": "https://www.instagram.com/spoorthi_vattem/", "email": "se22uari165@mahindrauniversity.edu.in" }
+      ]
+    },
+    {
+      "label": "Subject Group Leads",
+      "members": [
+        { "name": "Sumedha Pandravada", "role": "AI/ML", "img": "sumedha.png", "instagram": "https://www.instagram.com/_sumedhaaaa_/", "email": "se21ucse222@mahindrauniversity.edu.in" },
+        { "name": "B.N. Varun", "role": "Data Science", "img": "varun.png", "instagram": "https://www.instagram.com/_varun_278/", "email": "se22ucse042@mahindrauniversity.edu.in" },
+        { "name": "Srivathsan", "role": "Number Theory & Cryptography", "img": "srivat.png", "email": "se21uari161@mahindrauniversity.edu.in" }
+      ]
+    },
+    {
+      "label": "Executive Team",
+      "members": [
+        { "name": "Sai Ankit Shankar", "role": "Executive", "img": "ankit.png", "instagram": "https://www.instagram.com/ankit.reddy_/", "linkedin": "https://www.linkedin.com/in/saiankit-shankar/", "email": "se23ucse160@mahindrauniversity.edu.in" },
+        { "name": "Bobba Dilip Reddy", "role": "Executive", "img": "dilip.png", "instagram": "https://www.instagram.com/bobbadilipreddy/", "linkedin": "https://www.linkedin.com/in/dilip-reddy-bobba-459543333/", "email": "se23ucse038@mahindrauniversity.edu.in" },
+        { "name": "Tanishka Wagh", "role": "Executive", "img": "wagh.png", "instagram": "https://www.instagram.com/tanishka_wagh_2305/", "linkedin": "https://www.linkedin.com/in/tanishkawagh/", "email": "se23ucam024@mahindrauniversity.edu.in" },
+        { "name": "Madhav Basur", "role": "Executive", "img": "madhav.png", "email": "se23ucam009@mahindrauniversity.edu.in" },
+        { "name": "Shrivatsh K Subramaniam", "role": "Executive", "img": "shrivat.png", "instagram": "https://www.instagram.com/darkrizer_2705/", "email": "se23uari115@mahindrauniversity.edu.in" },
+        { "name": "Chirag Goyal", "role": "Executive", "img": "chirag.png", "instagram": "https://www.instagram.com/chirag.18._2004/", "email": "se23ucse050@mahindrauniversity.edu.in" }
       ]
     }
   ]

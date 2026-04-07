@@ -10,7 +10,6 @@ const NAV_LINKS = [
   { label: "Events", href: "/events" },
   { label: "Gallery", href: "/gallery" },
   { label: "Team", href: "/team" },
-  { label: "Blackjack", href: "/blackjack" },
   { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/contact" },
 ];
@@ -43,7 +42,7 @@ export default function Navbar() {
 
         {/* Left: Logo + name */}
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 relative shrink-0">
+          <div className="w-8 h-8 relative shrink-0">
             <Image
               src="/mathsoclogowhite.png"
               alt="MathSoc"

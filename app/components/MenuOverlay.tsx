@@ -9,7 +9,6 @@ const MENU_LINKS = [
   { label: "Events", href: "/events" },
   { label: "Gallery", href: "/gallery" },
   { label: "Team", href: "/team" },
-  { label: "Blackjack", href: "/blackjack" },
   { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/contact" },
 ];
@@ -34,7 +33,7 @@ export default function MenuOverlay({
         >
           <button
             onClick={onClose}
-            className="absolute top-6 right-8 md:right-14 text-white font-semibold cursor-pointer bg-transparent border-none"
+            className="absolute top-[26px] right-7 md:right-14 text-white font-semibold cursor-pointer bg-transparent border-none"
             style={{
               fontSize: "0.62rem",
               letterSpacing: "0.18em",

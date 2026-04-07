@@ -33,14 +33,36 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full grain">
-        {/* Fixed background gradient — single-corner (bottom-right) */}
-        <div
-          className="pointer-events-none fixed inset-0 z-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 80% at 100% 100%, #001a6e 0%, #000c2d 28%, #000510 55%, #000000 75%)",
-          }}
-        />
+        {/* Fixed ambient background — multi-layer depth */}
+        <div className="pointer-events-none fixed inset-0 z-0" style={{ background: "#000" }}>
+          {/* Bottom-right: deep blue glow */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(ellipse 65% 75% at 100% 100%, #001358 0%, #000922 22%, transparent 58%)",
+            }}
+          />
+          {/* Top-left: subtle dark indigo breath */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(ellipse 55% 50% at 0% 0%, rgba(12,4,32,0.9) 0%, transparent 60%)",
+            }}
+          />
+          {/* Center-bottom: faint atmospheric warmth */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(ellipse 90% 50% at 50% 100%, rgba(0,6,26,0.55) 0%, transparent 65%)",
+            }}
+          />
+        </div>
         <Navbar />
         <main className="relative z-10">{children}</main>
         <Footer />

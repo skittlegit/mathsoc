@@ -9,7 +9,6 @@ const SITE_LINKS = [
   { label: "Events", href: "/events" },
   { label: "Gallery", href: "/gallery" },
   { label: "Team", href: "/team" },
-  { label: "Blackjack", href: "/blackjack" },
   { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/contact" },
 ];
@@ -18,7 +17,7 @@ const SOCIAL_LINKS = [
   { label: "Instagram", href: "https://www.instagram.com/mathsoc.mu/" },
   { label: "LinkedIn", href: "https://www.linkedin.com/company/mathematics-club-mu/" },
   { label: "WhatsApp", href: "https://chat.whatsapp.com/BLmgzpyLnvs3iXC8LYHxun" },
-  { label: "Discord", href: "https://discord.gg/XAZKKrBQCC" },
+  { label: "Discord", href: "https://discord.com/invite/XAZKKrBQCC" },
 ];
 
 export default function Footer() {

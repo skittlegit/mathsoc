@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import {
   motion,
   useInView,
   AnimatePresence,
 } from "framer-motion";
+import BlackjackGame from "./components/BlackjackGame";
 
 /* ═══════════════════════════════════════════════
    DATA
@@ -34,55 +34,89 @@ const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 ═══════════════════════════════════════════════ */
 
 function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+  const [count, setCount] = useState(0);
+
   useEffect(() => {
-    const t = setTimeout(onComplete, 2400);
-    return () => clearTimeout(t);
+    const DURATION = 2000;
+    const start = performance.now();
+    let raf: number;
+
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / DURATION, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setCount(Math.floor(eased * 100));
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setTimeout(onComplete, 380);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [onComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black"
+      className="fixed inset-0 z-[200] bg-black flex flex-col"
       exit={{ y: "-100%" }}
-      transition={{ duration: 0.8, ease: [0.65, 0, 0.35, 1] }}
+      transition={{ duration: 0.75, ease: [0.65, 0, 0.35, 1] }}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease }}
-        className="flex flex-col items-center gap-6"
-      >
-        <div className="w-20 h-20 relative">
-          <Image
-            src="/mathsoclogowhite.png"
-            alt="MathSoc"
-            fill
-            style={{ objectFit: "contain" }}
-            priority
-          />
-        </div>
-        <motion.p
+      {/* Content — bottom-left editorial layout */}
+      <div className="flex-1 flex flex-col justify-end px-8 md:px-14 pb-10">
+        <motion.span
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.35 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="text-white font-semibold"
-          style={{ fontSize: "1.1rem", letterSpacing: "0.08em" }}
-        >
-          MathSoc
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ delay: 1.0, duration: 0.6 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.5 }}
           style={{
-            fontSize: "0.5rem",
-            letterSpacing: "0.45em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.4)",
+            display: "block",
+            fontFamily: "var(--font-jetbrains-mono)",
+            fontSize: "clamp(5rem, 18vw, 11rem)",
+            lineHeight: 1,
+            color: "rgba(255,255,255,0.92)",
+            letterSpacing: "-0.02em",
           }}
         >
-          Mathematics Society
-        </motion.p>
-      </motion.div>
+          {String(count).padStart(2, "0")}
+        </motion.span>
+        <motion.div
+          className="mt-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.7 }}
+        >
+          <span
+            style={{
+              fontSize: "0.48rem",
+              letterSpacing: "0.38em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.2)",
+            }}
+          >
+            The Mathematics Society &middot; Mahindra University
+          </span>
+          <span
+            style={{
+              fontFamily: "var(--font-jetbrains-mono)",
+              fontSize: "0.48rem",
+              color: "rgba(255,255,255,0.1)",
+            }}
+          >
+            e^(iπ) + 1 = 0
+          </span>
+        </motion.div>
+      </div>
+
+      {/* Thin progress line at bottom */}
+      <div style={{ height: 1, background: "rgba(255,255,255,0.05)" }}>
+        <div
+          style={{
+            height: "100%",
+            width: `${count}%`,
+            background: "rgba(255,255,255,0.18)",
+            transition: "width 0.05s linear",
+          }}
+        />
+      </div>
     </motion.div>
   );
 }
@@ -222,121 +256,108 @@ export default function Home() {
         {loading && <LoadingScreen onComplete={handleLoadingComplete} />}
       </AnimatePresence>
 
-      {/* ═══ HERO ═══ */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Dot grid */}
+      {/* ═══ HERO — Split: Brand (left) + Blackjack (right) ═══ */}
+      <section className="relative min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+        {/* Full-hero dot grid */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px)",
+              "radial-gradient(circle, rgba(255,255,255,0.022) 1px, transparent 1px)",
             backgroundSize: "36px 36px",
           }}
         />
 
-        {/* Floating math symbols */}
-        <FloatingSymbols />
-
-        {/* Center content */}
-        <div className="relative z-10 flex flex-col items-center text-center px-6">
-          {/* Logo */}
-          <motion.div
-            className="mb-10 w-24 h-24 md:w-32 md:h-32 relative"
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 2.6, duration: 1, ease }}
-          >
-            <Image
-              src="/mathsoclogowhite.png"
-              alt="MathSoc"
-              fill
-              style={{ objectFit: "contain" }}
-              priority
-            />
-          </motion.div>
+        {/* ── LEFT: Branding ── */}
+        <div className="relative z-10 md:w-[46%] flex flex-col justify-center px-7 md:px-14 pt-32 pb-10 md:py-0">
+          {/* Floating symbols on the left only */}
+          <FloatingSymbols />
 
           {/* Title */}
           <motion.h1
             className="font-bold select-none"
             style={{
-              fontSize: "clamp(4rem, 14vw, 13rem)",
-              letterSpacing: "0.04em",
-              lineHeight: 0.9,
+              fontSize: "clamp(2rem, 5.2vw, 4.8rem)",
+              letterSpacing: "0.02em",
+              lineHeight: 1.05,
               color: "rgba(255,255,255,0.95)",
             }}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.9, duration: 0.9, ease }}
           >
-            MathSoc
+            The Mathematics<br />Society
           </motion.h1>
 
           {/* Tagline */}
           <motion.p
-            className="mt-7"
+            className="mt-5"
             style={{
               fontSize: "0.62rem",
-              letterSpacing: "0.45em",
-              color: "rgba(255,255,255,0.38)",
+              letterSpacing: "0.18em",
+              color: "rgba(255,255,255,0.32)",
+              fontFamily: "var(--font-jetbrains-mono)",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 3.2, duration: 0.8 }}
+          >
+            @ Mahindra University
+          </motion.p>
+
+          {/* Est. */}
+          <motion.p
+            className="mt-2"
+            style={{
+              fontSize: "0.44rem",
+              letterSpacing: "0.3em",
+              color: "rgba(255,255,255,0.14)",
               textTransform: "uppercase",
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 3.3, duration: 0.8 }}
+            transition={{ delay: 3.4, duration: 0.8 }}
           >
-            Mathematics Society · Mahindra University
+            Est. 2023
           </motion.p>
 
           {/* Scroll indicator */}
           <motion.div
-            className="mt-20 flex flex-col items-center gap-3"
+            className="mt-16 flex items-center gap-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 3.7, duration: 1 }}
-            style={{ color: "rgba(255,255,255,0.2)" }}
+            style={{ color: "rgba(255,255,255,0.18)" }}
           >
-            <span style={{ fontSize: "0.48rem", letterSpacing: "0.35em", textTransform: "uppercase" }}>
-              Scroll
+            <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>
+              Scroll to explore
             </span>
             <motion.div
-              style={{ width: 1, height: 40, background: "rgba(255,255,255,0.25)" }}
-              animate={{ scaleY: [1, 0.3, 1] }}
+              style={{ width: 32, height: 1, background: "rgba(255,255,255,0.2)" }}
+              animate={{ scaleX: [1, 0.4, 1] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             />
           </motion.div>
         </div>
 
-        {/* Year badge */}
-        <motion.span
-          className="absolute top-28 left-7 md:left-14"
-          style={{
-            fontSize: "0.52rem",
-            letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.2)",
-            textTransform: "uppercase",
-          }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 3.0, duration: 0.7 }}
-        >
-          Est. 2023
-        </motion.span>
+        {/* Thin vertical divider */}
+        <div
+          className="hidden md:block self-stretch w-px my-24"
+          style={{ background: "rgba(255,255,255,0.05)" }}
+        />
 
-        {/* Location badge */}
-        <motion.span
-          className="absolute bottom-8 right-7 md:right-14"
-          style={{
-            fontSize: "0.48rem",
-            letterSpacing: "0.3em",
-            color: "rgba(255,255,255,0.18)",
-            textTransform: "uppercase",
-          }}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 3.1, duration: 0.7 }}
-        >
-          Mahindra University
-        </motion.span>
+        {/* ── RIGHT: Blackjack ── */}
+        <div className="relative z-10 md:flex-1 flex flex-col justify-center items-center px-7 md:px-14 pb-14 md:py-0">
+          <motion.div
+            className="w-full"
+            style={{ maxWidth: 440 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 3.0, duration: 0.9, ease }}
+          >
+            <BlackjackGame />
+          </motion.div>
+        </div>
       </section>
 
       {/* ═══ INTRO ═══ */}

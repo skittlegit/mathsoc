@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+
+/* ─── Types ─── */
 export interface TeamMember {
   name: string;
   role: string;
   img: string;
+  email?: string;
+  instagram?: string;
+  linkedin?: string;
 }
 
 export interface TeamSection {
@@ -18,170 +23,283 @@ export interface YearData {
   sections: TeamSection[];
 }
 
-const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
+/* ─── Utils ─── */
+function getImgSrc(img: string, year: string) {
+  return `/team/${year}/${img}`;
+}
 
-/* ─────────── Helper ─────────── */
 function getInitials(name: string) {
   return name
     .split(" ")
+    .map((w) => w[0] ?? "")
     .slice(0, 2)
-    .map((s) => s[0])
     .join("")
     .toUpperCase();
 }
 
-/* ─────────── Photo Card ─────────── */
-function MemberPhoto({
-  src,
-  alt,
-  init,
+/* ─── Social icons (inline SVG, 14×14) ─── */
+function IconEmail() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2"/>
+      <path d="m2 7 10 7 10-7"/>
+    </svg>
+  );
+}
+
+function IconInstagram() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+    </svg>
+  );
+}
+
+function IconLinkedIn() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+      <rect x="2" y="9" width="4" height="12"/>
+      <circle cx="4" cy="4" r="2"/>
+    </svg>
+  );
+}
+
+/* ─── Social icon button ─── */
+function SocialIcon({
+  href,
+  isExternal = true,
+  children,
+  label,
 }: {
-  src: string;
-  alt: string;
-  init: string;
+  href: string;
+  isExternal?: boolean;
+  children: React.ReactNode;
+  label: string;
 }) {
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 26,
+        height: 26,
+        background: "rgba(255,255,255,0.06)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        color: "rgba(255,255,255,0.38)",
+        borderRadius: 4,
+        transition: "background 0.15s, color 0.15s, border-color 0.15s",
+        flexShrink: 0,
+        textDecoration: "none",
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLAnchorElement;
+        el.style.background = "rgba(255,255,255,0.12)";
+        el.style.color = "rgba(255,255,255,0.85)";
+        el.style.borderColor = "rgba(255,255,255,0.18)";
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLAnchorElement;
+        el.style.background = "rgba(255,255,255,0.06)";
+        el.style.color = "rgba(255,255,255,0.38)";
+        el.style.borderColor = "rgba(255,255,255,0.08)";
+      }}
+    >
+      {children}
+    </a>
+  );
+}
+
+/* ─── Photo with initials fallback ─── */
+function MemberPhoto({ src, alt, init }: { src: string; alt: string; init: string }) {
   const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(255,255,255,0.03)",
+          color: "rgba(255,255,255,0.3)",
+          fontSize: "1.4rem",
+          fontWeight: 600,
+          letterSpacing: "0.04em",
+          userSelect: "none",
+        }}
+      >
+        {init}
+      </div>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      onError={() => setFailed(true)}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        objectPosition: "center top",
+        display: "block",
+      }}
+    />
+  );
+}
+
+/* ─── Member card ─── */
+function MemberCard({ member, year }: { member: TeamMember; year: string }) {
+  const init = getInitials(member.name);
+  const src = getImgSrc(member.img, year);
+  const hasSocials = !!(member.email || member.instagram || member.linkedin);
+
   return (
     <div
-      className="absolute inset-0 overflow-hidden"
-      style={{ background: "linear-gradient(175deg, #000510 0%, #000a25 100%)" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        background: "#060a14",
+        border: "1px solid rgba(255,255,255,0.05)",
+      }}
     >
-      {!failed && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt={alt}
-          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-          onError={() => setFailed(true)}
-        />
-      )}
-      {failed && (
-        <span
-          className="absolute inset-0 flex items-center justify-center font-bold select-none"
+      {/* Photo */}
+      <div
+        style={{
+          position: "relative",
+          aspectRatio: "4/5",
+          background: "#03050d",
+          overflow: "hidden",
+          flexShrink: 0,
+        }}
+      >
+        <MemberPhoto src={src} alt={member.name} init={init} />
+      </div>
+
+      {/* Info strip */}
+      <div
+        style={{
+          padding: "12px 14px 14px",
+          borderTop: "1px solid rgba(255,255,255,0.04)",
+          flex: 1,
+        }}
+      >
+        <p
           style={{
-            fontSize: "clamp(2rem, 5vw, 3.5rem)",
-            color: "rgba(255,255,255,0.06)",
+            fontSize: "0.82rem",
+            fontWeight: 600,
+            color: "rgba(255,255,255,0.88)",
+            lineHeight: 1.25,
+            margin: 0,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
-          {init}
-        </span>
-      )}
-    </div>
-  );
-}
-
-function BigCard({ member, year }: { member: TeamMember; year: string }) {
-  const init = getInitials(member.name);
-  const src = `/team/${year}/${member.img}`;
-  return (
-    <div className="group relative overflow-hidden" style={{ aspectRatio: "3/4" }}>
-      <MemberPhoto src={src} alt={member.name} init={init} />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.12) 55%, transparent 100%)",
-        }}
-      />
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <p className="font-semibold" style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.88)", lineHeight: 1.25 }}>
           {member.name}
         </p>
-        {member.role && (
-          <p style={{ fontSize: "0.48rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginTop: "4px" }}>
-            {member.role}
-          </p>
+        <p
+          style={{
+            fontSize: "0.42rem",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.28)",
+            marginTop: 5,
+            lineHeight: 1.4,
+          }}
+        >
+          {member.role}
+        </p>
+
+        {hasSocials && (
+          <div style={{ display: "flex", gap: 5, marginTop: 10, flexWrap: "wrap" }}>
+            {member.email && (
+              <SocialIcon
+                href={`mailto:${member.email}`}
+                isExternal={false}
+                label={`Email ${member.name}`}
+              >
+                <IconEmail />
+              </SocialIcon>
+            )}
+            {member.instagram && (
+              <SocialIcon href={member.instagram} label={`${member.name} on Instagram`}>
+                <IconInstagram />
+              </SocialIcon>
+            )}
+            {member.linkedin && (
+              <SocialIcon href={member.linkedin} label={`${member.name} on LinkedIn`}>
+                <IconLinkedIn />
+              </SocialIcon>
+            )}
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-function SmallCard({ member, year }: { member: TeamMember; year: string }) {
-  const init = getInitials(member.name);
-  const src = `/team/${year}/${member.img}`;
-  return (
-    <div className="group relative overflow-hidden" style={{ aspectRatio: "2/3" }}>
-      <MemberPhoto src={src} alt={member.name} init={init} />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.05) 50%, transparent 100%)",
-        }}
-      />
-      <div className="absolute bottom-0 left-0 right-0 p-3">
-        <p className="font-semibold" style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.85)", lineHeight: 1.25 }}>
-          {member.name}
-        </p>
-        {member.role && (
-          <p style={{ fontSize: "0.42rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginTop: "3px" }}>
-            {member.role}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
+/* ─── Animated section heading ─── */
 function SectionLabel({ label }: { label: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -16 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease }}
-      className="flex items-center gap-4 mb-10"
-      style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "2.5rem" }}
-    >
-      <span style={{ fontSize: "0.48rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
+      <div style={{ height: 1, width: 28, background: "rgba(255,255,255,0.12)" }} />
+      <span
+        style={{
+          fontSize: "0.44rem",
+          letterSpacing: "0.35em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.28)",
+        }}
+      >
         {label}
       </span>
-      <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
-    </motion.div>
+    </div>
   );
 }
 
-/* ─────────── Section renderer ─────────── */
-function YearSection({ data, year }: { data: YearData; year: string }) {
+/* ─── Year section ─── */
+function YearSection({ year, data }: { year: string; data: YearData }) {
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={year}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.45, ease }}
-      >
-        {data.sections.map((section) => {
-          const isLarge = section.members.length <= 7;
-          return (
-            <div key={section.label} className="mb-16">
-              <SectionLabel label={section.label} />
-              <div
-                className={
-                  isLarge
-                    ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
-                    : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3"
-                }
+    <div>
+      {data.sections.map((section, si) => (
+        <div key={si} style={{ marginBottom: 52 }}>
+          <SectionLabel label={section.label} />
+          <div
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+            style={{ gap: 12 }}
+          >
+            {section.members.map((member, mi) => (
+              <motion.div
+                key={mi}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: mi * 0.04, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                {section.members.map((m) =>
-                  isLarge ? (
-                    <BigCard key={m.name} member={m} year={year} />
-                  ) : (
-                    <SmallCard key={m.name} member={m} year={year} />
-                  )
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </motion.div>
-    </AnimatePresence>
+                <MemberCard member={member} year={year} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
-/* ─────────── Main Component ─────────── */
+/* ─── Main client component ─── */
 export default function TeamClient({
   years,
   dataByYear,
@@ -189,86 +307,102 @@ export default function TeamClient({
   years: string[];
   dataByYear: Record<string, YearData>;
 }) {
-  const [activeYear, setActiveYear] = useState(years[0] ?? "2024");
-  const currentData = dataByYear[activeYear];
+  const [activeYear, setActiveYear] = useState(years[0] ?? "");
 
   return (
-    <div className="pt-32 md:pt-44 pb-24">
-      <div className="px-7 md:px-14 max-w-7xl mx-auto">
-        {/* Hero */}
+    <div style={{ paddingTop: 72, minHeight: "100vh" }}>
+      <div className="px-7 md:px-14" style={{ paddingTop: 48, paddingBottom: 20 }}>
+        {/* Header */}
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease }}
-          style={{ fontSize: "0.56rem", letterSpacing: "0.4em", color: "rgba(255,255,255,0.35)", textTransform: "uppercase" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            display: "block",
+            fontSize: "0.48rem",
+            letterSpacing: "0.4em",
+            color: "rgba(255,255,255,0.25)",
+            textTransform: "uppercase",
+            marginBottom: 10,
+          }}
         >
-          Mathematics Society · Mahindra University
+          The People
         </motion.span>
-
         <motion.h1
-          className="font-bold uppercase mt-6 mb-6"
-          style={{
-            fontSize: "clamp(3.5rem, 11vw, 9rem)",
-            letterSpacing: "0.08em",
-            color: "rgba(255,255,255,0.92)",
-            lineHeight: 0.9,
-          }}
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.8, ease }}
-        >
-          Team
-        </motion.h1>
-
-        <motion.p
+          transition={{ delay: 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="font-bold uppercase"
           style={{
-            fontSize: "clamp(0.9rem, 2vw, 1.05rem)",
-            color: "rgba(255,255,255,0.45)",
-            lineHeight: 1.8,
-            maxWidth: "520px",
-            marginBottom: "3rem",
+            fontSize: "clamp(2.2rem, 7vw, 6rem)",
+            letterSpacing: "0.08em",
+            lineHeight: 0.9,
+            color: "rgba(255,255,255,0.88)",
+            marginBottom: 16,
           }}
+        >
+          Our Team
+        </motion.h1>
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
+          transition={{ delay: 0.25, duration: 0.6 }}
+          style={{
+            fontSize: "0.55rem",
+            color: "rgba(255,255,255,0.22)",
+            letterSpacing: "0.08em",
+            maxWidth: 480,
+          }}
         >
-          The people who make MathSoc what it is — mathematicians, engineers,
-          designers, thinkers. Driven by curiosity. United by a love for
-          problem-solving.
+          The students who keep MathSoc running — organizers, designers, thinkers, and problem-solvers.
         </motion.p>
 
-        {/* Year Selector */}
-        <motion.div
-          className="flex items-center gap-2 flex-wrap mb-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-        >
-          <span style={{ fontSize: "0.48rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", lineHeight: "32px" }}>
-            Batch:
-          </span>
-          {years.map((yr) => (
-            <button
-              key={yr}
-              onClick={() => setActiveYear(yr)}
-              className="cursor-pointer bg-transparent transition-all duration-300"
-              style={{
-                fontSize: "0.72rem",
-                fontWeight: activeYear === yr ? 700 : 400,
-                letterSpacing: "0.1em",
-                padding: "6px 18px",
-                color: activeYear === yr ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.3)",
-                border: activeYear === yr ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(255,255,255,0.07)",
-                borderRadius: "2px",
-              }}
-            >
-              {yr}
-            </button>
-          ))}
-        </motion.div>
+        {/* Year tabs */}
+        {years.length > 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.5 }}
+            style={{ display: "flex", gap: 8, marginTop: 32 }}
+          >
+            {years.map((year) => (
+              <button
+                key={year}
+                onClick={() => setActiveYear(year)}
+                style={{
+                  padding: "6px 16px",
+                  fontSize: "0.55rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  border: "1px solid",
+                  borderColor:
+                    activeYear === year
+                      ? "rgba(255,255,255,0.25)"
+                      : "rgba(255,255,255,0.08)",
+                  background:
+                    activeYear === year
+                      ? "rgba(255,255,255,0.08)"
+                      : "transparent",
+                  color:
+                    activeYear === year
+                      ? "rgba(255,255,255,0.82)"
+                      : "rgba(255,255,255,0.3)",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              >
+                {year}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </div>
 
-        {/* Team grid */}
-        {currentData && <YearSection data={currentData} year={activeYear} />}
+      {/* Team grid */}
+      <div className="px-7 md:px-14" style={{ paddingBottom: 80 }}>
+        {activeYear && dataByYear[activeYear] && (
+          <YearSection year={activeYear} data={dataByYear[activeYear]} />
+        )}
       </div>
     </div>
   );
