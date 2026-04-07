@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: "#000922",
   viewportFit: "cover",
 };
 
@@ -72,6 +72,26 @@ export default function RootLayout({
           />
         </div>
         <Navbar />
+        {/* Safe-area top strip — bleeds gradient into iOS status bar */}
+        <div
+          className="fixed top-0 left-0 right-0 z-[55] pointer-events-none"
+          style={{
+            height: "env(safe-area-inset-top, 0px)",
+            background: "rgba(0,2,14,0.92)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+          }}
+        />
+        {/* Safe-area bottom strip — bleeds gradient into iOS home indicator */}
+        <div
+          className="fixed bottom-0 left-0 right-0 z-[55] pointer-events-none"
+          style={{
+            height: "env(safe-area-inset-bottom, 0px)",
+            background: "rgba(0,2,14,0.92)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+          }}
+        />
         <main className="relative z-10">{children}</main>
         <Footer />
       </body>
