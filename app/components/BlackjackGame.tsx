@@ -227,9 +227,15 @@ export default function BlackjackGame() {
   const dv = phase === "done" && dealer.length ? handValue(dealer) : 0;
 
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{
+      width: "100%",
+      background: "rgba(255,255,255,0.016)",
+      border: "1px solid rgba(255,255,255,0.055)",
+      borderRadius: 10,
+      padding: "20px 18px 18px",
+    }}>
       {/* Header — idle shows "Start a new game", playing shows score */}
-      <div style={{ marginBottom: 20, textAlign: "center" }}>
+      <div style={{ marginBottom: 18, textAlign: "center" }}>
         <AnimatePresence mode="wait">
           {phase === "idle" && !result && (
             <motion.p
@@ -299,15 +305,15 @@ export default function BlackjackGame() {
             minWidth: 16, textAlign: "right",
           }}>{dv}</span>
         </div>
-        <div style={{ position: "relative", height: H, minWidth: W + STACK_OFFSET }}>
+        <div style={{ position: "relative", height: H + STACK_OFFSET * 3 }}>
           {phase === "idle" ? (
             <>
-              <div style={{ position: "absolute", left: 0, zIndex: 1 }}><PlaceholderCard /></div>
-              <div style={{ position: "absolute", left: STACK_OFFSET, zIndex: 2 }}><PlaceholderCard /></div>
+              <div style={{ position: "absolute", left: 0, top: 0, zIndex: 1 }}><PlaceholderCard /></div>
+              <div style={{ position: "absolute", left: STACK_OFFSET, top: 0, zIndex: 2 }}><PlaceholderCard /></div>
             </>
           ) : (
             dealer.map((c, i) => (
-              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, zIndex: i + 1 }}>
+              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, top: 0, zIndex: i + 1 }}>
                 {phase === "playing" && i === 1
                   ? <HiddenCard delay={i * 0.08} />
                   : <FaceCard card={c} delay={i * 0.08} />}
@@ -331,15 +337,15 @@ export default function BlackjackGame() {
             minWidth: 16, textAlign: "right",
           }}>{pv}</span>
         </div>
-        <div style={{ position: "relative", height: H, minWidth: W + STACK_OFFSET }}>
+        <div style={{ position: "relative", height: H + STACK_OFFSET * 3 }}>
           {phase === "idle" ? (
             <>
-              <div style={{ position: "absolute", left: 0, zIndex: 1 }}><PlaceholderCard /></div>
-              <div style={{ position: "absolute", left: STACK_OFFSET, zIndex: 2 }}><PlaceholderCard /></div>
+              <div style={{ position: "absolute", left: 0, top: 0, zIndex: 1 }}><PlaceholderCard /></div>
+              <div style={{ position: "absolute", left: STACK_OFFSET, top: 0, zIndex: 2 }}><PlaceholderCard /></div>
             </>
           ) : (
             player.map((c, i) => (
-              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, zIndex: i + 1 }}>
+              <div key={c.id} style={{ position: "absolute", left: i * STACK_OFFSET, top: 0, zIndex: i + 1 }}>
                 <FaceCard card={c} delay={i * 0.08} />
               </div>
             ))

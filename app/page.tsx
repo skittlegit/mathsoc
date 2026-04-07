@@ -255,7 +255,7 @@ export default function Home() {
           <motion.h1
             className="font-bold select-none"
             style={{
-              fontSize: "clamp(2rem, 5.2vw, 4.8rem)",
+              fontSize: "clamp(2.4rem, 6vw, 5.8rem)",
               letterSpacing: "0.02em",
               lineHeight: 1.05,
               color: "rgba(255,255,255,0.95)",
@@ -325,10 +325,10 @@ export default function Home() {
         />
 
         {/* ── RIGHT: Blackjack ── */}
-        <div className="relative z-10 md:flex-1 flex flex-col justify-center items-center px-7 md:px-14 pb-14 md:py-0">
+        <div className="relative z-10 md:w-[36%] flex flex-col justify-center items-center px-7 md:px-10 pb-14 md:py-0">
           <motion.div
             className="w-full"
-            style={{ maxWidth: 540 }}
+            style={{ maxWidth: 300 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 3.0, duration: 0.9, ease }}

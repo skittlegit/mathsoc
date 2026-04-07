@@ -50,7 +50,7 @@ export default function RootLayout({
               position: "absolute",
               inset: 0,
               background:
-                "radial-gradient(ellipse 55% 60% at 0% 0%, #001358 0%, #000922 22%, transparent 55%)",
+                "radial-gradient(ellipse 35% 38% at 0% 0%, #001358 0%, #000922 20%, transparent 48%)",
             }}
           />
           {/* Center-bottom: faint atmospheric warmth */}
