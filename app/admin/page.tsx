@@ -328,7 +328,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
               <div>
                 <label style={labelStyle}>Date</label>
                 <input
@@ -351,19 +351,34 @@ export default function AdminPage() {
                   required
                 />
               </div>
-              <div>
-                <label style={labelStyle}>Tag</label>
-                <select
-                  style={{ ...inputStyle, cursor: "pointer" }}
-                  value={form.tag}
-                  onChange={(e) => setForm({ ...form, tag: e.target.value })}
-                >
-                  {TAGS.map((t) => (
-                    <option key={t} value={t} style={{ background: "#0a0a0a" }}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={labelStyle}>Tag</label>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingTop: 4 }}>
+                {TAGS.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setForm({ ...form, tag: t })}
+                    style={{
+                      padding: "8px 18px",
+                      fontSize: "0.62rem",
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      borderRadius: "3px",
+                      border: "1px solid",
+                      borderColor: form.tag === t ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.08)",
+                      background: form.tag === t ? "rgba(255,255,255,0.1)" : "transparent",
+                      color: form.tag === t ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.3)",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-space-grotesk)",
+                      transition: "all 0.15s",
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
             </div>
 

@@ -19,7 +19,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="pt-32 md:pt-44 pb-24">
+    <div className="pt-32 md:pt-44 pb-24 overflow-x-hidden">
       {/* Page Hero */}
       <div className="px-7 md:px-14 max-w-6xl mx-auto mb-20">
         <motion.span
@@ -234,8 +234,10 @@ export default function ContactPage() {
                 href="mailto:mu.mathematicsclub@mahindrauniversity.edu.in"
                 className="link-underline hover:text-white transition-colors duration-300"
                 style={{
-                  fontSize: "0.95rem",
+                  fontSize: "0.85rem",
                   color: "rgba(255,255,255,0.35)",
+                  wordBreak: "break-all",
+                  overflowWrap: "anywhere",
                 }}
               >
                 mu.mathematicsclub@mahindrauniversity.edu.in

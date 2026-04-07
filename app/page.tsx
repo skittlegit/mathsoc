@@ -250,79 +250,133 @@ export default function Home() {
         <div className="relative z-10 min-h-screen px-7 md:px-14 max-w-6xl mx-auto flex flex-col md:flex-row">
 
           {/* ── LEFT: Branding ── */}
-          <div className="relative flex-1 flex flex-col justify-center pt-32 pb-10 md:py-0 min-h-[60vh] md:min-h-0">
+          <div className="relative flex-1 flex flex-col justify-center pt-32 pb-10 md:py-0 min-h-[60vh] md:min-h-0 md:pr-14">
             {/* Floating symbols on the left only */}
             <FloatingSymbols />
+
+            {/* Eyebrow */}
+            <motion.div
+              className="flex items-center gap-4 mb-10"
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 2.8, duration: 0.7, ease }}
+            >
+              <div style={{ width: 1, height: 28, background: "rgba(255,255,255,0.15)", flexShrink: 0 }} />
+              <span
+                style={{
+                  fontSize: "0.48rem",
+                  letterSpacing: "0.35em",
+                  textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.2)",
+                  fontFamily: "var(--font-jetbrains-mono)",
+                }}
+              >
+                Mathematics Society · Est. 2023
+              </span>
+            </motion.div>
 
             {/* Title */}
             <motion.h1
               className="font-bold select-none"
               style={{
-                fontSize: "clamp(2.4rem, 6vw, 5.8rem)",
-                letterSpacing: "0.02em",
-                lineHeight: 1.05,
-                color: "rgba(255,255,255,0.95)",
+                fontSize: "clamp(3rem, 8vw, 7.5rem)",
+                letterSpacing: "-0.02em",
+                lineHeight: 0.95,
+                color: "rgba(255,255,255,0.96)",
               }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.9, duration: 0.9, ease }}
             >
-              The Mathematics<br />Society
+              The<br />Mathematics<br />
+              <span style={{ color: "rgba(255,255,255,0.45)" }}>Society</span>
             </motion.h1>
 
-            {/* Tagline */}
+            {/* Description */}
             <motion.p
-              className="mt-5"
+              className="mt-8"
               style={{
-                fontSize: "0.62rem",
-                letterSpacing: "0.18em",
+                fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)",
+                lineHeight: 1.85,
                 color: "rgba(255,255,255,0.32)",
-                fontFamily: "var(--font-jetbrains-mono)",
+                maxWidth: "34ch",
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3.2, duration: 0.8 }}
             >
-              @ Mahindra University
+              Where curiosity meets rigor. A community for mathematicians,
+              problem-solvers, and thinkers at Mahindra University.
             </motion.p>
 
-            {/* Est. */}
-            <motion.p
-              className="mt-2"
-              style={{
-                fontSize: "0.44rem",
-                letterSpacing: "0.3em",
-                color: "rgba(255,255,255,0.14)",
-                textTransform: "uppercase",
-              }}
+            {/* Quick links */}
+            <motion.div
+              className="flex items-center gap-8 mt-10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3.4, duration: 0.8 }}
+              transition={{ delay: 3.4, duration: 0.7 }}
             >
-              Est. 2023
-            </motion.p>
+              {[
+                { label: "Events", href: "/events" },
+                { label: "Team", href: "/team" },
+                { label: "Gallery", href: "/gallery" },
+              ].map(({ label, href }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  style={{
+                    fontSize: "0.5rem",
+                    letterSpacing: "0.25em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.22)",
+                    textDecoration: "none",
+                    borderBottom: "1px solid rgba(255,255,255,0.1)",
+                    paddingBottom: "3px",
+                    transition: "color 0.2s, border-color 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)";
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.3)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.22)";
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.1)";
+                  }}
+                >
+                  {label} ↗
+                </Link>
+              ))}
+            </motion.div>
 
             {/* Scroll indicator */}
             <motion.div
-              className="mt-16 flex items-center gap-3"
+              className="mt-14 flex items-center gap-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3.7, duration: 1 }}
-              style={{ color: "rgba(255,255,255,0.18)" }}
             >
-              <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase" }}>
+              <motion.div
+                style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.18)" }}
+                animate={{ opacity: [0.18, 0.6, 0.18] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.15)" }}>
                 Scroll to explore
               </span>
-              <motion.div
-                style={{ width: 32, height: 1, background: "rgba(255,255,255,0.2)" }}
-                animate={{ scaleX: [1, 0.4, 1] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              />
             </motion.div>
           </div>
 
+          {/* ── VERTICAL RULE (desktop only) ── */}
+          <motion.div
+            className="hidden md:block self-center"
+            style={{ width: 1, height: 220, background: "rgba(255,255,255,0.05)", flexShrink: 0 }}
+            initial={{ opacity: 0, scaleY: 0 }}
+            animate={{ opacity: 1, scaleY: 1 }}
+            transition={{ delay: 3.1, duration: 0.8, ease }}
+          />
+
           {/* ── RIGHT: Blackjack ── */}
-          <div className="flex flex-col justify-center items-center pb-14 md:py-0 md:pl-10 md:w-[45%]">
+          <div className="flex flex-col justify-center items-center pb-14 md:py-0 md:pl-12 md:w-[40%]">
             <motion.div
               className="w-full"
               style={{ maxWidth: 300 }}
@@ -330,6 +384,17 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 3.0, duration: 0.9, ease }}
             >
+              {/* Label */}
+              <div
+                className="flex items-center gap-3 mb-5"
+                style={{ opacity: 0.4 }}
+              >
+                <div style={{ height: 1, flex: 1, background: "rgba(255,255,255,0.12)" }} />
+                <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-jetbrains-mono)", flexShrink: 0 }}>
+                  Play a round
+                </span>
+                <div style={{ height: 1, flex: 1, background: "rgba(255,255,255,0.12)" }} />
+              </div>
               <BlackjackGame />
             </motion.div>
           </div>

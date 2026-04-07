@@ -198,7 +198,7 @@ function ResourceSection({
 
 export default function ResourcesPage() {
   return (
-    <div className="pt-24 md:pt-44 pb-24">
+    <div className="pt-24 md:pt-44 pb-24 overflow-x-hidden">
       {/* Page Hero */}
       <div className="px-7 md:px-14 max-w-6xl mx-auto mb-10 md:mb-20">
         <motion.span
@@ -218,8 +218,8 @@ export default function ResourcesPage() {
         <motion.h1
           className="font-bold uppercase mt-6 mb-10"
           style={{
-            fontSize: "clamp(3.5rem, 11vw, 9rem)",
-            letterSpacing: "0.15em",
+            fontSize: "clamp(2rem, 9.5vw, 9rem)",
+            letterSpacing: "0.12em",
             color: "rgba(255,255,255,0.9)",
             lineHeight: 0.9,
           }}
