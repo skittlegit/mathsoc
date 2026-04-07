@@ -50,12 +50,12 @@ function PlaceholderCard() {
   return (
     <div style={{
       width: W, height: H, flexShrink: 0,
-      background: "rgba(255,255,255,0.02)",
-      border: "1px dashed rgba(255,255,255,0.06)",
+      background: "rgba(255,255,255,0.05)",
+      border: "1px dashed rgba(255,255,255,0.14)",
       borderRadius: 6,
       display: "flex", alignItems: "center", justifyContent: "center",
     }}>
-      <span style={{ fontSize: "1rem", color: "rgba(255,255,255,0.06)", fontWeight: 300 }}>?</span>
+      <span style={{ fontSize: "1rem", color: "rgba(255,255,255,0.2)", fontWeight: 300 }}>?</span>
     </div>
   );
 }
@@ -69,19 +69,19 @@ function HiddenCard({ delay = 0 }: { delay?: number }) {
       transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
-        background: "linear-gradient(145deg, #0a1530, #0d1a3d)",
-        border: "1px solid rgba(255,255,255,0.06)",
+        background: "linear-gradient(145deg, #0d1c40, #122060)",
+        border: "1px solid rgba(255,255,255,0.14)",
         borderRadius: 6,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}
     >
       <div style={{
         width: 22, height: 22,
-        border: "1px solid rgba(255,255,255,0.06)",
+        border: "1px solid rgba(255,255,255,0.18)",
         borderRadius: 3,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.08)" }}>?</span>
+        <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.28)" }}>?</span>
       </div>
     </motion.div>
   );
@@ -144,8 +144,8 @@ function GameBtn({
         textTransform: "uppercase",
         fontWeight: 600,
         background: variant === "primary" && !disabled ? "rgba(255,255,255,0.08)" : "transparent",
-        color: disabled ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.6)",
-        border: `1px solid ${disabled ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.1)"}`,
+        color: disabled ? "rgba(255,255,255,0.28)" : "rgba(255,255,255,0.78)",
+        border: `1px solid ${disabled ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.22)"}`,
         borderRadius: 4,
         cursor: disabled ? "not-allowed" : "pointer",
         transition: "all 0.18s ease",
@@ -240,7 +240,7 @@ export default function BlackjackGame() {
                 fontSize: "0.52rem",
                 letterSpacing: "0.25em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.18)",
+                color: "rgba(255,255,255,0.45)",
               }}
             >
               Start a new game
@@ -274,7 +274,7 @@ export default function BlackjackGame() {
                 fontSize: "0.46rem",
                 letterSpacing: "0.2em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.14)",
+                color: "rgba(255,255,255,0.38)",
                 fontFamily: "var(--font-jetbrains-mono)",
               }}
             >
@@ -289,12 +289,12 @@ export default function BlackjackGame() {
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
           <span style={{
             fontSize: "0.42rem", letterSpacing: "0.3em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.18)",
+            color: "rgba(255,255,255,0.42)",
           }}>Dealer</span>
-          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
           <span style={{
             fontSize: "0.65rem", fontFamily: "var(--font-jetbrains-mono)",
-            fontWeight: 600, color: dv > 21 ? "#e84040" : "rgba(255,255,255,0.25)",
+            fontWeight: 600, color: dv > 21 ? "#e84040" : "rgba(255,255,255,0.52)",
             minWidth: 16, textAlign: "right",
           }}>{dv}</span>
         </div>
@@ -316,12 +316,12 @@ export default function BlackjackGame() {
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
           <span style={{
             fontSize: "0.42rem", letterSpacing: "0.3em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.18)",
+            color: "rgba(255,255,255,0.42)",
           }}>Your Hand</span>
-          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
           <span style={{
             fontSize: "0.65rem", fontFamily: "var(--font-jetbrains-mono)",
-            fontWeight: 600, color: pv > 21 ? "#e84040" : "rgba(255,255,255,0.25)",
+            fontWeight: 600, color: pv > 21 ? "#e84040" : "rgba(255,255,255,0.52)",
             minWidth: 16, textAlign: "right",
           }}>{pv}</span>
         </div>

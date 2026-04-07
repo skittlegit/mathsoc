@@ -89,7 +89,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
               fontSize: "0.48rem",
               letterSpacing: "0.38em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.2)",
+              color: "rgba(255,255,255,0.45)",
             }}
           >
             The Mathematics Society &middot; Mahindra University
@@ -98,7 +98,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
             style={{
               fontFamily: "var(--font-jetbrains-mono)",
               fontSize: "0.48rem",
-              color: "rgba(255,255,255,0.1)",
+              color: "rgba(255,255,255,0.35)",
             }}
           >
             e^(iπ) + 1 = 0
@@ -267,7 +267,7 @@ export default function Home() {
                   fontSize: "0.48rem",
                   letterSpacing: "0.35em",
                   textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.2)",
+                  color: "rgba(255,255,255,0.45)",
                   fontFamily: "var(--font-jetbrains-mono)",
                 }}
               >
@@ -298,7 +298,7 @@ export default function Home() {
               style={{
                 fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)",
                 lineHeight: 1.85,
-                color: "rgba(255,255,255,0.32)",
+                color: "rgba(255,255,255,0.58)",
                 maxWidth: "34ch",
               }}
               initial={{ opacity: 0 }}
@@ -328,19 +328,19 @@ export default function Home() {
                     fontSize: "0.5rem",
                     letterSpacing: "0.25em",
                     textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.22)",
+                    color: "rgba(255,255,255,0.48)",
                     textDecoration: "none",
-                    borderBottom: "1px solid rgba(255,255,255,0.1)",
+                    borderBottom: "1px solid rgba(255,255,255,0.18)",
                     paddingBottom: "3px",
                     transition: "color 0.2s, border-color 0.2s",
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)";
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.3)";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.85)";
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.4)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.22)";
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.1)";
+                    (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.48)";
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.18)";
                   }}
                 >
                   {label} ↗
@@ -356,11 +356,11 @@ export default function Home() {
               transition={{ delay: 3.7, duration: 1 }}
             >
               <motion.div
-                style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.18)" }}
-                animate={{ opacity: [0.18, 0.6, 0.18] }}
+                style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.38)" }}
+                animate={{ opacity: [0.35, 0.75, 0.35] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               />
-              <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.15)" }}>
+              <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.38)" }}>
                 Scroll to explore
               </span>
             </motion.div>
@@ -387,10 +387,10 @@ export default function Home() {
               {/* Label */}
               <div
                 className="flex items-center gap-3 mb-5"
-                style={{ opacity: 0.4 }}
+                style={{ opacity: 0.85 }}
               >
                 <div style={{ height: 1, flex: 1, background: "rgba(255,255,255,0.12)" }} />
-                <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-jetbrains-mono)", flexShrink: 0 }}>
+                <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-jetbrains-mono)", flexShrink: 0 }}>
                   Play a round
                 </span>
                 <div style={{ height: 1, flex: 1, background: "rgba(255,255,255,0.12)" }} />

@@ -1,0 +1,55 @@
+{
+  "year": "2026",
+  "sections": [
+    {
+      "label": "Faculty Mentors",
+      "members": [
+        { "name": "Biswarup Biswas", "role": "Club Mentor", "img": "/team/2024/biswarupbiswas.png", "linkedin": "https://www.linkedin.com/in/biswarup-biswas-428a60230/", "email": "biswarup.biswas@mahindrauniversity.edu.in" },
+        { "name": "Meraj Alam", "role": "Club Mentor", "img": "/team/2024/merajalam.png", "linkedin": "https://www.linkedin.com/in/meraj-alam-96711b223/", "email": "meraj.alam@mahindrauniversity.edu.in" }
+      ]
+    },
+    {
+      "label": "Core Leads",
+      "members": [
+        { "name": "Utkarsh Mangal", "role": "President", "img": "/team/2024/utkarshmangal.png", "instagram": "https://www.instagram.com/_utkarsh_mangal/", "linkedin": "https://www.linkedin.com/in/utkarsh-mangal2/", "email": "se22ucam015@mahindrauniversity.edu.in" },
+        { "name": "Saiankit Shankar", "role": "Vice President", "img": "/team/2024/ankitreddy.png", "instagram": "https://www.instagram.com/ankit.reddy_/", "linkedin": "https://www.linkedin.com/in/saiankit-shankar/", "email": "se23ucse160@mahindrauniversity.edu.in" },
+        { "name": "Shourya Thakur", "role": "Head of Subject Groups", "img": "/team/2024/shourya.png", "instagram": "https://www.instagram.com/shouryaa_thakurrr/", "linkedin": "https://www.linkedin.com/in/shourya-singh-197043289/", "email": "se22uece015@mahindrauniversity.edu.in" },
+        { "name": "Venkat Vinesh Kumar Reddy", "role": "Logistics Head", "img": "/team/2024/venkat.png", "instagram": "https://www.instagram.com/vinvortex007/", "linkedin": "https://www.linkedin.com/in/venkat-vinesh-515ba52b5/", "email": "se23ucse001@mahindrauniversity.edu.in" },
+        { "name": "Seerat Chatha", "role": "Social Media Head", "img": "/team/2024/seerat.jpeg", "instagram": "https://www.instagram.com/seeer4ttt/", "linkedin": "https://www.linkedin.com/in/seerat-chatha-249058322/", "email": "seeratchatha06@gmail.com" },
+        { "name": "Pranav Reddy Mitta", "role": "Design Head", "img": "/team/2024/pranav.png", "instagram": "https://www.instagram.com/pranavreddy.m/", "linkedin": "https://www.linkedin.com/in/pranavreddymitta/", "email": "se23ucse111@mahindrauniversity.edu.in" },
+        { "name": "Dev Bhandiya", "role": "Finance Head", "img": "/team/2024/dev.png", "linkedin": "https://www.linkedin.com/in/dev-m-bandhiya-2b25842a9/", "email": "anika.p@student.mahindra.edu" }
+      ]
+    },
+    {
+      "label": "Subject Group Leads",
+      "members": [
+        { "name": "Amithi Shangari", "role": "Data Science & AI/ML", "img": "/team/2024/amithi.jpeg", "instagram": "https://www.instagram.com/amithii_s", "linkedin": "https://www.linkedin.com/in/amithishangari", "email": "shangari.amithi@gmail.com" },
+        { "name": "Poojan Patel", "role": "Cryptography", "img": "/team/2024/poojan.png", "instagram": "https://www.instagram.com/_literally_poojan_", "email": "poojanpatel236@gmail.com" },
+        { "name": "Nihaal Patnaik", "role": "Financial Mathematics", "img": "/team/2024/nihaal.jpg", "instagram": "https://www.instagram.com/nihaal4312", "linkedin": "https://www.linkedin.com/in/nihaal-patnaik-378010250/", "email": "se22ucse050@mahindrauniversity.edu.in" }
+      ]
+    },
+    {
+      "label": "Executive Team",
+      "members": [
+        { "name": "Aashna Reddy", "role": "Executive", "img": "/team/2024/aashna.jpeg", "instagram": "https://www.instagram.com/aashnaaa_reddy", "email": "aashnapilla07@gmail.com" },
+        { "name": "Abhinav Jata", "role": "Executive", "img": "/team/2024/aj.png", "instagram": "https://www.instagram.com/abhinav.jata/", "linkedin": "https://www.linkedin.com/in/abhinav-jata", "email": "abhinav.jata.986@gmail.com" },
+        { "name": "Geetika Pachauri", "role": "Content Team", "img": "/team/2024/geethika.jpg", "email": "geetikapachauri12345@gmail.com" },
+        { "name": "Hinduja", "role": "Design Team", "img": "/team/2024/hinduja2.jpg", "instagram": "https://www.instagram.com/hiinduja_", "linkedin": "https://www.linkedin.com/in/hinduja-reddy-b87b8932b", "email": "hiinduja.13@gmail.com" },
+        { "name": "Nitin Sailapathi", "role": "Executive", "img": "/team/2024/nitin.jpeg", "instagram": "https://www.instagram.com/nitin.___.06", "linkedin": "https://www.linkedin.com/in/nitin-sailapathi-652009331", "email": "nitin06sailapathi@gmail.com" },
+        { "name": "Mohan Pritam K", "role": "Executive", "img": "/team/2024/mohan.jpg", "instagram": "https://www.instagram.com/mohanpritamk", "linkedin": "https://www.linkedin.com/in/mohan-pritam-k-318a26328", "email": "mohanpritamk@gmail.com" },
+        { "name": "Pearl Mendapara", "role": "Executive", "img": "/team/2024/pearl.jpg", "instagram": "https://www.instagram.com/_pearl.mendapara_", "linkedin": "https://www.linkedin.com/in/pearl-mendapara-3495a0356", "email": "se24ucam043@mahindrauniversity.edu.in" },
+        { "name": "Suhas Vadlapatla", "role": "Social Media Team", "img": "/team/2024/suhas.jpg", "email": "se23ucse211@mahindrauniversity.edu.in" },
+        { "name": "Shriyans Bachu", "role": "Finance Team", "img": "/team/2024/bachu.jpg", "instagram": "https://www.instagram.com/shriii_05/", "email": "bachushriyans205@gmail.com" },
+        { "name": "Ucchishth Singh", "role": "Executive", "img": "/team/2024/ucchishth.png", "instagram": "https://www.instagram.com/ucchishthsingh", "email": "ucchishthsingh432@gmail.com" },
+        { "name": "Uddish", "role": "Executive", "img": "/team/2024/uddish.png", "instagram": "https://www.instagram.com/uddish_03", "linkedin": "https://www.linkedin.com/in/uddish-maini-3b9563356", "email": "mainiuddish@gmail.com" }
+      ]
+    },
+    {
+      "label": "Honorary Members",
+      "members": [
+        { "name": "Bobba Dilip Reddy", "role": "Math Wizard", "img": "/team/2024/dilip.jpg", "instagram": "https://www.instagram.com/bobbadilipreddy/", "linkedin": "https://www.linkedin.com/in/dilip-reddy-bobba-459543333/", "email": "se23ucse038@mahindrauniversity.edu.in" },
+        { "name": "Madhav Basur", "role": "Maddy", "img": "/team/2024/madhav.png", "email": "se23ucam009@mahindrauniversity.edu.in" }
+      ]
+    }
+  ]
+}

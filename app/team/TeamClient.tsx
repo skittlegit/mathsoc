@@ -148,6 +148,8 @@ function MemberPhoto({ src, alt, init }: { src: string; alt: string; init: strin
     <img
       src={src}
       alt={alt}
+      loading="lazy"
+      decoding="async"
       onError={() => setFailed(true)}
       style={{
         width: "100%",

@@ -255,6 +255,7 @@ export default function GalleryClient({
 }) {
   const all = shuffle([...images, ...videos]);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+  const [loadedSet, setLoadedSet] = useState<Set<number>>(new Set());
 
   return (
     <div style={{ paddingTop: 72, minHeight: "100vh" }}>
@@ -267,7 +268,7 @@ export default function GalleryClient({
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.45)",
             textTransform: "uppercase",
             display: "block",
             marginBottom: 10,
@@ -294,7 +295,7 @@ export default function GalleryClient({
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.18)",
+            color: "rgba(255,255,255,0.45)",
             textTransform: "uppercase",
           }}
           initial={{ opacity: 0 }}
@@ -347,22 +348,50 @@ export default function GalleryClient({
                   overflow: "hidden",
                   cursor: "pointer",
                   breakInside: "avoid",
-                  background: "#000510",
+                  background: "#050a1c",
+                  position: "relative",
+                  minHeight: isVideo ? undefined : 120,
                 }}
               >
                 {isVideo ? (
                   <GalleryVideo src={src} />
                 ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={src}
-                    alt=""
-                    loading="lazy"
-                    style={{
-                      width: "100%",
-                      display: "block",
-                    }}
-                  />
+                  <>
+                    {/* Skeleton shimmer — visible until image loads */}
+                    {!loadedSet.has(i) && (
+                      <div
+                        className="skeleton-shimmer"
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          minHeight: 120,
+                          zIndex: 1,
+                        }}
+                      />
+                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={src}
+                      alt=""
+                      loading={i < 8 ? "eager" : "lazy"}
+                      decoding="async"
+                      onLoad={() =>
+                        setLoadedSet((prev) => {
+                          const next = new Set(prev);
+                          next.add(i);
+                          return next;
+                        })
+                      }
+                      style={{
+                        width: "100%",
+                        display: "block",
+                        position: "relative",
+                        zIndex: 2,
+                        opacity: loadedSet.has(i) ? 1 : 0,
+                        transition: "opacity 0.4s ease",
+                      }}
+                    />
+                  </>
                 )}
               </motion.div>
             );

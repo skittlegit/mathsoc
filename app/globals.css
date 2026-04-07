@@ -46,6 +46,23 @@ body {
   animation-play-state: paused;
 }
 
+/* ── Gallery skeleton shimmer ── */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #050a1c 25%,
+    #0c1835 50%,
+    #050a1c 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
 /* ── Remove number input spinners ── */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
