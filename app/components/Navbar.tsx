@@ -24,7 +24,8 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-[72px] px-7 md:px-14"
+        className="fixed top-0 left-0 right-0 z-50 px-7 md:px-14"
+        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
         initial={{ y: -72 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, delay: 0.1, ease }}
@@ -40,6 +41,7 @@ export default function Navbar() {
           }}
         />
 
+        <div className="flex items-center justify-between h-[72px]">
         {/* Left: Logo + name */}
         <Link href="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 relative shrink-0">
@@ -95,6 +97,7 @@ export default function Navbar() {
             <span style={{ display: "block", width: 14, height: 1.5, background: "rgba(255,255,255,0.75)", borderRadius: 2 }} />
             <span style={{ display: "block", width: 22, height: 1.5, background: "rgba(255,255,255,0.75)", borderRadius: 2 }} />
           </button>
+        </div>
         </div>
       </motion.nav>
 

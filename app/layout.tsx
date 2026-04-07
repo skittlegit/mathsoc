@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
@@ -16,10 +16,18 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: "MathSoc — Mathematics Society",
   description:
     "The official Mathematics Society. Where curiosity becomes proof and problems become art.",
+  appleWebApp: {
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export default function RootLayout({

@@ -28,8 +28,11 @@ export default function Footer() {
   return (
     <footer
       ref={ref}
-      className="relative z-10 pt-20 pb-12"
-      style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
+      className="relative z-10 pt-20"
+      style={{
+        borderTop: "1px solid rgba(255,255,255,0.04)",
+        paddingBottom: "calc(3rem + env(safe-area-inset-bottom, 0px))",
+      }}
     >
       <div className="max-w-6xl mx-auto px-7 md:px-14">
         {/* CTA Banner */}
