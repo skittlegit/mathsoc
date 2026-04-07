@@ -25,6 +25,7 @@ export interface YearData {
 
 /* ─── Utils ─── */
 function getImgSrc(img: string, year: string) {
+  if (img.startsWith("/")) return img;
   return `/team/${year}/${img}`;
 }
 

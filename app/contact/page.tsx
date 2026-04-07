@@ -231,14 +231,14 @@ export default function ContactPage() {
                 Email
               </p>
               <a
-                href="mailto:mathsoc@university.edu"
+                href="mailto:mu.mathematicsclub@mahindrauniversity.edu.in"
                 className="link-underline hover:text-white transition-colors duration-300"
                 style={{
                   fontSize: "0.95rem",
                   color: "rgba(255,255,255,0.35)",
                 }}
               >
-                mathsoc@university.edu
+                mu.mathematicsclub@mahindrauniversity.edu.in
               </a>
             </div>
 
@@ -261,36 +261,11 @@ export default function ContactPage() {
                   lineHeight: 1.8,
                 }}
               >
-                Room 314, Mathematics Building
-                <br />
-                University Campus
+                Mahindra University
               </p>
             </div>
 
-            <div>
-              <p
-                className="mb-3 font-semibold"
-                style={{
-                  fontSize: "0.5rem",
-                  letterSpacing: "0.3em",
-                  color: "rgba(255,255,255,0.1)",
-                  textTransform: "uppercase",
-                }}
-              >
-                Meetings
-              </p>
-              <p
-                style={{
-                  fontSize: "0.95rem",
-                  color: "rgba(255,255,255,0.25)",
-                  lineHeight: 1.8,
-                }}
-              >
-                Every Wednesday, 5:00 PM
-                <br />
-                Open to all students
-              </p>
-            </div>
+
           </motion.div>
         </div>
       </div>

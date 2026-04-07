@@ -42,31 +42,20 @@ function handValue(cs: Card[]): number {
 }
 function isBlackjack(cs: Card[]) { return cs.length === 2 && handValue(cs) === 21; }
 
-/* ─────────── Card sizes ─────────── */
-const W = 56, H = 84;
+/* ─────────── Card dimensions ─────────── */
+const W = 52, H = 76;
 
-/* ─────────── Placeholder card (idle) ─────────── */
+/* ─────────── Placeholder card ─────────── */
 function PlaceholderCard() {
   return (
     <div style={{
       width: W, height: H, flexShrink: 0,
-      background: "linear-gradient(145deg, #060e25 0%, #0c1738 100%)",
-      border: "1px solid rgba(255,255,255,0.055)",
-      borderRadius: 5,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
+      background: "rgba(255,255,255,0.02)",
+      border: "1px dashed rgba(255,255,255,0.06)",
+      borderRadius: 6,
+      display: "flex", alignItems: "center", justifyContent: "center",
     }}>
-      <div style={{
-        width: "52%", height: "52%",
-        border: "1px solid rgba(255,255,255,0.05)",
-        borderRadius: 2,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}>
-        <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.06)" }}>?</span>
-      </div>
+      <span style={{ fontSize: "1rem", color: "rgba(255,255,255,0.06)", fontWeight: 300 }}>?</span>
     </div>
   );
 }
@@ -75,99 +64,89 @@ function PlaceholderCard() {
 function HiddenCard({ delay = 0 }: { delay?: number }) {
   return (
     <motion.div
-      initial={{ y: -24, opacity: 0, rotateY: 90 }}
+      initial={{ y: -20, opacity: 0, rotateY: 90 }}
       animate={{ y: 0, opacity: 1, rotateY: 0 }}
       transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
-        background: "linear-gradient(145deg, #060e25, #0c1738)",
-        border: "1px solid rgba(255,255,255,0.055)",
-        borderRadius: 5,
+        background: "linear-gradient(145deg, #0a1530, #0d1a3d)",
+        border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 6,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: "1.4rem", color: "rgba(255,255,255,0.04)",
       }}
     >
-      ✦
+      <div style={{
+        width: 22, height: 22,
+        border: "1px solid rgba(255,255,255,0.06)",
+        borderRadius: 3,
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.08)" }}>?</span>
+      </div>
     </motion.div>
   );
 }
 
 /* ─────────── Playing card (face-up) ─────────── */
-function HeroCard({ card, delay = 0 }: { card: Card; delay?: number }) {
+function FaceCard({ card, delay = 0 }: { card: Card; delay?: number }) {
   const isRed = RED.has(card.suit);
+  const col = isRed ? "#c0322d" : "#1a1a2e";
   return (
     <motion.div
-      initial={{ y: -24, opacity: 0, rotateY: 90 }}
+      initial={{ y: -20, opacity: 0, rotateY: 90 }}
       animate={{ y: 0, opacity: 1, rotateY: 0 }}
       transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
-        background: "rgba(255,255,255,0.96)",
-        border: "1px solid rgba(255,255,255,0.12)",
-        borderRadius: 5,
-        padding: "5px 6px",
+        background: "#f5f5f0",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderRadius: 6,
+        padding: "4px 5px",
         position: "relative",
-        boxShadow: "0 4px 18px rgba(0,0,0,0.6)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.5)",
         display: "flex", flexDirection: "column",
       }}
     >
-      <div style={{ lineHeight: 1.1 }}>
-        <div style={{ fontSize: "0.76rem", fontWeight: 700, color: isRed ? "#c0322d" : "#111" }}>{card.rank}</div>
-        <div style={{ fontSize: "0.6rem", color: isRed ? "#c0322d" : "#111" }}>{card.suit}</div>
+      <div style={{ lineHeight: 1 }}>
+        <div style={{ fontSize: "0.72rem", fontWeight: 700, color: col }}>{card.rank}</div>
+        <div style={{ fontSize: "0.55rem", color: col, marginTop: -1 }}>{card.suit}</div>
       </div>
       <div style={{
         position: "absolute", inset: 0,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: "1.5rem", color: isRed ? "#c0322d" : "#111", opacity: 0.6,
+        fontSize: "1.35rem", color: col, opacity: 0.5,
       }}>{card.suit}</div>
-      <div style={{ position: "absolute", bottom: 5, right: 6, transform: "rotate(180deg)", lineHeight: 1.1 }}>
-        <div style={{ fontSize: "0.76rem", fontWeight: 700, color: isRed ? "#c0322d" : "#111" }}>{card.rank}</div>
-        <div style={{ fontSize: "0.6rem", color: isRed ? "#c0322d" : "#111" }}>{card.suit}</div>
+      <div style={{ position: "absolute", bottom: 4, right: 5, transform: "rotate(180deg)", lineHeight: 1 }}>
+        <div style={{ fontSize: "0.72rem", fontWeight: 700, color: col }}>{card.rank}</div>
+        <div style={{ fontSize: "0.55rem", color: col, marginTop: -1 }}>{card.suit}</div>
       </div>
     </motion.div>
   );
 }
 
-/* ─────────── Score badge ─────────── */
-function Score({ value, bust }: { value: number; bust?: boolean }) {
-  return (
-    <span style={{
-      fontSize: "0.68rem",
-      fontFamily: "var(--font-jetbrains-mono)",
-      fontWeight: 600,
-      color: bust ? "#e84040" : "rgba(255,255,255,0.35)",
-      letterSpacing: "0.04em",
-      minWidth: 20,
-    }}>
-      {value}
-    </span>
-  );
-}
-
-/* ─────────── Button ─────────── */
+/* ─────────── GameBtn ─────────── */
 function GameBtn({
-  children, onClick, disabled, primary,
+  children, onClick, disabled, variant = "default",
 }: {
   children: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  primary?: boolean;
+  variant?: "default" | "primary";
 }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className="game-btn"
       style={{
-        padding: "8px 20px",
+        padding: "10px 22px",
         fontSize: "0.5rem",
-        letterSpacing: "0.22em",
+        letterSpacing: "0.2em",
         textTransform: "uppercase",
         fontWeight: 600,
-        background: primary && !disabled ? "rgba(255,255,255,0.09)" : "transparent",
-        color: disabled ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.65)",
-        border: `1px solid ${disabled ? "rgba(255,255,255,0.05)" : primary ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.08)"}`,
-        borderRadius: 3,
+        background: variant === "primary" && !disabled ? "rgba(255,255,255,0.08)" : "transparent",
+        color: disabled ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.6)",
+        border: `1px solid ${disabled ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.1)"}`,
+        borderRadius: 4,
         cursor: disabled ? "not-allowed" : "pointer",
         transition: "all 0.18s ease",
         flexShrink: 0,
@@ -178,59 +157,13 @@ function GameBtn({
   );
 }
 
-/* ─────────── Hand row ─────────── */
-function HandRow({
-  label,
-  cards,
-  phase,
-  showHidden,
-  score,
-}: {
-  label: string;
-  cards: Card[];
-  phase: Phase;
-  showHidden?: boolean; // second card face-down
-  score: number;
-}) {
-  const isIdle = phase === "idle";
-  const isBust = score > 21;
-
-  return (
-    <div>
-      {/* Label + score */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-        <span style={{ fontSize: "0.42rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.22)" }}>
-          {label}
-        </span>
-        <Score value={score} bust={isBust} />
-      </div>
-
-      {/* Cards */}
-      <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
-        {isIdle ? (
-          <>
-            <PlaceholderCard />
-            <PlaceholderCard />
-          </>
-        ) : (
-          cards.map((c, i) => (
-            showHidden && i === 1
-              ? <HiddenCard key={c.id} delay={i * 0.08} />
-              : <HeroCard key={c.id} card={c} delay={i * 0.08} />
-          ))
-        )}
-      </div>
-    </div>
-  );
-}
-
 /* ─────────── Result banner ─────────── */
 const RESULTS: Record<NonNullable<Result>, { text: string; color: string }> = {
   blackjack: { text: "Blackjack!", color: "#f0c040" },
   win: { text: "You win", color: "rgba(80,220,140,0.9)" },
   push: { text: "Push", color: "rgba(255,255,255,0.35)" },
   bust: { text: "Bust", color: "#e84040" },
-  "dealer-bust": { text: "Dealer busts — you win", color: "rgba(80,220,140,0.9)" },
+  "dealer-bust": { text: "Dealer busts", color: "rgba(80,220,140,0.9)" },
   lose: { text: "Dealer wins", color: "#e84040" },
 };
 
@@ -293,105 +226,132 @@ export default function BlackjackGame() {
   const dv = phase === "done" && dealer.length ? handValue(dealer) : 0;
 
   return (
-    <div style={{ width: "100%", maxWidth: 440 }}>
-      {/* Title row */}
-      <div style={{
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        marginBottom: 16,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{
-            fontSize: "0.44rem", letterSpacing: "0.35em", textTransform: "uppercase",
-            color: "rgba(255,255,255,0.18)",
-            lineHeight: 1,
-          }}>Blackjack</span>
-        </div>
-        <span style={{
-          fontSize: "0.56rem",
-          fontFamily: "var(--font-jetbrains-mono)",
-          color: "rgba(255,255,255,0.14)",
-          letterSpacing: "0.06em",
-        }}>
-          W {wins} · L {losses}
-        </span>
+    <div style={{ width: "100%" }}>
+      {/* Header — idle shows "Start a new game", playing shows score */}
+      <div style={{ marginBottom: 20, textAlign: "center" }}>
+        <AnimatePresence mode="wait">
+          {phase === "idle" && !result && (
+            <motion.p
+              key="start"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                fontSize: "0.52rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.18)",
+              }}
+            >
+              Start a new game
+            </motion.p>
+          )}
+          {result && (
+            <motion.p
+              key={result}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              style={{
+                fontSize: "0.58rem",
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+                color: RESULTS[result].color,
+              }}
+            >
+              {RESULTS[result].text}
+            </motion.p>
+          )}
+          {phase === "playing" && (
+            <motion.p
+              key="playing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                fontSize: "0.46rem",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.14)",
+                fontFamily: "var(--font-jetbrains-mono)",
+              }}
+            >
+              W {wins} · L {losses}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Game panel */}
-      <div style={{
-        border: "1px solid rgba(255,255,255,0.065)",
-        borderRadius: 8,
-        padding: "22px 24px",
-        background: "rgba(2,6,20,0.7)",
-        backdropFilter: "blur(12px)",
-      }}>
-        {/* Dealer */}
-        <HandRow
-          label="Dealer"
-          cards={dealer}
-          phase={phase}
-          showHidden={phase === "playing"}
-          score={dv}
-        />
+      {/* Dealer hand */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <span style={{
+            fontSize: "0.42rem", letterSpacing: "0.3em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.18)",
+          }}>Dealer</span>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
+          <span style={{
+            fontSize: "0.65rem", fontFamily: "var(--font-jetbrains-mono)",
+            fontWeight: 600, color: dv > 21 ? "#e84040" : "rgba(255,255,255,0.25)",
+            minWidth: 16, textAlign: "right",
+          }}>{dv}</span>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {phase === "idle" ? (
+            <>
+              <PlaceholderCard />
+              <PlaceholderCard />
+            </>
+          ) : (
+            dealer.map((c, i) =>
+              phase === "playing" && i === 1
+                ? <HiddenCard key={c.id} delay={i * 0.08} />
+                : <FaceCard key={c.id} card={c} delay={i * 0.08} />
+            )
+          )}
+        </div>
+      </div>
 
-        {/* Divider */}
-        <div style={{ height: 1, background: "rgba(255,255,255,0.04)", margin: "18px 0" }} />
-
-        {/* Player */}
-        <HandRow
-          label="Your Hand"
-          cards={player}
-          phase={phase}
-          score={pv}
-        />
-
-        {/* Result */}
-        <div style={{ minHeight: 28, marginTop: 10 }}>
-          <AnimatePresence mode="wait">
-            {result && (
-              <motion.p
-                key={result}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.28 }}
-                style={{
-                  fontSize: "0.58rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  fontWeight: 600,
-                  color: RESULTS[result].color,
-                }}
-              >
-                {RESULTS[result].text}
-              </motion.p>
-            )}
-            {phase === "idle" && !result && (
-              <motion.p
-                key="idle"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{
-                  fontSize: "0.46rem",
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.1)",
-                }}
-              >
-                Deal to start a new game
-              </motion.p>
-            )}
-          </AnimatePresence>
+      {/* Player hand */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <span style={{
+            fontSize: "0.42rem", letterSpacing: "0.3em", textTransform: "uppercase",
+            color: "rgba(255,255,255,0.18)",
+          }}>Your Hand</span>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
+          <span style={{
+            fontSize: "0.65rem", fontFamily: "var(--font-jetbrains-mono)",
+            fontWeight: 600, color: pv > 21 ? "#e84040" : "rgba(255,255,255,0.25)",
+            minWidth: 16, textAlign: "right",
+          }}>{pv}</span>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {phase === "idle" ? (
+            <>
+              <PlaceholderCard />
+              <PlaceholderCard />
+            </>
+          ) : (
+            player.map((c, i) => <FaceCard key={c.id} card={c} delay={i * 0.08} />)
+          )}
         </div>
       </div>
 
       {/* Action buttons */}
-      <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-        <GameBtn onClick={deal} primary>
-          {phase === "idle" ? "Deal" : "New Game"}
-        </GameBtn>
-        <GameBtn onClick={hit} disabled={phase !== "playing"}>Hit</GameBtn>
-        <GameBtn onClick={stand} disabled={phase !== "playing"}>Stand</GameBtn>
+      <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+        {phase === "idle" || phase === "done" ? (
+          <GameBtn onClick={deal} variant="primary">
+            {phase === "idle" ? "Deal Cards" : "New Game"}
+          </GameBtn>
+        ) : (
+          <>
+            <GameBtn onClick={hit} variant="primary">Hit</GameBtn>
+            <GameBtn onClick={stand}>Stand</GameBtn>
+          </>
+        )}
       </div>
     </div>
   );

@@ -44,13 +44,13 @@ export default function RootLayout({
                 "radial-gradient(ellipse 65% 75% at 100% 100%, #001358 0%, #000922 22%, transparent 58%)",
             }}
           />
-          {/* Top-left: subtle dark indigo breath */}
+          {/* Top-left: matching deep blue glow */}
           <div
             style={{
               position: "absolute",
               inset: 0,
               background:
-                "radial-gradient(ellipse 55% 50% at 0% 0%, rgba(12,4,32,0.9) 0%, transparent 60%)",
+                "radial-gradient(ellipse 55% 60% at 0% 0%, #001358 0%, #000922 22%, transparent 55%)",
             }}
           />
           {/* Center-bottom: faint atmospheric warmth */}

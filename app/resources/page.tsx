@@ -13,31 +13,37 @@ const RESOURCES = [
         title: "How to Solve It",
         author: "George Pólya",
         desc: "The classic guide to mathematical problem-solving heuristics.",
+        url: "https://en.wikipedia.org/wiki/How_to_Solve_It",
       },
       {
         title: "Proofs from THE BOOK",
         author: "Aigner & Ziegler",
         desc: "Beautiful proofs that Erdős would say came from God's own book.",
+        url: "https://en.wikipedia.org/wiki/Proofs_from_THE_BOOK",
       },
       {
         title: "The Art and Craft of Problem Solving",
         author: "Paul Zeitz",
         desc: "Essential for competition preparation and mathematical thinking.",
+        url: "https://www.wiley.com/en-us/The+Art+and+Craft+of+Problem+Solving%2C+3rd+Edition-p-9781119239901",
       },
       {
         title: "Linear Algebra Done Right",
         author: "Sheldon Axler",
         desc: "The elegant, determinant-free approach to linear algebra.",
+        url: "https://linear.axler.net/",
       },
       {
         title: "Principles of Mathematical Analysis",
         author: "Walter Rudin",
         desc: "Baby Rudin. The rite of passage for every analysis student.",
+        url: "https://en.wikipedia.org/wiki/Principles_of_Mathematical_Analysis",
       },
       {
         title: "Concrete Mathematics",
         author: "Graham, Knuth, Patashnik",
         desc: "A foundation for computer science, grounded in discrete math.",
+        url: "https://en.wikipedia.org/wiki/Concrete_Mathematics",
       },
     ],
   },
@@ -48,21 +54,25 @@ const RESOURCES = [
         title: "Art of Problem Solving",
         author: "aops.com",
         desc: "Community, courses, and the legendary MATHCOUNTS/AMC resources.",
+        url: "https://artofproblemsolving.com/",
       },
       {
         title: "Project Euler",
         author: "projecteuler.net",
         desc: "Math + programming challenges. 800+ problems and counting.",
+        url: "https://projecteuler.net/",
       },
       {
         title: "3Blue1Brown",
         author: "youtube.com",
         desc: "Grant Sanderson's visual, intuitive math explanations.",
+        url: "https://www.youtube.com/@3blue1brown",
       },
       {
         title: "MIT OpenCourseWare",
         author: "ocw.mit.edu",
         desc: "Full MIT math courses, problem sets, and lecture videos — free.",
+        url: "https://ocw.mit.edu/",
       },
     ],
   },
@@ -73,21 +83,25 @@ const RESOURCES = [
         title: "LaTeX / Overleaf",
         author: "overleaf.com",
         desc: "The standard for typesetting mathematical documents.",
+        url: "https://www.overleaf.com/",
       },
       {
         title: "Desmos",
         author: "desmos.com",
         desc: "Beautiful, fast graphing calculator. Essential for visualization.",
+        url: "https://www.desmos.com/calculator",
       },
       {
         title: "GeoGebra",
         author: "geogebra.org",
         desc: "Dynamic geometry, algebra, and calculus — all in one place.",
+        url: "https://www.geogebra.org/",
       },
       {
         title: "Wolfram Alpha",
         author: "wolframalpha.com",
         desc: "Computational knowledge engine. The Swiss army knife of math.",
+        url: "https://www.wolframalpha.com/",
       },
     ],
   },
@@ -124,16 +138,20 @@ function ResourceSection({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {section.items.map((item, i) => (
-          <motion.div
+          <motion.a
             key={item.title}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.15 + i * 0.06, duration: 0.6, ease }}
-            className="group p-6 transition-colors duration-300"
+            className="group p-6 transition-colors duration-300 block"
             style={{
               border: "1px solid rgba(255,255,255,0.04)",
               borderRadius: "3px",
               background: "rgba(255,255,255,0.01)",
+              textDecoration: "none",
             }}
           >
             <h3
@@ -165,7 +183,13 @@ function ResourceSection({
             >
               {item.desc}
             </p>
-          </motion.div>
+            <div className="mt-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span style={{ fontSize: "0.52rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>Open</span>
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M8 3l5 5-5 5" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </motion.a>
         ))}
       </div>
     </motion.div>

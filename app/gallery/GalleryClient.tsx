@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const GAP = 6;
 
 /* ─── Deterministic shuffle ─── */
 function shuffle<T>(arr: T[], seed = 42): T[] {
@@ -25,7 +24,10 @@ function GalleryVideo({ src }: { src: string }) {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) el.play().catch(() => {}); else el.pause(); },
+      ([e]) => {
+        if (e.isIntersecting) el.play().catch(() => {});
+        else el.pause();
+      },
       { threshold: 0.1 }
     );
     obs.observe(el);
@@ -33,51 +35,217 @@ function GalleryVideo({ src }: { src: string }) {
   }, []);
   return (
     <video
-      ref={ref} src={src} muted loop playsInline preload="none"
-      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }}
+      ref={ref}
+      src={src}
+      muted
+      loop
+      playsInline
+      preload="none"
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        display: "block",
+      }}
     />
   );
 }
 
-/* ─── Single gallery item ─── */
-function GalleryItem({
+/* ─── Lightbox ─── */
+function Lightbox({
   src,
-  isFirst,
-  itemRef,
+  all,
+  onClose,
+  onNavigate,
 }: {
   src: string;
-  isFirst?: boolean;
-  itemRef?: React.RefObject<HTMLDivElement | null>;
+  all: string[];
+  onClose: () => void;
+  onNavigate: (idx: number) => void;
 }) {
+  const idx = all.indexOf(src);
   const isVideo = /\.(mp4|webm|mov)$/i.test(decodeURIComponent(src));
+
+  const handleKey = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" && idx < all.length - 1) onNavigate(idx + 1);
+      if (e.key === "ArrowLeft" && idx > 0) onNavigate(idx - 1);
+    },
+    [idx, all.length, onClose, onNavigate]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [handleKey]);
+
   return (
-    <div
-      ref={isFirst ? itemRef : undefined}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       style={{
-        width: "100%",
-        aspectRatio: "2/3",
-        overflow: "hidden",
-        background: "#000510",
-        flexShrink: 0,
-        display: "block",
+        position: "fixed",
+        inset: 0,
+        zIndex: 200,
+        background: "rgba(0,0,0,0.92)",
+        backdropFilter: "blur(20px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
+      onClick={onClose}
     >
-      {isVideo ? (
-        <GalleryVideo src={src} />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt=""
-          loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }}
-        />
+      {/* Close */}
+      <button
+        onClick={onClose}
+        style={{
+          position: "absolute",
+          top: 24,
+          right: 28,
+          background: "none",
+          border: "none",
+          color: "rgba(255,255,255,0.5)",
+          fontSize: "0.62rem",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          cursor: "pointer",
+          zIndex: 10,
+        }}
+      >
+        Close
+      </button>
+
+      {/* Prev */}
+      {idx > 0 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onNavigate(idx - 1);
+          }}
+          style={{
+            position: "absolute",
+            left: 16,
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 4,
+            width: 40,
+            height: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            color: "rgba(255,255,255,0.6)",
+            fontSize: "1.2rem",
+            zIndex: 10,
+          }}
+        >
+          ‹
+        </button>
       )}
-    </div>
+
+      {/* Next */}
+      {idx < all.length - 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onNavigate(idx + 1);
+          }}
+          style={{
+            position: "absolute",
+            right: 16,
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 4,
+            width: 40,
+            height: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            color: "rgba(255,255,255,0.6)",
+            fontSize: "1.2rem",
+            zIndex: 10,
+          }}
+        >
+          ›
+        </button>
+      )}
+
+      {/* Content */}
+      <motion.div
+        key={src}
+        initial={{ scale: 0.92, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.92, opacity: 0 }}
+        transition={{ duration: 0.25, ease }}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: "90vw",
+          maxHeight: "85vh",
+          overflow: "hidden",
+        }}
+      >
+        {isVideo ? (
+          <video
+            src={src}
+            controls
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "85vh",
+              objectFit: "contain",
+              display: "block",
+            }}
+          />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt=""
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "85vh",
+              objectFit: "contain",
+              display: "block",
+            }}
+          />
+        )}
+      </motion.div>
+
+      {/* Counter */}
+      <span
+        style={{
+          position: "absolute",
+          bottom: 24,
+          left: "50%",
+          transform: "translateX(-50%)",
+          fontSize: "0.5rem",
+          letterSpacing: "0.15em",
+          color: "rgba(255,255,255,0.22)",
+          fontFamily: "var(--font-jetbrains-mono)",
+        }}
+      >
+        {idx + 1} / {all.length}
+      </span>
+    </motion.div>
   );
 }
 
-/* ─── Main ─── */
+/* ─── Masonry layout using CSS columns ─── */
 export default function GalleryClient({
   images,
   videos,
@@ -85,75 +253,13 @@ export default function GalleryClient({
   images: string[];
   videos: string[];
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const firstItemRef = useRef<HTMLDivElement>(null);
-  const copyHeightRef = useRef(0);
-  const resetLockRef = useRef(false);
-
   const all = shuffle([...images, ...videos]);
-  const n = all.length;
-
-  // Three different offsets so columns look independent
-  const r1 = Math.floor(n / 3);
-  const r2 = Math.floor((n * 2) / 3);
-  const col1 = all;
-  const col2 = [...all.slice(r1), ...all.slice(0, r1)];
-  const col3 = [...all.slice(r2), ...all.slice(0, r2)];
-
-  // Triple each column — seamless loop via scroll reset
-  const t1 = [...col1, ...col1, ...col1];
-  const t2 = [...col2, ...col2, ...col2];
-  const t3 = [...col3, ...col3, ...col3];
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    const fi = firstItemRef.current;
-    if (!el || !fi) return;
-
-    const measure = () => {
-      const h = fi.getBoundingClientRect().height;
-      if (h === 0) { requestAnimationFrame(measure); return; }
-      // Each copy = n items + (n-1) gaps
-      copyHeightRef.current = n * h + (n - 1) * GAP;
-      el.scrollTop = copyHeightRef.current;
-    };
-
-    const onScroll = () => {
-      if (resetLockRef.current) return;
-      const cH = copyHeightRef.current;
-      if (!cH) return;
-      const st = el.scrollTop;
-      if (st >= cH * 2) {
-        resetLockRef.current = true;
-        el.scrollTop = st - cH;
-        requestAnimationFrame(() => { resetLockRef.current = false; });
-      } else if (st < cH * 0.02) {
-        resetLockRef.current = true;
-        el.scrollTop = st + cH;
-        requestAnimationFrame(() => { resetLockRef.current = false; });
-      }
-    };
-
-    const onResize = () => {
-      const h = fi.getBoundingClientRect().height;
-      if (h === 0) return;
-      copyHeightRef.current = n * h + (n - 1) * GAP;
-      el.scrollTop = copyHeightRef.current;
-    };
-
-    requestAnimationFrame(measure);
-    window.addEventListener("resize", onResize, { passive: true });
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("resize", onResize);
-      el.removeEventListener("scroll", onScroll);
-    };
-  }, [n]);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   return (
-    <div style={{ height: "100svh", display: "flex", flexDirection: "column", paddingTop: 72 }}>
+    <div style={{ paddingTop: 72, minHeight: "100vh" }}>
       {/* Header */}
-      <div style={{ position: "relative", zIndex: 10, padding: "24px 28px 16px", flexShrink: 0 }}>
+      <div className="px-7 md:px-14" style={{ paddingTop: 48, paddingBottom: 24 }}>
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -195,61 +301,85 @@ export default function GalleryClient({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.6 }}
         >
-          {images.length} photos · {videos.length} videos · scroll to explore
+          {images.length} photos · {videos.length} videos · click to view
         </motion.p>
       </div>
 
-      {/* Scrollable columns — infinitely loop on user scroll */}
+      {/* Masonry grid */}
       <motion.div
-        ref={scrollRef}
-        className="gallery-scroll"
-        style={{ flex: 1, overflowY: "scroll", scrollbarWidth: "none" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        className="px-3 md:px-7 pb-16"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35, duration: 0.7 }}
+        style={{
+          columnCount: 2,
+          columnGap: 6,
+        }}
       >
-        <div style={{ display: "flex", gap: GAP, padding: `0 ${GAP}px ${GAP}px` }}>
-          {/* Column 1 — always visible */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: GAP }}>
-            {t1.map((src, i) => (
-              <GalleryItem
+        <style jsx>{`
+          @media (min-width: 640px) {
+            .masonry-grid {
+              column-count: 3 !important;
+            }
+          }
+          @media (min-width: 1024px) {
+            .masonry-grid {
+              column-count: 4 !important;
+            }
+          }
+        `}</style>
+        <div className="masonry-grid" style={{ columnCount: 2, columnGap: 6 }}>
+          {all.map((src, i) => {
+            const isVideo = /\.(mp4|webm|mov)$/i.test(
+              decodeURIComponent(src)
+            );
+            return (
+              <motion.div
                 key={i}
-                src={src}
-                isFirst={i === 0}
-                itemRef={firstItemRef}
-              />
-            ))}
-          </div>
-
-          {/* Column 2 — always visible */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: GAP }}>
-            {t2.map((src, i) => (
-              <GalleryItem key={i} src={src} />
-            ))}
-          </div>
-
-          {/* Column 3 — hidden on small mobile */}
-          <div className="hidden sm:flex" style={{ flex: 1, flexDirection: "column", gap: GAP }}>
-            {t3.map((src, i) => (
-              <GalleryItem key={i} src={src} />
-            ))}
-          </div>
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{ duration: 0.5, delay: (i % 8) * 0.03 }}
+                onClick={() => setLightboxIdx(i)}
+                style={{
+                  marginBottom: 6,
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  breakInside: "avoid",
+                  background: "#000510",
+                }}
+              >
+                {isVideo ? (
+                  <GalleryVideo src={src} />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={src}
+                    alt=""
+                    loading="lazy"
+                    style={{
+                      width: "100%",
+                      display: "block",
+                    }}
+                  />
+                )}
+              </motion.div>
+            );
+          })}
         </div>
       </motion.div>
 
-      {/* Top fade overlay so header blends into columns */}
-      <div
-        style={{
-          position: "fixed",
-          top: 72,
-          left: 0,
-          right: 0,
-          height: 120,
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%)",
-          pointerEvents: "none",
-          zIndex: 5,
-        }}
-      />
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxIdx !== null && (
+          <Lightbox
+            src={all[lightboxIdx]}
+            all={all}
+            onClose={() => setLightboxIdx(null)}
+            onNavigate={(idx) => setLightboxIdx(idx)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

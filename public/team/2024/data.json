@@ -48,7 +48,7 @@
       "label": "Honorary Members",
       "members": [
         { "name": "Bobba Dilip Reddy", "role": "Math Wizard", "img": "dilip.jpg", "instagram": "https://www.instagram.com/bobbadilipreddy/", "linkedin": "https://www.linkedin.com/in/dilip-reddy-bobba-459543333/", "email": "se23ucse038@mahindrauniversity.edu.in" },
-        { "name": "Madhav Basur", "role": "Maddy", "img": "/team/2023/madhav.png", "email": "se23ucam009@mahindrauniversity.edu.in" }
+        { "name": "Madhav Basur", "role": "Maddy", "img": "madhav.png", "email": "se23ucam009@mahindrauniversity.edu.in" }
       ]
     }
   ]

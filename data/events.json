@@ -1,0 +1,82 @@
+[
+  {
+    "id": "mcse-2025",
+    "year": 2025,
+    "date": "APR 5, 2025",
+    "title": "MCSE",
+    "full": "Math Club Stock Exchange",
+    "location": "mcse.in",
+    "desc": "The flagship event of MathSoc and the showstopper of MU's first-ever techfest, AEON. A full-scale stock market simulation where MU clubs acted as companies — participants traded shares based on live news, IPOs, and real-time market shifts.",
+    "tag": "Competition"
+  },
+  {
+    "id": "speed-trading-2025",
+    "year": 2025,
+    "date": "MAR 19, 2025",
+    "title": "Speed Trading",
+    "full": "Speed Trading",
+    "location": "ECR-5",
+    "desc": "A teaser for MCSE. Participants reacted to rapid news updates and made quick investment choices with virtual money — testing analytical thinking, foresight, and risk-taking in a timed, intense format.",
+    "tag": "Competition"
+  },
+  {
+    "id": "proof-by-deceit-2-2025",
+    "year": 2025,
+    "date": "FEB 5, 2025",
+    "title": "Proof by Deceit 2.0",
+    "full": "Proof by Deceit 2.0",
+    "location": "ECR-4",
+    "desc": "Teams tackled absurd mathematical statements using logic, creativity, and custom super-axioms. Fast-paced rounds with intense debates — one team proves, the other disproves, judges score on wordplay, arguments, and the elegance of the proof.",
+    "tag": "Competition"
+  },
+  {
+    "id": "subject-group-primer-2024",
+    "year": 2024,
+    "date": "NOV 13, 2024",
+    "title": "Subject Group Primer",
+    "full": "Subject Group Primer",
+    "location": "ECR-2",
+    "desc": "Introductory sessions on Data Science & ML, Cryptography, and Financial Mathematics. Designed to plant interest, recruit bright minds, and set the stage for the society's specialized research groups.",
+    "tag": "Academic"
+  },
+  {
+    "id": "eulers-quest-2024",
+    "year": 2024,
+    "date": "SEP 24, 2024",
+    "title": "Euler's Quest",
+    "full": "Euler's Quest — Treasure Hunt",
+    "location": "Campus-wide",
+    "desc": "A campus treasure hunt combining cryptic clues, calculus puzzles, and map coordinates. Teams competed for a ₹10,000 prize pool, navigating an Euler line hidden across campus landmarks.",
+    "tag": "Orientation"
+  },
+  {
+    "id": "pi-day-2024",
+    "year": 2024,
+    "date": "MAR 12, 2024",
+    "title": "Pi Day '23",
+    "full": "Pi Day Celebration",
+    "location": "ELT-2",
+    "desc": "A three-day celebration featuring a Pi Recitation Challenge (100+ digits!), a tabletop RPG where players embodied famous mathematicians, and a presentation on Pi approximation methods judged by the Department HOD.",
+    "tag": "Competition"
+  },
+  {
+    "id": "proof-by-deceit-1-2024",
+    "year": 2024,
+    "date": "FEB 14, 2024",
+    "title": "Proof by Deceit 1.0",
+    "full": "Proof by Deceit 1.0",
+    "location": "ECR-1",
+    "desc": "Four rounds of deception and deduction. Teams used ultraxioms — special axioms irrespective of truth — to prove or disprove absurd mathematical statements. A blend of logic, philosophy, and strategy.",
+    "tag": "Competition"
+  },
+  {
+    "id": "iotas-quest-2023",
+    "year": 2023,
+    "date": "OCT 3, 2023",
+    "title": "Iota's Quest",
+    "full": "Iota's Quest — Orientation",
+    "location": "Campus-wide",
+    "desc": "The founding orientation of MathSoc: a three-day treasure hunt with origami puzzles, calculus clues, and Desmos challenges. 47 teams. A final hidden reveal at the orientation. The beginning of it all.",
+    "tag": "Orientation"
+  }
+]

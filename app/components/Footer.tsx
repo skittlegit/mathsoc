@@ -174,7 +174,7 @@ export default function Footer() {
                 src="/mathsoclogowhite.png"
                 alt="MathSoc"
                 fill
-                style={{ objectFit: "contain" }}
+                style={{ objectFit: "contain", opacity: 0.15 }}
               />
             </div>
             <span
