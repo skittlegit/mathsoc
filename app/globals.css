@@ -114,3 +114,13 @@ input[type=number] {
 .link-underline:hover::after {
   width: 100%;
 }
+
+/* ── Skeleton pulse for loading states ── */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.skeleton-pulse {
+  animation: skeletonPulse 1.8s ease-in-out infinite;
+}

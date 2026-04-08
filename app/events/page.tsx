@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import EventsClient from "./EventsClient";
+import EventsClient, { EventsSkeleton } from "./EventsClient";
 import type { EventItem } from "@/lib/types";
 
 function toEventItem(doc: { id: string; [key: string]: unknown }): EventItem {
@@ -46,8 +46,7 @@ function toEventItem(doc: { id: string; [key: string]: unknown }): EventItem {
 }
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<EventItem[] | null>(null);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -61,39 +60,12 @@ export default function EventsPage() {
         setEvents(list);
       } catch (error) {
         console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
+        setEvents([]);
       }
     }
     fetchEvents();
   }, []);
 
-  if (loading) {
-    return (
-      <div
-        className="pt-32 md:pt-44 pb-24 flex items-center justify-center"
-        style={{ minHeight: "60vh" }}
-      >
-        <div
-          style={{
-            width: 24,
-            height: 24,
-            border: "2px solid rgba(255,255,255,0.1)",
-            borderTop: "2px solid rgba(255,255,255,0.5)",
-            borderRadius: "50%",
-            animation: "spin 0.8s linear infinite",
-          }}
-        />
-        <style jsx>{`
-          @keyframes spin {
-            to {
-              transform: rotate(360deg);
-            }
-          }
-        `}</style>
-      </div>
-    );
-  }
-
+  if (events === null) return <EventsSkeleton />;
   return <EventsClient events={events} />;
 }

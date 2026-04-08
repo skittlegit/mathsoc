@@ -8,95 +8,371 @@ import type { EventItem } from "@/lib/types";
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FILTERS = ["All", "Competition", "Academic", "Orientation"];
 
-function EventRow({ ev, index }: { ev: EventItem; index: number }) {
+/* ── Featured card — big hero image ── */
+function FeaturedCard({ ev }: { ev: EventItem }) {
   return (
-    <Link href={`/events/${ev.slug}`} className="block">
-    <motion.div
-      initial={{ opacity: 0, x: -24 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.45, delay: index * 0.04, ease }}
-      whileHover={{ x: 8, backgroundColor: "rgba(255,255,255,0.012)" }}
-      className="group flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-8 py-8 cursor-pointer"
-      style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
-    >
-      <div className="shrink-0 w-36">
-        <p
-          className="font-semibold mb-1"
-          style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.65)" }}
-        >
-          {ev.date}
-        </p>
-        <p
-          style={{
-            fontSize: "0.62rem",
-            color: "rgba(255,255,255,0.5)",
-            letterSpacing: "0.1em",
-            fontFamily: "var(--font-jetbrains-mono)",
-          }}
-        >
-          {ev.location}
-        </p>
-      </div>
-
-      <div className="flex-1">
-        <div className="flex items-center gap-3 mb-2 flex-wrap">
-          <h3
-            className="font-semibold group-hover:text-white transition-colors duration-300"
+    <Link href={`/events/${ev.slug}`} className="block group">
+      <motion.article
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease }}
+      >
+        {ev.photo && (
+          <div
             style={{
-              fontSize: "1.1rem",
-              color: "rgba(255,255,255,0.82)",
+              width: "100%",
+              aspectRatio: "16/9",
+              overflow: "hidden",
+              background: "rgba(255,255,255,0.02)",
+              borderRadius: 2,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={ev.photo}
+              alt={ev.full}
+              loading="eager"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
+              }}
+              className="group-hover:scale-[1.03]"
+            />
+          </div>
+        )}
+
+        <div style={{ marginTop: 20 }}>
+          <div className="flex items-center gap-3 mb-3 flex-wrap">
+            <span
+              style={{
+                fontSize: "0.7rem",
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.55)",
+              }}
+            >
+              {ev.date}
+            </span>
+            <span
+              style={{
+                width: 3,
+                height: 3,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.15)",
+                display: "inline-block",
+              }}
+            />
+            <span
+              style={{
+                fontSize: "0.6rem",
+                color: "rgba(255,255,255,0.4)",
+                fontFamily: "var(--font-jetbrains-mono)",
+                letterSpacing: "0.08em",
+              }}
+            >
+              {ev.location}
+            </span>
+            <span
+              style={{
+                fontSize: "0.44rem",
+                letterSpacing: "0.15em",
+                color: "rgba(255,255,255,0.4)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                padding: "2px 8px",
+                textTransform: "uppercase",
+              }}
+            >
+              {ev.tag}
+            </span>
+          </div>
+
+          <h2
+            className="font-bold group-hover:text-white transition-colors duration-300"
+            style={{
+              fontSize: "clamp(1.6rem, 4vw, 2.8rem)",
               letterSpacing: "-0.01em",
+              lineHeight: 1.05,
+              color: "rgba(255,255,255,0.88)",
+              marginBottom: 12,
             }}
           >
             {ev.full}
-          </h3>
-          <span
+          </h2>
+
+          <p
             style={{
-              fontSize: "0.48rem",
-              letterSpacing: "0.15em",
+              fontSize: "0.9rem",
               color: "rgba(255,255,255,0.5)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              padding: "2px 8px",
-              textTransform: "uppercase",
+              lineHeight: 1.7,
+              maxWidth: 640,
             }}
           >
-            {ev.tag}
-          </span>
+            {ev.desc && ev.desc.length > 180
+              ? ev.desc.slice(0, 180).trim() + "…"
+              : ev.desc}
+          </p>
         </div>
-        <p
-          style={{
-            fontSize: "0.88rem",
-            color: "rgba(255,255,255,0.65)",
-            lineHeight: 1.75,
-          }}
-        >
-          {ev.desc}
-        </p>
-      </div>
-
-      {ev.photo && (
-        <div className="shrink-0 hidden sm:block" style={{ width: 72, height: 54, overflow: "hidden", flexShrink: 0 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ev.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        </div>
-      )}
-      <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M3 8h10M8 3l5 5-5 5"
-            stroke="rgba(255,255,255,0.25)"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-    </motion.div>
+      </motion.article>
     </Link>
   );
 }
 
+/* ── Compact event card with image ── */
+function EventCard({ ev, index }: { ev: EventItem; index: number }) {
+  return (
+    <Link href={`/events/${ev.slug}`} className="block group">
+      <motion.article
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.4,
+          delay: Math.min(index * 0.05, 0.3),
+          ease,
+        }}
+      >
+        {ev.photo && (
+          <div
+            style={{
+              width: "100%",
+              aspectRatio: "3/2",
+              overflow: "hidden",
+              background: "rgba(255,255,255,0.02)",
+              borderRadius: 2,
+              marginBottom: 14,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={ev.photo}
+              alt={ev.full}
+              loading="lazy"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
+              }}
+              className="group-hover:scale-[1.03]"
+            />
+          </div>
+        )}
+
+        {!ev.photo && (
+          <div
+            style={{
+              borderTop: "1px solid rgba(255,255,255,0.06)",
+              paddingTop: 14,
+              marginBottom: 14,
+            }}
+          />
+        )}
+
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <span
+            style={{
+              fontSize: "0.62rem",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.5)",
+            }}
+          >
+            {ev.date}
+          </span>
+          <span
+            style={{
+              width: 2,
+              height: 2,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.15)",
+              display: "inline-block",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "0.52rem",
+              color: "rgba(255,255,255,0.35)",
+              fontFamily: "var(--font-jetbrains-mono)",
+              letterSpacing: "0.08em",
+            }}
+          >
+            {ev.location}
+          </span>
+        </div>
+
+        <h3
+          className="font-semibold group-hover:text-white transition-colors duration-300"
+          style={{
+            fontSize: "1.05rem",
+            color: "rgba(255,255,255,0.82)",
+            letterSpacing: "-0.01em",
+            lineHeight: 1.2,
+            marginBottom: 6,
+          }}
+        >
+          {ev.full}
+        </h3>
+
+        <p
+          style={{
+            fontSize: "0.8rem",
+            color: "rgba(255,255,255,0.42)",
+            lineHeight: 1.65,
+          }}
+        >
+          {ev.desc && ev.desc.length > 120
+            ? ev.desc.slice(0, 120).trim() + "…"
+            : ev.desc}
+        </p>
+      </motion.article>
+    </Link>
+  );
+}
+
+/* ── Skeleton placeholders ── */
+function SkeletonFeatured() {
+  return (
+    <div style={{ marginBottom: 56 }}>
+      <div
+        className="skeleton-pulse"
+        style={{
+          width: "100%",
+          aspectRatio: "16/9",
+          background: "rgba(255,255,255,0.03)",
+          borderRadius: 2,
+        }}
+      />
+      <div style={{ marginTop: 20 }}>
+        <div
+          className="skeleton-pulse"
+          style={{
+            width: 180,
+            height: 10,
+            background: "rgba(255,255,255,0.04)",
+            borderRadius: 2,
+            marginBottom: 14,
+          }}
+        />
+        <div
+          className="skeleton-pulse"
+          style={{
+            width: "60%",
+            height: 28,
+            background: "rgba(255,255,255,0.04)",
+            borderRadius: 2,
+            marginBottom: 10,
+          }}
+        />
+        <div
+          className="skeleton-pulse"
+          style={{
+            width: "80%",
+            height: 12,
+            background: "rgba(255,255,255,0.03)",
+            borderRadius: 2,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div>
+      <div
+        className="skeleton-pulse"
+        style={{
+          width: "100%",
+          aspectRatio: "3/2",
+          background: "rgba(255,255,255,0.03)",
+          borderRadius: 2,
+          marginBottom: 14,
+        }}
+      />
+      <div
+        className="skeleton-pulse"
+        style={{
+          width: 120,
+          height: 8,
+          background: "rgba(255,255,255,0.04)",
+          borderRadius: 2,
+          marginBottom: 10,
+        }}
+      />
+      <div
+        className="skeleton-pulse"
+        style={{
+          width: "75%",
+          height: 14,
+          background: "rgba(255,255,255,0.04)",
+          borderRadius: 2,
+          marginBottom: 8,
+        }}
+      />
+      <div
+        className="skeleton-pulse"
+        style={{
+          width: "90%",
+          height: 10,
+          background: "rgba(255,255,255,0.03)",
+          borderRadius: 2,
+        }}
+      />
+    </div>
+  );
+}
+
+export function EventsSkeleton() {
+  return (
+    <div className="pt-32 md:pt-44 pb-24">
+      <div className="px-7 md:px-14 max-w-6xl mx-auto mb-16">
+        <div
+          className="skeleton-pulse"
+          style={{
+            width: 200,
+            height: 8,
+            background: "rgba(255,255,255,0.04)",
+            borderRadius: 2,
+            marginBottom: 24,
+          }}
+        />
+        <div
+          className="skeleton-pulse"
+          style={{
+            width: "50%",
+            height: 64,
+            background: "rgba(255,255,255,0.03)",
+            borderRadius: 2,
+          }}
+        />
+      </div>
+      <div className="px-7 md:px-14 max-w-6xl mx-auto">
+        <SkeletonFeatured />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: 32,
+          }}
+        >
+          {[1, 2, 3, 4].map((i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+      <style jsx>{`
+        @keyframes skeletonPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/* ── Main ── */
 export default function EventsClient({ events }: { events: EventItem[] }) {
   const [activeFilter, setActiveFilter] = useState("All");
 
@@ -105,10 +381,13 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
       ? events
       : events.filter((e) => e.tag === activeFilter);
 
-  const years = [...new Set(events.map((e) => e.year))].sort((a, b) => b - a);
+  const years = [...new Set(filtered.map((e) => e.year))].sort(
+    (a, b) => b - a
+  );
 
   return (
     <div className="pt-32 md:pt-44 pb-24">
+      {/* Header */}
       <div className="px-7 md:px-14 max-w-6xl mx-auto mb-16">
         <motion.span
           initial={{ opacity: 0, x: -20 }}
@@ -140,6 +419,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
         </motion.h1>
       </div>
 
+      {/* Filters */}
       <div className="px-7 md:px-14 max-w-6xl mx-auto mb-10">
         <motion.div
           className="flex flex-wrap items-center gap-3"
@@ -185,6 +465,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
         </motion.div>
       </div>
 
+      {/* Event grid by year */}
       <div className="px-7 md:px-14 max-w-6xl mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
@@ -192,22 +473,41 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.2 }}
           >
+            {filtered.length === 0 && (
+              <p
+                style={{
+                  color: "rgba(255,255,255,0.3)",
+                  fontSize: "0.9rem",
+                  paddingTop: 40,
+                }}
+              >
+                No events found.
+              </p>
+            )}
+
             {years.map((year) => {
               const yearEvents = filtered.filter((e) => e.year === year);
               if (yearEvents.length === 0) return null;
+
+              const [featured, ...rest] = yearEvents;
+
               return (
-                <div key={year} className="mb-16">
+                <div key={year} style={{ marginBottom: 72 }}>
+                  {/* Year label */}
                   <div
-                    className="flex items-center gap-6 mb-4 pt-4"
-                    style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
+                    style={{
+                      borderTop: "1px solid rgba(255,255,255,0.04)",
+                      paddingTop: 16,
+                      marginBottom: 32,
+                    }}
                   >
                     <span
                       className="font-bold"
                       style={{
-                        fontSize: "clamp(3rem, 8vw, 6rem)",
-                        color: "rgba(255,255,255,0.03)",
+                        fontSize: "clamp(2.5rem, 6vw, 5rem)",
+                        color: "rgba(255,255,255,0.04)",
                         letterSpacing: "0.1em",
                         lineHeight: 1,
                       }}
@@ -215,9 +515,28 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                       {year}
                     </span>
                   </div>
-                  {yearEvents.map((ev, i) => (
-                    <EventRow key={ev.id} ev={ev} index={i} />
-                  ))}
+
+                  {/* Featured event — full width */}
+                  <div style={{ marginBottom: rest.length > 0 ? 40 : 0 }}>
+                    <FeaturedCard ev={featured} />
+                  </div>
+
+                  {/* Remaining events in grid */}
+                  {rest.length > 0 && (
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns:
+                          "repeat(auto-fill, minmax(280px, 1fr))",
+                        gap: 32,
+                        marginTop: 8,
+                      }}
+                    >
+                      {rest.map((ev, i) => (
+                        <EventCard key={ev.id} ev={ev} index={i} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}

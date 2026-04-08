@@ -52,6 +52,82 @@ function toEventItem(doc: { id: string; [key: string]: unknown }): EventItem {
   };
 }
 
+function DetailSkeleton() {
+  return (
+    <div style={{ minHeight: "100vh", paddingBottom: 100 }}>
+      <div
+        className="skeleton-pulse"
+        style={{
+          width: "100%",
+          aspectRatio: "21/9",
+          minHeight: 280,
+          maxHeight: 520,
+          background: "rgba(255,255,255,0.03)",
+        }}
+      />
+      <div className="px-7 md:px-14 max-w-6xl mx-auto" style={{ marginTop: 32 }}>
+        <div
+          className="skeleton-pulse"
+          style={{
+            width: "70%",
+            height: 48,
+            background: "rgba(255,255,255,0.04)",
+            borderRadius: 2,
+            marginBottom: 24,
+          }}
+        />
+        <div className="flex gap-3 mb-12">
+          <div
+            className="skeleton-pulse"
+            style={{
+              width: 100,
+              height: 12,
+              background: "rgba(255,255,255,0.04)",
+              borderRadius: 2,
+            }}
+          />
+          <div
+            className="skeleton-pulse"
+            style={{
+              width: 80,
+              height: 12,
+              background: "rgba(255,255,255,0.03)",
+              borderRadius: 2,
+            }}
+          />
+        </div>
+        <div
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            paddingTop: 40,
+            maxWidth: 680,
+          }}
+        >
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="skeleton-pulse"
+              style={{
+                width: `${90 - i * 10}%`,
+                height: 12,
+                background: "rgba(255,255,255,0.03)",
+                borderRadius: 2,
+                marginBottom: 18,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      <style jsx>{`
+        @keyframes skeletonPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function EventDetailPage() {
   const params = useParams();
   const slug = params?.id as string;
@@ -84,32 +160,7 @@ export default function EventDetailPage() {
     if (slug) fetchEvent();
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div
-        className="pt-32 md:pt-44 pb-24 flex items-center justify-center"
-        style={{ minHeight: "60vh" }}
-      >
-        <div
-          style={{
-            width: 24,
-            height: 24,
-            border: "2px solid rgba(255,255,255,0.1)",
-            borderTop: "2px solid rgba(255,255,255,0.5)",
-            borderRadius: "50%",
-            animation: "spin 0.8s linear infinite",
-          }}
-        />
-        <style jsx>{`
-          @keyframes spin {
-            to {
-              transform: rotate(360deg);
-            }
-          }
-        `}</style>
-      </div>
-    );
-  }
+  if (loading) return <DetailSkeleton />;
 
   if (notFound || !event) {
     return (
