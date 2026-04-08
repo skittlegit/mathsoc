@@ -1,4 +1,4 @@
-import { readdirSync } from "fs";
+import { readdirSync, readFileSync } from "fs";
 import { join } from "path";
 import sizeOf from "image-size";
 import GalleryClient from "./GalleryClient";
@@ -17,7 +17,8 @@ export default function GalleryPage() {
       .map((f) => {
         let w = 4, h = 3;
         try {
-          const dim = sizeOf(join(imgDir, f));
+          const buf = readFileSync(join(imgDir, f));
+          const dim = sizeOf(buf);
           if (dim.width && dim.height) { w = dim.width; h = dim.height; }
         } catch { /* use fallback ratio */ }
         return { src: `/images/gallery/${encodeURIComponent(f)}`, w, h };
