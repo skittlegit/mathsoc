@@ -8,6 +8,8 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  /* Matches ambient gradient + Safari browser-chrome theme-color */
+  background: radial-gradient(ellipse 35% 38% at 0% 0%, #001358 0%, #000922 30%, #000 65%);
   background-color: #000922;
 }
 

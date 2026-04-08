@@ -48,22 +48,80 @@ const emptyEvent: EventItem = {
   gallery: [],
 };
 
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+type SaveStatus = "idle" | "saving" | "saved" | "error";
+
+/* ─────────────────────────────────────────────────
+   Shared style atoms
+───────────────────────────────────────────────── */
+const inputBase: React.CSSProperties = {
+  width: "100%",
+  padding: "10px 14px",
+  fontSize: "0.85rem",
+  background: "rgba(255,255,255,0.04)",
+  border: "1px solid rgba(255,255,255,0.09)",
+  borderRadius: "4px",
+  color: "rgba(255,255,255,0.88)",
+  outline: "none",
+  fontFamily: "var(--font-space-grotesk)",
+  transition: "border-color 0.15s",
+};
+
+const lbl: React.CSSProperties = {
+  display: "block",
+  fontSize: "0.52rem",
+  letterSpacing: "0.2em",
+  textTransform: "uppercase",
+  color: "rgba(255,255,255,0.38)",
+  marginBottom: "7px",
+  fontFamily: "var(--font-space-grotesk)",
+};
+
+function SectionDivider({ title }: { title: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "28px 0 18px" }}>
+      <span style={{ ...lbl, margin: 0, whiteSpace: "nowrap" }}>{title}</span>
+      <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   Main Component
+───────────────────────────────────────────────── */
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
+
   const [events, setEvents] = useState<EventItem[]>([]);
   const [form, setForm] = useState<EventItem>({ ...emptyEvent });
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [saveError, setSaveError] = useState("");
+  const [lastSavedId, setLastSavedId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
+
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const cropContainerRef = useRef<HTMLDivElement>(null);
+  const formTopRef = useRef<HTMLDivElement>(null);
 
+  /* Drag-to-crop — use ref to avoid stale closures during rapid pointer moves */
+  const dragRef = useRef({
+    active: false,
+    startX: 0,
+    startY: 0,
+    startPosX: 50,
+    startPosY: 50,
+  });
+
+  /* ── File upload helper ── */
   const uploadFile = async (file: File): Promise<string> => {
     const ext = file.name.split(".").pop() || "jpg";
     const path = `event_images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
@@ -76,11 +134,7 @@ export default function AdminPage() {
     });
   };
 
-  const showToast = (msg: string, type: "ok" | "err" = "ok") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
+  /* ── Fetch events ── */
   const fetchEvents = useCallback(async () => {
     try {
       const q = query(collection(db, "events"), orderBy("date", "desc"));
@@ -93,7 +147,9 @@ export default function AdminPage() {
         let year = new Date().getFullYear();
         if (rawDate && typeof rawDate === "object" && "toDate" in rawDate) {
           const dt = (rawDate as { toDate: () => Date }).toDate();
-          dateStr = dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase();
+          dateStr = dt
+            .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+            .toUpperCase();
           year = dt.getFullYear();
         } else if (typeof rawDate === "string") {
           dateStr = rawDate;
@@ -117,7 +173,7 @@ export default function AdminPage() {
       });
       setEvents(list);
     } catch {
-      showToast("Failed to load events", "err");
+      setSaveError("Failed to load events");
     } finally {
       setLoading(false);
     }
@@ -127,9 +183,11 @@ export default function AdminPage() {
     fetchEvents();
   }, [fetchEvents]);
 
+  /* ── Submit / save ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
+    setSaveStatus("saving");
+    setSaveError("");
 
     try {
       const slug =
@@ -140,7 +198,7 @@ export default function AdminPage() {
         "-" +
         form.year;
 
-      const firestoreData = {
+      const payload = {
         title: form.full || form.title,
         summary: form.desc,
         content: form.content || form.desc,
@@ -153,72 +211,94 @@ export default function AdminPage() {
         additionalImageUrls: Array.isArray(form.gallery) ? form.gallery : [],
       };
 
+      let savedId = form.id;
       if (editing && form.id) {
-        await updateDoc(doc(db, "events", form.id), firestoreData);
+        await updateDoc(doc(db, "events", form.id), payload);
       } else {
-        await addDoc(collection(db, "events"), {
-          ...firestoreData,
+        const docRef = await addDoc(collection(db, "events"), {
+          ...payload,
           createdAt: serverTimestamp(),
         });
+        savedId = docRef.id;
       }
 
-      showToast(editing ? "Event updated" : "Event created");
+      setSaveStatus("saved");
+      setLastSavedId(savedId || null);
+      setTimeout(() => setSaveStatus("idle"), 3500);
+      setTimeout(() => setLastSavedId(null), 6000);
+
       setForm({ ...emptyEvent });
       setEditing(false);
       await fetchEvents();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "Save failed", "err");
-    } finally {
-      setSaving(false);
+      setSaveStatus("error");
+      setSaveError(err instanceof Error ? err.message : "Save failed");
+      setTimeout(() => setSaveStatus("idle"), 4000);
     }
   };
 
   const startEdit = (ev: EventItem) => {
     setForm({ ...ev, gallery: ev.gallery ?? [] });
     setEditing(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSaveStatus("idle");
+    setSaveError("");
+    setTimeout(
+      () => formTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      50
+    );
   };
 
   const cancelEdit = () => {
     setForm({ ...emptyEvent });
     setEditing(false);
+    setSaveStatus("idle");
+    setSaveError("");
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteDoc(doc(db, "events", id));
-      showToast("Event deleted");
       setDeleteConfirm(null);
       if (form.id === id) cancelEdit();
       await fetchEvents();
     } catch {
-      showToast("Delete failed", "err");
+      setSaveError("Delete failed");
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 14px",
-    fontSize: "0.85rem",
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)",
-    borderRadius: "4px",
-    color: "rgba(255,255,255,0.85)",
-    outline: "none",
-    fontFamily: "var(--font-space-grotesk)",
-    transition: "border-color 0.2s",
+  /* ── Drag-to-crop handlers (React synthetic events + pointer capture) ── */
+  const handleCropDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    e.currentTarget.style.cursor = "grabbing";
+    const parts = (form.photoPosition || "50% 50%").split(" ");
+    dragRef.current = {
+      active: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      startPosX: parseFloat(parts[0]) || 50,
+      startPosY: parseFloat(parts[1]) || 50,
+    };
   };
 
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    fontSize: "0.6rem",
-    letterSpacing: "0.15em",
-    textTransform: "uppercase",
-    color: "rgba(255,255,255,0.3)",
-    marginBottom: "6px",
+  const handleCropMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.active || !cropContainerRef.current) return;
+    const { startX, startY, startPosX, startPosY } = dragRef.current;
+    const w = cropContainerRef.current.clientWidth;
+    const h = cropContainerRef.current.clientHeight;
+    /* Sensitivity: dragging full frame width ≈ 150% of 0-100 range */
+    const newX = clamp(startPosX - ((e.clientX - startX) / w) * 150, 0, 100);
+    const newY = clamp(startPosY - ((e.clientY - startY) / h) * 150, 0, 100);
+    setForm((f) => ({ ...f, photoPosition: `${Math.round(newX)}% ${Math.round(newY)}%` }));
   };
 
-  /* ─── Password gate ─── */
+  const handleCropUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragRef.current.active = false;
+    e.currentTarget.style.cursor = "grab";
+  };
+
+  /* ─────────────────────────────────────────────────
+     PASSWORD GATE
+  ───────────────────────────────────────────────── */
   if (!authed) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-7">
@@ -227,7 +307,7 @@ export default function AdminPage() {
             fontSize: "0.5rem",
             letterSpacing: "0.4em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.18)",
+            color: "rgba(255,255,255,0.3)",
             marginBottom: 32,
             display: "block",
           }}
@@ -235,12 +315,15 @@ export default function AdminPage() {
           Admin Panel
         </span>
         <div style={{ width: "100%", maxWidth: 340 }}>
-          <label style={labelStyle}>Password</label>
+          <label style={lbl}>Password</label>
           <input
             type="password"
             value={pwdInput}
             autoFocus
-            onChange={(e) => { setPwdInput(e.target.value); setPwdError(false); }}
+            onChange={(e) => {
+              setPwdInput(e.target.value);
+              setPwdError(false);
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 if (pwdInput === "geometrystinks") setAuthed(true);
@@ -248,8 +331,8 @@ export default function AdminPage() {
               }
             }}
             style={{
-              ...inputStyle,
-              borderColor: pwdError ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.08)",
+              ...inputBase,
+              borderColor: pwdError ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.09)",
             }}
             placeholder="Enter password"
           />
@@ -286,438 +369,502 @@ export default function AdminPage() {
     );
   }
 
-  return (
-    <div className="pt-32 md:pt-44 pb-24">
-      <div className="px-7 md:px-14 max-w-4xl mx-auto">
-        {/* Header */}
-        <span
-          style={{
-            fontSize: "0.56rem",
-            letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.2)",
-            textTransform: "uppercase",
-          }}
-        >
-          Admin Panel
-        </span>
-        <h1
-          className="font-bold uppercase mt-4 mb-12"
-          style={{
-            fontSize: "clamp(2.5rem, 8vw, 5rem)",
-            letterSpacing: "0.15em",
-            color: "rgba(255,255,255,0.9)",
-            lineHeight: 0.95,
-          }}
-        >
-          Events
-        </h1>
+  /* ─────────────────────────────────────────────────
+     MAIN ADMIN PANEL
+  ───────────────────────────────────────────────── */
+  const saveBtnStyle: React.CSSProperties =
+    saveStatus === "saved"
+      ? { background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.35)", color: "rgb(134,239,172)" }
+      : saveStatus === "error"
+      ? { background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "rgb(252,165,165)" }
+      : { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.85)" };
 
-        {/* Toast */}
-        {toast && (
-          <div
+  return (
+    <div className="pt-28 md:pt-36 pb-28">
+      <div className="px-5 md:px-14 max-w-5xl mx-auto">
+
+        {/* ── Page Header ── */}
+        <div ref={formTopRef} style={{ marginBottom: 36 }}>
+          <span
             style={{
-              position: "fixed",
-              top: 24,
-              right: 24,
-              zIndex: 100,
-              padding: "12px 20px",
-              borderRadius: "4px",
-              fontSize: "0.8rem",
-              background: toast.type === "ok" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)",
-              border: `1px solid ${toast.type === "ok" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
-              color: toast.type === "ok" ? "rgb(134,239,172)" : "rgb(252,165,165)",
+              fontSize: "0.5rem",
+              letterSpacing: "0.4em",
+              color: "rgba(255,255,255,0.3)",
+              textTransform: "uppercase",
             }}
           >
-            {toast.msg}
-          </div>
-        )}
+            Admin Panel
+          </span>
+          <h1
+            className="font-bold uppercase mt-3"
+            style={{
+              fontSize: "clamp(2.2rem, 7vw, 4rem)",
+              letterSpacing: "0.12em",
+              color: "rgba(255,255,255,0.9)",
+              lineHeight: 0.95,
+            }}
+          >
+            Events
+          </h1>
+        </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} style={{ marginBottom: 48 }}>
+        {/* ══════════════════ FORM ══════════════════ */}
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            padding: "28px",
+            border: `1px solid ${editing ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
+            borderRadius: "8px",
+            background: editing ? "rgba(255,255,255,0.022)" : "rgba(255,255,255,0.012)",
+            marginBottom: 44,
+            transition: "border-color 0.3s, background 0.3s",
+          }}
+        >
+          {/* Form title row */}
           <div
             style={{
-              padding: "28px",
-              border: "1px solid rgba(255,255,255,0.06)",
-              borderRadius: "6px",
-              background: "rgba(255,255,255,0.015)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 4,
             }}
           >
             <h2
               style={{
-                fontSize: "0.9rem",
+                fontSize: "0.88rem",
                 fontWeight: 600,
-                color: "rgba(255,255,255,0.7)",
-                marginBottom: 24,
-                letterSpacing: "0.02em",
+                color: editing ? "rgba(255,255,255,0.82)" : "rgba(255,255,255,0.5)",
+                letterSpacing: "0.03em",
+                margin: 0,
               }}
             >
-              {editing ? "Edit Event" : "New Event"}
+              {editing ? `Editing — ${form.full || form.title || "event"}` : "New Event"}
             </h2>
+            {editing && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                style={{
+                  fontSize: "0.55rem",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  background: "none",
+                  border: "none",
+                  color: "rgba(255,255,255,0.28)",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-space-grotesk)",
+                }}
+              >
+                Cancel ×
+              </button>
+            )}
+          </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-              <div>
-                <label style={labelStyle}>Title (short)</label>
-                <input
-                  style={inputStyle}
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. MCSE"
-                  required
-                />
-              </div>
-              <div>
-                <label style={labelStyle}>Full Title</label>
-                <input
-                  style={inputStyle}
-                  value={form.full}
-                  onChange={(e) => setForm({ ...form, full: e.target.value })}
-                  placeholder="e.g. Math Club Stock Exchange"
-                  required
-                />
-              </div>
-            </div>
+          {/* ── Details ── */}
+          <SectionDivider title="Event Details" />
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-              <div>
-                <label style={labelStyle}>Date</label>
-                <input
-                  style={inputStyle}
-                  value={form.date}
-                  onChange={(e) => setForm({ ...form, date: e.target.value })}
-                  placeholder="e.g. APR 5, 2025"
-                  required
-                />
-              </div>
-              <div>
-                <label style={labelStyle}>Year</label>
-                <input
-                  style={inputStyle}
-                  type="number"
-                  value={form.year}
-                  onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
-                  min={2020}
-                  max={2099}
-                  required
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <label style={labelStyle}>Tag</label>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingTop: 4 }}>
-                {TAGS.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setForm({ ...form, tag: t })}
-                    style={{
-                      padding: "8px 18px",
-                      fontSize: "0.62rem",
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      borderRadius: "3px",
-                      border: "1px solid",
-                      borderColor: form.tag === t ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.08)",
-                      background: form.tag === t ? "rgba(255,255,255,0.1)" : "transparent",
-                      color: form.tag === t ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.3)",
-                      cursor: "pointer",
-                      fontFamily: "var(--font-space-grotesk)",
-                      transition: "all 0.15s",
-                    }}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <label style={labelStyle}>Location</label>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}
+          >
+            <div>
+              <label style={lbl}>Short Title</label>
               <input
-                style={inputStyle}
+                style={inputBase}
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="e.g. MCSE"
+                required
+              />
+            </div>
+            <div>
+              <label style={lbl}>Full Title</label>
+              <input
+                style={inputBase}
+                value={form.full}
+                onChange={(e) => setForm({ ...form, full: e.target.value })}
+                placeholder="e.g. Math Club Stock Exchange"
+                required
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 14,
+              marginBottom: 14,
+            }}
+          >
+            <div>
+              <label style={lbl}>Date</label>
+              <input
+                style={inputBase}
+                value={form.date}
+                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                placeholder="APR 5, 2025"
+                required
+              />
+            </div>
+            <div>
+              <label style={lbl}>Year</label>
+              <input
+                style={inputBase}
+                type="number"
+                value={form.year}
+                onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
+                min={2020}
+                max={2099}
+                required
+              />
+            </div>
+            <div>
+              <label style={lbl}>Location</label>
+              <input
+                style={inputBase}
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
                 placeholder="e.g. ECR-5"
                 required
               />
             </div>
+          </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <label style={labelStyle}>Description</label>
-              <textarea
-                style={{ ...inputStyle, minHeight: 100, resize: "vertical" }}
-                value={form.desc}
-                onChange={(e) => setForm({ ...form, desc: e.target.value })}
-                placeholder="Event description..."
-                required
-              />
-            </div>
-
-            <div style={{ marginBottom: 16 }}>
-              <label style={labelStyle}>Cover Photo (optional)</label>
-              {/* File upload */}
-              <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8 }}>
+          <div style={{ marginBottom: 14 }}>
+            <label style={lbl}>Category</label>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingTop: 4 }}>
+              {TAGS.map((t) => (
                 <button
+                  key={t}
                   type="button"
-                  disabled={uploadingCover}
-                  onClick={() => coverInputRef.current?.click()}
+                  onClick={() => setForm({ ...form, tag: t })}
                   style={{
-                    padding: "8px 16px",
-                    fontSize: "0.65rem",
+                    padding: "7px 18px",
+                    fontSize: "0.6rem",
                     letterSpacing: "0.12em",
                     textTransform: "uppercase",
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    borderRadius: "4px",
-                    color: "rgba(255,255,255,0.6)",
-                    cursor: uploadingCover ? "not-allowed" : "pointer",
-                    opacity: uploadingCover ? 0.5 : 1,
+                    borderRadius: "3px",
+                    border: "1px solid",
+                    borderColor:
+                      form.tag === t ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.08)",
+                    background:
+                      form.tag === t ? "rgba(255,255,255,0.1)" : "transparent",
+                    color:
+                      form.tag === t ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.38)",
+                    cursor: "pointer",
                     fontFamily: "var(--font-space-grotesk)",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
+                    transition: "all 0.15s",
                   }}
                 >
-                  {uploadingCover ? "Uploading..." : "Upload Image"}
+                  {t}
                 </button>
-                <input
-                  ref={coverInputRef}
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    setUploadingCover(true);
-                    try {
-                      const url = await uploadFile(file);
-                      setForm((f) => ({ ...f, photo: url }));
-                    } catch {
-                      showToast("Cover upload failed", "err");
-                    } finally {
-                      setUploadingCover(false);
-                      e.target.value = "";
-                    }
-                  }}
-                />
-                {form.photo && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={form.photo}
-                    alt="Cover preview"
-                    style={{ height: 48, width: 72, objectFit: "cover", borderRadius: 3, border: "1px solid rgba(255,255,255,0.08)" }}
-                  />
-                )}
-              </div>
-              {/* Manual URL fallback */}
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={lbl}>Short Description</label>
+            <textarea
+              style={{ ...inputBase, minHeight: 90, resize: "vertical" }}
+              value={form.desc}
+              onChange={(e) => setForm({ ...form, desc: e.target.value })}
+              placeholder="Brief event summary shown on event cards…"
+              required
+            />
+          </div>
+
+          {/* ── Cover Photo ── */}
+          <SectionDivider title="Cover Photo" />
+
+          <div style={{ marginBottom: 14 }}>
+            <div
+              style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}
+            >
+              <button
+                type="button"
+                disabled={uploadingCover}
+                onClick={() => coverInputRef.current?.click()}
+                style={{
+                  padding: "8px 16px",
+                  fontSize: "0.62rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: "4px",
+                  color: uploadingCover ? "rgba(255,255,255,0.28)" : "rgba(255,255,255,0.65)",
+                  cursor: uploadingCover ? "not-allowed" : "pointer",
+                  fontFamily: "var(--font-space-grotesk)",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
+                }}
+              >
+                {uploadingCover ? "Uploading…" : "↑ Upload Image"}
+              </button>
               <input
-                style={{ ...inputStyle, fontSize: "0.75rem" }}
+                ref={coverInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setUploadingCover(true);
+                  try {
+                    const url = await uploadFile(file);
+                    setForm((f) => ({ ...f, photo: url }));
+                  } catch {
+                    setSaveError("Cover upload failed");
+                  } finally {
+                    setUploadingCover(false);
+                    e.target.value = "";
+                  }
+                }}
+              />
+              <input
+                style={{ ...inputBase, fontSize: "0.78rem", flex: 1, minWidth: 0 }}
                 value={form.photo ?? ""}
                 onChange={(e) => setForm({ ...form, photo: e.target.value })}
-                placeholder="Or paste a URL directly..."
+                placeholder="Or paste an image URL directly…"
               />
+            </div>
 
-              {/* Drag-to-reposition crop preview — like Instagram/X */}
-              {form.photo && (
-                <div style={{ marginTop: 12 }}>
-                  <label style={labelStyle}>Drag image to reposition crop</label>
-                  <div
+            {/* Drag-to-reposition crop frame */}
+            {form.photo && (
+              <div>
+                <label style={{ ...lbl, marginBottom: 8 }}>
+                  Drag to reposition · 21 : 9 crop preview
+                </label>
+                <div
+                  ref={cropContainerRef}
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "21/9",
+                    overflow: "hidden",
+                    borderRadius: 4,
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    cursor: "grab",
+                    touchAction: "none",
+                    userSelect: "none",
+                  }}
+                  onPointerDown={handleCropDown}
+                  onPointerMove={handleCropMove}
+                  onPointerUp={handleCropUp}
+                  onPointerCancel={handleCropUp}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={form.photo}
+                    alt="Crop preview"
+                    draggable={false}
                     style={{
-                      position: "relative",
                       width: "100%",
-                      aspectRatio: "21/9",
-                      maxHeight: 200,
-                      overflow: "hidden",
-                      borderRadius: 3,
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      cursor: "grab",
-                      touchAction: "none",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: form.photoPosition || "50% 50%",
+                      display: "block",
+                      pointerEvents: "none",
                     }}
-                    onPointerDown={(e) => {
-                      const el = e.currentTarget;
-                      const img = el.querySelector("img") as HTMLImageElement;
-                      if (!img) return;
-                      el.style.cursor = "grabbing";
-                      el.setPointerCapture(e.pointerId);
-
-                      const frameW = el.clientWidth;
-                      const frameH = el.clientHeight;
-                      const natW = img.naturalWidth;
-                      const natH = img.naturalHeight;
-                      const frameAspect = frameW / frameH;
-                      const imgAspect = natW / natH;
-
-                      // parse current position
-                      const pos = (form.photoPosition || "50% 50%").split(" ");
-                      let pctX = parseFloat(pos[0]);
-                      let pctY = parseFloat(pos[1]);
-                      const startClientX = e.clientX;
-                      const startClientY = e.clientY;
-
-                      // determine which axis can be panned
-                      const canPanX = imgAspect > frameAspect;
-                      const canPanY = imgAspect < frameAspect;
-                      // renderedSize of image when covering frame
-                      const scale = canPanX ? frameH / natH : frameW / natW;
-                      const renderedW = natW * scale;
-                      const renderedH = natH * scale;
-                      const maxDriftX = renderedW - frameW;
-                      const maxDriftY = renderedH - frameH;
-
-                      const onMove = (ev: PointerEvent) => {
-                        const dx = ev.clientX - startClientX;
-                        const dy = ev.clientY - startClientY;
-                        if (canPanX && maxDriftX > 0) {
-                          pctX = Math.max(0, Math.min(100, parseFloat(pos[0]) - (dx / maxDriftX) * 100));
-                        }
-                        if (canPanY && maxDriftY > 0) {
-                          pctY = Math.max(0, Math.min(100, parseFloat(pos[1]) - (dy / maxDriftY) * 100));
-                        }
-                        setForm((f) => ({ ...f, photoPosition: `${Math.round(pctX)}% ${Math.round(pctY)}%` }));
-                      };
-
-                      const onUp = () => {
-                        el.style.cursor = "grab";
-                        el.removeEventListener("pointermove", onMove);
-                        el.removeEventListener("pointerup", onUp);
-                      };
-                      el.addEventListener("pointermove", onMove);
-                      el.addEventListener("pointerup", onUp);
-                    }}
+                  />
+                  {/* Rule-of-thirds grid */}
+                  <div
+                    style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={form.photo}
-                      alt="Crop preview"
-                      draggable={false}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        objectPosition: form.photoPosition || "50% 50%",
-                        display: "block",
-                        userSelect: "none",
-                      }}
-                    />
-                    {/* Guide lines */}
-                    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-                      <div style={{ position: "absolute", left: "33.33%", top: 0, bottom: 0, width: 1, background: "rgba(255,255,255,0.1)" }} />
-                      <div style={{ position: "absolute", left: "66.66%", top: 0, bottom: 0, width: 1, background: "rgba(255,255,255,0.1)" }} />
-                      <div style={{ position: "absolute", top: "33.33%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
-                      <div style={{ position: "absolute", top: "66.66%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
-                    <p style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.25)" }}>
-                      Position: {form.photoPosition || "50% 50%"}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setForm((f) => ({ ...f, photoPosition: "50% 50%" }))}
-                      style={{
-                        fontSize: "0.55rem",
-                        color: "rgba(255,255,255,0.35)",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }}
-                    >
-                      Reset
-                    </button>
+                    {(["33.33%", "66.66%"] as const).map((p) => (
+                      <div
+                        key={`v-${p}`}
+                        style={{
+                          position: "absolute",
+                          left: p,
+                          top: 0,
+                          bottom: 0,
+                          width: 1,
+                          background: "rgba(255,255,255,0.14)",
+                        }}
+                      />
+                    ))}
+                    {(["33.33%", "66.66%"] as const).map((p) => (
+                      <div
+                        key={`h-${p}`}
+                        style={{
+                          position: "absolute",
+                          top: p,
+                          left: 0,
+                          right: 0,
+                          height: 1,
+                          background: "rgba(255,255,255,0.14)",
+                        }}
+                      />
+                    ))}
                   </div>
                 </div>
-              )}
-            </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginTop: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.52rem",
+                      color: "rgba(255,255,255,0.3)",
+                      fontFamily: "var(--font-jetbrains-mono)",
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    position: {form.photoPosition || "50% 50%"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, photoPosition: "50% 50%" }))}
+                    style={{
+                      fontSize: "0.52rem",
+                      color: "rgba(255,255,255,0.45)",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      fontFamily: "var(--font-space-grotesk)",
+                    }}
+                  >
+                    Reset center
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <label style={labelStyle}>Full Content (optional — appears on the event detail page)</label>
-              <textarea
-                style={{ ...inputStyle, minHeight: 160, resize: "vertical" }}
-                value={form.content ?? ""}
-                onChange={(e) => setForm({ ...form, content: e.target.value })}
-                placeholder="Write the full event description here. Use blank lines between paragraphs."
+          {/* ── Gallery ── */}
+          <SectionDivider title="Gallery Images" />
+
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ marginBottom: 12 }}>
+              <button
+                type="button"
+                disabled={uploadingGallery}
+                onClick={() => galleryInputRef.current?.click()}
+                style={{
+                  padding: "8px 16px",
+                  fontSize: "0.62rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: "4px",
+                  color: uploadingGallery ? "rgba(255,255,255,0.28)" : "rgba(255,255,255,0.65)",
+                  cursor: uploadingGallery ? "not-allowed" : "pointer",
+                  fontFamily: "var(--font-space-grotesk)",
+                }}
+              >
+                {uploadingGallery ? "Uploading…" : "↑ Add Images"}
+              </button>
+              <input
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: "none" }}
+                onChange={async (e) => {
+                  const files = Array.from(e.target.files ?? []);
+                  if (!files.length) return;
+                  setUploadingGallery(true);
+                  try {
+                    const urls = await Promise.all(files.map(uploadFile));
+                    setForm((f) => ({
+                      ...f,
+                      gallery: [...(f.gallery ?? []), ...urls],
+                    }));
+                  } catch {
+                    setSaveError("One or more uploads failed");
+                  } finally {
+                    setUploadingGallery(false);
+                    e.target.value = "";
+                  }
+                }}
               />
             </div>
 
-            <div style={{ marginBottom: 20 }}>
-              <label style={labelStyle}>Gallery Images (optional)</label>
-              {/* Upload button */}
-              <div style={{ marginBottom: 10 }}>
-                <button
-                  type="button"
-                  disabled={uploadingGallery}
-                  onClick={() => galleryInputRef.current?.click()}
+            {(form.gallery ?? []).length > 0 ? (
+              <>
+                <div
                   style={{
-                    padding: "8px 16px",
-                    fontSize: "0.65rem",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    borderRadius: "4px",
-                    color: "rgba(255,255,255,0.6)",
-                    cursor: uploadingGallery ? "not-allowed" : "pointer",
-                    opacity: uploadingGallery ? 0.5 : 1,
-                    fontFamily: "var(--font-space-grotesk)",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))",
+                    gap: 8,
+                    marginBottom: 8,
                   }}
                 >
-                  {uploadingGallery ? "Uploading..." : "Add Images"}
-                </button>
-                <input
-                  ref={galleryInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  style={{ display: "none" }}
-                  onChange={async (e) => {
-                    const files = Array.from(e.target.files ?? []);
-                    if (!files.length) return;
-                    setUploadingGallery(true);
-                    try {
-                      const urls = await Promise.all(files.map(uploadFile));
-                      setForm((f) => ({ ...f, gallery: [...(f.gallery ?? []), ...urls] }));
-                    } catch {
-                      showToast("One or more uploads failed", "err");
-                    } finally {
-                      setUploadingGallery(false);
-                      e.target.value = "";
-                    }
-                  }}
-                />
-              </div>
-              {/* Thumbnail list */}
-              {(form.gallery ?? []).length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
                   {(form.gallery ?? []).map((url, i) => (
-                    <div key={i} style={{ position: "relative" }}>
+                    <div
+                      key={i}
+                      style={{
+                        position: "relative",
+                        borderRadius: 4,
+                        overflow: "hidden",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                      }}
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={url}
                         alt={`Gallery ${i + 1}`}
-                        style={{ height: 64, width: 96, objectFit: "cover", borderRadius: 3, border: "1px solid rgba(255,255,255,0.08)", display: "block" }}
+                        onClick={() => setLightboxImg(url)}
+                        style={{
+                          height: 72,
+                          width: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                          cursor: "zoom-in",
+                        }}
+                      />
+                      {/* Hover overlay */}
+                      <div
+                        onClick={() => setLightboxImg(url)}
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background: "rgba(0,0,0,0)",
+                          cursor: "zoom-in",
+                          transition: "background 0.15s",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.background = "rgba(0,0,0,0.4)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.background = "rgba(0,0,0,0)")
+                        }
                       />
                       <button
                         type="button"
                         onClick={() =>
-                          setForm((f) => ({ ...f, gallery: (f.gallery ?? []).filter((_, j) => j !== i) }))
+                          setForm((f) => ({
+                            ...f,
+                            gallery: (f.gallery ?? []).filter((_, j) => j !== i),
+                          }))
                         }
                         style={{
                           position: "absolute",
-                          top: 2,
-                          right: 2,
+                          top: 3,
+                          right: 3,
                           width: 18,
                           height: 18,
                           borderRadius: "50%",
-                          background: "rgba(0,0,0,0.7)",
+                          background: "rgba(0,0,0,0.75)",
                           border: "none",
-                          color: "rgba(255,255,255,0.8)",
-                          fontSize: "0.7rem",
+                          color: "rgba(255,255,255,0.85)",
+                          fontSize: "0.75rem",
                           lineHeight: 1,
                           cursor: "pointer",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          zIndex: 2,
                         }}
                         aria-label="Remove image"
                       >
@@ -726,195 +873,454 @@ export default function AdminPage() {
                     </div>
                   ))}
                 </div>
-              )}
-              <p style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.18)", marginTop: 2 }}>
-                {(form.gallery ?? []).length} image{(form.gallery ?? []).length !== 1 ? "s" : ""} added
-              </p>
-            </div>
-
-            <div style={{ display: "flex", gap: 10 }}>
-              <button
-                type="submit"
-                disabled={saving}
-                style={{
-                  padding: "10px 28px",
-                  fontSize: "0.7rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  background: "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: "4px",
-                  color: "rgba(255,255,255,0.8)",
-                  cursor: saving ? "not-allowed" : "pointer",
-                  opacity: saving ? 0.5 : 1,
-                  fontFamily: "var(--font-space-grotesk)",
-                  transition: "all 0.2s",
-                }}
-              >
-                {saving ? "Saving..." : editing ? "Update Event" : "Create Event"}
-              </button>
-              {editing && (
-                <button
-                  type="button"
-                  onClick={cancelEdit}
+                <p
                   style={{
-                    padding: "10px 20px",
-                    fontSize: "0.7rem",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    background: "transparent",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    borderRadius: "4px",
-                    color: "rgba(255,255,255,0.35)",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-space-grotesk)",
+                    fontSize: "0.52rem",
+                    color: "rgba(255,255,255,0.3)",
+                    letterSpacing: "0.08em",
                   }}
                 >
-                  Cancel
-                </button>
-              )}
-            </div>
+                  {form.gallery?.length} image{form.gallery?.length !== 1 ? "s" : ""} · click any
+                  to preview
+                </p>
+              </>
+            ) : (
+              <p
+                style={{
+                  fontSize: "0.75rem",
+                  color: "rgba(255,255,255,0.2)",
+                  fontStyle: "italic",
+                }}
+              >
+                No gallery images yet.
+              </p>
+            )}
+          </div>
+
+          {/* ── Full Content ── */}
+          <SectionDivider title="Full Content (event detail page)" />
+
+          <div style={{ marginBottom: 24 }}>
+            <textarea
+              style={{ ...inputBase, minHeight: 150, resize: "vertical" }}
+              value={form.content ?? ""}
+              onChange={(e) => setForm({ ...form, content: e.target.value })}
+              placeholder="Full event write-up. Blank lines = paragraph breaks."
+            />
+          </div>
+
+          {/* ── Save row ── */}
+          <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+            <button
+              type="submit"
+              disabled={saveStatus === "saving"}
+              style={{
+                padding: "11px 32px",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                borderRadius: "5px",
+                cursor: saveStatus === "saving" ? "not-allowed" : "pointer",
+                fontFamily: "var(--font-space-grotesk)",
+                transition: "all 0.3s",
+                ...saveBtnStyle,
+              }}
+            >
+              {saveStatus === "saving"
+                ? "Saving…"
+                : saveStatus === "saved"
+                ? "✓ Saved"
+                : saveStatus === "error"
+                ? "Failed — retry?"
+                : editing
+                ? "Update Event"
+                : "Create Event"}
+            </button>
+
+            {editing && saveStatus === "idle" && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                style={{
+                  padding: "11px 20px",
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  background: "transparent",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: "5px",
+                  color: "rgba(255,255,255,0.32)",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-space-grotesk)",
+                }}
+              >
+                Cancel
+              </button>
+            )}
+
+            {saveStatus === "saved" && (
+              <span
+                style={{
+                  fontSize: "0.65rem",
+                  color: "rgb(134,239,172)",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                Changes saved to Firestore ✓
+              </span>
+            )}
+            {saveStatus === "error" && saveError && (
+              <span style={{ fontSize: "0.65rem", color: "rgb(252,165,165)" }}>
+                {saveError}
+              </span>
+            )}
           </div>
         </form>
 
-        {/* Events List */}
+        {/* ══════════════════ EVENTS LIST ══════════════════ */}
         <div>
-          <h2
+          <div
             style={{
-              fontSize: "0.6rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.2)",
-              marginBottom: 16,
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginBottom: 20,
             }}
           >
-            All Events ({events.length})
-          </h2>
+            <span
+              style={{
+                fontSize: "0.52rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.4)",
+              }}
+            >
+              All Events
+            </span>
+            <span
+              style={{
+                fontSize: "0.52rem",
+                color: "rgba(255,255,255,0.22)",
+                fontFamily: "var(--font-jetbrains-mono)",
+              }}
+            >
+              ({events.length})
+            </span>
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
+          </div>
 
           {loading ? (
-            <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.85rem" }}>Loading...</p>
-          ) : events.length === 0 ? (
-            <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.85rem" }}>No events yet.</p>
-          ) : (
-            events.map((ev) => (
+            <div
+              style={{
+                display: "flex",
+                gap: 14,
+                alignItems: "center",
+                padding: "20px 0",
+              }}
+            >
               <div
-                key={ev.id}
                 style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 16,
-                  padding: "16px 0",
-                  borderBottom: "1px solid rgba(255,255,255,0.04)",
+                  width: 18,
+                  height: 18,
+                  borderRadius: "50%",
+                  border: "2px solid rgba(255,255,255,0.08)",
+                  borderTopColor: "rgba(255,255,255,0.45)",
+                  animation: "spin 0.8s linear infinite",
                 }}
-              >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 4 }}>
-                    <span
-                      style={{
-                        fontSize: "0.95rem",
-                        fontWeight: 600,
-                        color: "rgba(255,255,255,0.8)",
-                      }}
-                    >
-                      {ev.full}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "0.48rem",
-                        letterSpacing: "0.15em",
-                        textTransform: "uppercase",
-                        color: "rgba(255,255,255,0.3)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        padding: "2px 8px",
-                      }}
-                    >
-                      {ev.tag}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.35)" }}>
-                    {ev.date} · {ev.location}
-                  </p>
-                </div>
-
-                <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                  <button
-                    onClick={() => startEdit(ev)}
+              />
+              <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)" }}>
+                Loading…
+              </span>
+            </div>
+          ) : events.length === 0 ? (
+            <p
+              style={{
+                fontSize: "0.82rem",
+                color: "rgba(255,255,255,0.28)",
+                padding: "16px 0",
+                fontStyle: "italic",
+              }}
+            >
+              No events yet. Create the first one above.
+            </p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {events.map((ev) => {
+                const isActive = form.id === ev.id && editing;
+                const justSaved = lastSavedId === ev.id;
+                return (
+                  <div
+                    key={ev.id}
                     style={{
-                      padding: "6px 14px",
-                      fontSize: "0.6rem",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      background: "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: "3px",
-                      color: "rgba(255,255,255,0.5)",
-                      cursor: "pointer",
-                      fontFamily: "var(--font-space-grotesk)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 14,
+                      padding: "12px 14px",
+                      borderRadius: 6,
+                      background: isActive
+                        ? "rgba(255,255,255,0.05)"
+                        : justSaved
+                        ? "rgba(34,197,94,0.06)"
+                        : "transparent",
+                      border: isActive
+                        ? "1px solid rgba(255,255,255,0.1)"
+                        : justSaved
+                        ? "1px solid rgba(34,197,94,0.15)"
+                        : "1px solid rgba(255,255,255,0.03)",
+                      transition: "background 0.8s ease, border-color 0.5s",
                     }}
                   >
-                    Edit
-                  </button>
-                  {deleteConfirm === ev.id ? (
-                    <>
-                      <button
-                        onClick={() => handleDelete(ev.id)}
-                        style={{
-                          padding: "6px 14px",
-                          fontSize: "0.6rem",
-                          letterSpacing: "0.1em",
-                          textTransform: "uppercase",
-                          background: "rgba(239,68,68,0.12)",
-                          border: "1px solid rgba(239,68,68,0.25)",
-                          borderRadius: "3px",
-                          color: "rgb(252,165,165)",
-                          cursor: "pointer",
-                          fontFamily: "var(--font-space-grotesk)",
-                        }}
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={() => setDeleteConfirm(null)}
-                        style={{
-                          padding: "6px 10px",
-                          fontSize: "0.6rem",
-                          background: "transparent",
-                          border: "1px solid rgba(255,255,255,0.05)",
-                          borderRadius: "3px",
-                          color: "rgba(255,255,255,0.3)",
-                          cursor: "pointer",
-                          fontFamily: "var(--font-space-grotesk)",
-                        }}
-                      >
-                        ×
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => setDeleteConfirm(ev.id)}
+                    {/* Thumbnail */}
+                    <div
                       style={{
-                        padding: "6px 14px",
-                        fontSize: "0.6rem",
-                        letterSpacing: "0.1em",
-                        textTransform: "uppercase",
-                        background: "rgba(255,255,255,0.02)",
-                        border: "1px solid rgba(255,255,255,0.05)",
-                        borderRadius: "3px",
-                        color: "rgba(255,255,255,0.3)",
-                        cursor: "pointer",
-                        fontFamily: "var(--font-space-grotesk)",
+                        width: 56,
+                        height: 40,
+                        flexShrink: 0,
+                        borderRadius: 3,
+                        overflow: "hidden",
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.06)",
                       }}
                     >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
+                      {ev.photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={ev.photo}
+                          alt=""
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            objectPosition: ev.photoPosition || "center",
+                          }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <span
+                            style={{ fontSize: "1.1rem", color: "rgba(255,255,255,0.07)" }}
+                          >
+                            ∑
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          marginBottom: 3,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "0.88rem",
+                            fontWeight: 600,
+                            color: "rgba(255,255,255,0.82)",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {ev.full || ev.title}
+                        </span>
+                        {justSaved && (
+                          <span
+                            style={{
+                              fontSize: "0.44rem",
+                              letterSpacing: "0.15em",
+                              textTransform: "uppercase",
+                              color: "rgb(134,239,172)",
+                              background: "rgba(34,197,94,0.12)",
+                              padding: "2px 8px",
+                              borderRadius: 2,
+                              flexShrink: 0,
+                            }}
+                          >
+                            ✓ Updated
+                          </span>
+                        )}
+                        <span
+                          style={{
+                            fontSize: "0.44rem",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            color: "rgba(255,255,255,0.28)",
+                            border: "1px solid rgba(255,255,255,0.07)",
+                            padding: "1px 7px",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {ev.tag}
+                        </span>
+                      </div>
+                      <p
+                        style={{
+                          fontSize: "0.65rem",
+                          color: "rgba(255,255,255,0.38)",
+                          margin: 0,
+                        }}
+                      >
+                        {ev.date}
+                        {ev.location ? ` · ${ev.location}` : ""}
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 6,
+                        flexShrink: 0,
+                        alignItems: "center",
+                      }}
+                    >
+                      {!isActive && (
+                        <button
+                          onClick={() => startEdit(ev)}
+                          style={{
+                            padding: "6px 14px",
+                            fontSize: "0.58rem",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            background: "rgba(255,255,255,0.04)",
+                            border: "1px solid rgba(255,255,255,0.09)",
+                            borderRadius: "3px",
+                            color: "rgba(255,255,255,0.55)",
+                            cursor: "pointer",
+                            fontFamily: "var(--font-space-grotesk)",
+                          }}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {deleteConfirm === ev.id ? (
+                        <>
+                          <button
+                            onClick={() => handleDelete(ev.id)}
+                            style={{
+                              padding: "6px 14px",
+                              fontSize: "0.58rem",
+                              letterSpacing: "0.1em",
+                              textTransform: "uppercase",
+                              background: "rgba(239,68,68,0.15)",
+                              border: "1px solid rgba(239,68,68,0.3)",
+                              borderRadius: "3px",
+                              color: "rgb(252,165,165)",
+                              cursor: "pointer",
+                              fontFamily: "var(--font-space-grotesk)",
+                            }}
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm(null)}
+                            style={{
+                              padding: "6px 10px",
+                              fontSize: "0.62rem",
+                              background: "transparent",
+                              border: "1px solid rgba(255,255,255,0.06)",
+                              borderRadius: "3px",
+                              color: "rgba(255,255,255,0.3)",
+                              cursor: "pointer",
+                              fontFamily: "var(--font-space-grotesk)",
+                            }}
+                          >
+                            ×
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => setDeleteConfirm(ev.id)}
+                          style={{
+                            padding: "6px 14px",
+                            fontSize: "0.58rem",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            background: "transparent",
+                            border: "1px solid rgba(255,255,255,0.05)",
+                            borderRadius: "3px",
+                            color: "rgba(255,255,255,0.28)",
+                            cursor: "pointer",
+                            fontFamily: "var(--font-space-grotesk)",
+                          }}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
+
+      {/* ══════════════════ GALLERY LIGHTBOX ══════════════════ */}
+      {lightboxImg && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "rgba(0,0,0,0.96)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "zoom-out",
+          }}
+          onClick={() => setLightboxImg(null)}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={lightboxImg}
+            alt="Preview"
+            style={{
+              maxWidth: "92vw",
+              maxHeight: "88vh",
+              objectFit: "contain",
+              borderRadius: 4,
+              cursor: "default",
+              boxShadow: "0 0 80px rgba(0,0,0,0.6)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            onClick={() => setLightboxImg(null)}
+            style={{
+              position: "absolute",
+              top: 24,
+              right: 28,
+              fontSize: "1.5rem",
+              lineHeight: 1,
+              background: "none",
+              border: "none",
+              color: "rgba(255,255,255,0.5)",
+              cursor: "pointer",
+            }}
+            aria-label="Close preview"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Spinner keyframe */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   );
 }
