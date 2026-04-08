@@ -9,6 +9,7 @@ import { auth, db, storage } from "@/lib/firebase";
 
 interface EventItem {
   id: string;
+  slug?: string;
   year: number;
   date: string;
   title: string;
