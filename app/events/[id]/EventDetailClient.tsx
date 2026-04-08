@@ -197,7 +197,6 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25, duration: 0.7, ease }}
           style={{
-            maxWidth: 680,
             borderTop: "1px solid rgba(255,255,255,0.06)",
             paddingTop: 40,
           }}

@@ -97,6 +97,8 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [form, setForm] = useState<EventItem>({ ...emptyEvent });
@@ -301,6 +303,26 @@ export default function AdminPage() {
     e.currentTarget.style.cursor = "grab";
   };
 
+  /* ── Password sign-in ── */
+  const handleSignIn = async () => {
+    if (pwdInput !== "geometrystinks") {
+      setPwdError(true);
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError("");
+    try {
+      await signInAnonymously(auth);
+    } catch {
+      // Anonymous auth may be disabled in Firebase console.
+      // We still allow access — Firestore writes will surface their own error.
+      setAuthError("Firebase auth unavailable — saves may fail until Anonymous Auth is enabled.");
+    } finally {
+      setAuthLoading(false);
+      setAuthed(true);
+    }
+  };
+
   /* ─────────────────────────────────────────────────
      PASSWORD GATE
   ───────────────────────────────────────────────── */
@@ -328,14 +350,10 @@ export default function AdminPage() {
             onChange={(e) => {
               setPwdInput(e.target.value);
               setPwdError(false);
+              setAuthError("");
             }}
-            onKeyDown={async (e) => {
-              if (e.key === "Enter") {
-                if (pwdInput === "geometrystinks") {
-                  await signInAnonymously(auth);
-                  setAuthed(true);
-                } else setPwdError(true);
-              }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSignIn();
             }}
             style={{
               ...inputBase,
@@ -348,13 +366,14 @@ export default function AdminPage() {
               Incorrect password.
             </p>
           )}
+          {authError && (
+            <p style={{ fontSize: "0.65rem", color: "rgb(253,230,138)", marginTop: 8 }}>
+              {authError}
+            </p>
+          )}
           <button
-            onClick={async () => {
-              if (pwdInput === "geometrystinks") {
-                await signInAnonymously(auth);
-                setAuthed(true);
-              } else setPwdError(true);
-            }}
+            onClick={handleSignIn}
+            disabled={authLoading}
             style={{
               marginTop: 16,
               width: "100%",
@@ -363,15 +382,16 @@ export default function AdminPage() {
               fontWeight: 600,
               letterSpacing: "0.15em",
               textTransform: "uppercase",
-              background: "rgba(255,255,255,0.06)",
+              background: authLoading ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: "4px",
-              color: "rgba(255,255,255,0.7)",
-              cursor: "pointer",
+              color: authLoading ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)",
+              cursor: authLoading ? "not-allowed" : "pointer",
               fontFamily: "var(--font-space-grotesk)",
+              transition: "all 0.15s",
             }}
           >
-            Access
+            {authLoading ? "Signing in…" : "Access"}
           </button>
         </div>
       </div>
