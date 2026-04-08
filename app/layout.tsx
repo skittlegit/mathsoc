@@ -20,14 +20,18 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#000922",
+  themeColor: "#000000",
   viewportFit: "cover",
+  colorScheme: "dark",
 };
 
 export const metadata: Metadata = {
   title: "MathSoc",
   description:
     "The official Mathematics Society. Where curiosity becomes proof and problems become art.",
+  appleWebApp: {
+    statusBarStyle: "black-translucent",
+  },
 };
 
 /** Collect team image URLs for preloading */

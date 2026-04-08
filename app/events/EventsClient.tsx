@@ -194,7 +194,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
           <span
             style={{
               fontSize: "0.52rem",
-              color: "rgba(255,255,255,0.45)",
+              color: "rgba(255,255,255,0.55)",
               fontFamily: "var(--font-jetbrains-mono)",
               letterSpacing: "0.08em",
             }}
@@ -398,7 +398,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.35)",
+            color: "rgba(255,255,255,0.5)",
             textTransform: "uppercase",
           }}
         >
@@ -433,7 +433,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
             style={{
               fontSize: "0.5rem",
               letterSpacing: "0.22em",
-              color: "rgba(255,255,255,0.3)",
+              color: "rgba(255,255,255,0.45)",
               textTransform: "uppercase",
               lineHeight: "28px",
             }}
@@ -453,7 +453,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                 color:
                   activeFilter === f
                     ? "rgba(255,255,255,0.8)"
-                    : "rgba(255,255,255,0.4)",
+                    : "rgba(255,255,255,0.5)",
                 border:
                   activeFilter === f
                     ? "1px solid rgba(255,255,255,0.15)"
@@ -480,7 +480,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
             {filtered.length === 0 && (
               <p
                 style={{
-                  color: "rgba(255,255,255,0.3)",
+                  color: "rgba(255,255,255,0.45)",
                   fontSize: "0.9rem",
                   paddingTop: 40,
                 }}

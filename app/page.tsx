@@ -90,7 +90,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
               fontSize: "0.48rem",
               letterSpacing: "0.38em",
               textTransform: "uppercase",
-              color: "rgba(255,255,255,0.45)",
+              color: "rgba(255,255,255,0.55)",
             }}
           >
             The Mathematics Society &middot; Mahindra University
@@ -99,7 +99,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
             style={{
               fontFamily: "var(--font-jetbrains-mono)",
               fontSize: "0.48rem",
-              color: "rgba(255,255,255,0.35)",
+              color: "rgba(255,255,255,0.45)",
             }}
           >
             e^(iπ) + 1 = 0
@@ -355,7 +355,7 @@ export default function Home() {
                 animate={{ opacity: [0.35, 0.75, 0.35] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               />
-              <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.38)" }}>
+              <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>
                 Scroll to explore
               </span>
             </motion.div>
@@ -385,7 +385,7 @@ export default function Home() {
                 style={{ opacity: 0.85 }}
               >
                 <div style={{ height: 1, flex: 1, background: "rgba(255,255,255,0.12)" }} />
-                <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-jetbrains-mono)", flexShrink: 0 }}>
+                <span style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-jetbrains-mono)", flexShrink: 0 }}>
                   Play a round
                 </span>
                 <div style={{ height: 1, flex: 1, background: "rgba(255,255,255,0.12)" }} />
@@ -403,23 +403,25 @@ export default function Home() {
         style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
       >
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-16 md:gap-24 items-start">
+          <Reveal>
+            <div className="flex items-center gap-6 mb-8">
+              <span
+                style={{
+                  fontSize: "0.56rem",
+                  letterSpacing: "0.4em",
+                  textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.5)",
+                }}
+              >
+                Who We Are
+              </span>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+            {/* Left — text */}
             <div>
-              <Reveal>
-                <div className="flex items-center gap-6 mb-8">
-                  <span
-                    style={{
-                      fontSize: "0.56rem",
-                      letterSpacing: "0.4em",
-                      textTransform: "uppercase",
-                      color: "rgba(255,255,255,0.35)",
-                    }}
-                  >
-                    Who We Are
-                  </span>
-                </div>
-              </Reveal>
-              <Reveal delay={0.12}>
+              <Reveal delay={0.1}>
                 <p
                   style={{
                     fontSize: "clamp(1.5rem, 2.8vw, 2.1rem)",
@@ -435,17 +437,50 @@ export default function Home() {
                   curiosity, rigor, and a passion for mathematical sciences beyond the classroom.
                 </p>
               </Reveal>
+              <Reveal delay={0.2}>
+                <Link
+                  href="/events"
+                  className="inline-flex items-center gap-3 mt-10 group"
+                  style={{ textDecoration: "none" }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.6rem",
+                      letterSpacing: "0.25em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,255,255,0.6)",
+                      fontWeight: 600,
+                      transition: "color 0.2s",
+                    }}
+                    className="group-hover:text-white"
+                  >
+                    View Our Events
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "1rem",
+                      color: "rgba(255,255,255,0.4)",
+                      transition: "transform 0.3s, color 0.2s",
+                    }}
+                    className="group-hover:translate-x-1 group-hover:text-white inline-block"
+                  >
+                    →
+                  </span>
+                </Link>
+              </Reveal>
             </div>
-            <Reveal direction="fade" delay={0.25}>
+
+            {/* Right — event image */}
+            <Reveal direction="fade" delay={0.2}>
               <Link href="/events" className="block group">
                 <div
-                  className="h-56 md:h-auto md:aspect-[3/4]"
                   style={{
                     width: "100%",
+                    aspectRatio: "4/3",
                     overflow: "hidden",
-                    border: "1px solid rgba(255,255,255,0.07)",
                     position: "relative",
                     background: "rgba(255,255,255,0.018)",
+                    borderRadius: 3,
                   }}
                 >
                   {eventPhoto ? (
@@ -453,22 +488,33 @@ export default function Home() {
                     <img
                       src={eventPhoto.photo}
                       alt={eventPhoto.full}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: "block",
+                        transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
+                      }}
+                      className="group-hover:scale-[1.03]"
                     />
                   ) : (
                     <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <span style={{ fontSize: "5rem", color: "rgba(255,255,255,0.04)" }}>∑</span>
                     </div>
                   )}
-                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 16px 16px", background: "linear-gradient(to top, rgba(0,0,0,0.75), transparent)" }}>
-                    <p style={{ fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.55)", marginBottom: 4 }}>
-                      {eventPhoto ? eventPhoto.full : "Our Events"}
-                    </p>
-                    <p className="group-hover:opacity-100 transition-opacity" style={{ fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", opacity: 0.7 }}>
-                      View All →
-                    </p>
-                  </div>
                 </div>
+                {eventPhoto && (
+                  <p
+                    className="mt-4"
+                    style={{
+                      fontSize: "0.7rem",
+                      letterSpacing: "0.08em",
+                      color: "rgba(255,255,255,0.5)",
+                    }}
+                  >
+                    {eventPhoto.full}
+                  </p>
+                )}
               </Link>
             </Reveal>
           </div>
@@ -562,7 +608,7 @@ export default function Home() {
                       fontSize: "0.48rem",
                       letterSpacing: "0.3em",
                       textTransform: "uppercase",
-                      color: "rgba(255,255,255,0.25)",
+                      color: "rgba(255,255,255,0.38)",
                       marginBottom: 16,
                     }}
                   >
@@ -612,7 +658,7 @@ export default function Home() {
               style={{
                 fontSize: "0.58rem",
                 letterSpacing: "0.22em",
-                color: "rgba(255,255,255,0.28)",
+                color: "rgba(255,255,255,0.4)",
                 textTransform: "uppercase",
                 fontWeight: 500,
               }}

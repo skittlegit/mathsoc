@@ -516,10 +516,10 @@ export default function AdminPage() {
                 placeholder="Or paste a URL directly..."
               />
 
-              {/* Focal point control — click on image to set crop anchor */}
+              {/* Drag-to-reposition crop preview — like Instagram/X */}
               {form.photo && (
                 <div style={{ marginTop: 12 }}>
-                  <label style={labelStyle}>Image focal point (click to set)</label>
+                  <label style={labelStyle}>Drag image to reposition crop</label>
                   <div
                     style={{
                       position: "relative",
@@ -529,46 +529,103 @@ export default function AdminPage() {
                       overflow: "hidden",
                       borderRadius: 3,
                       border: "1px solid rgba(255,255,255,0.08)",
-                      cursor: "crosshair",
+                      cursor: "grab",
+                      touchAction: "none",
                     }}
-                    onClick={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-                      const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
-                      setForm((f) => ({ ...f, photoPosition: `${x}% ${y}%` }));
+                    onPointerDown={(e) => {
+                      const el = e.currentTarget;
+                      const img = el.querySelector("img") as HTMLImageElement;
+                      if (!img) return;
+                      el.style.cursor = "grabbing";
+                      el.setPointerCapture(e.pointerId);
+
+                      const frameW = el.clientWidth;
+                      const frameH = el.clientHeight;
+                      const natW = img.naturalWidth;
+                      const natH = img.naturalHeight;
+                      const frameAspect = frameW / frameH;
+                      const imgAspect = natW / natH;
+
+                      // parse current position
+                      const pos = (form.photoPosition || "50% 50%").split(" ");
+                      let pctX = parseFloat(pos[0]);
+                      let pctY = parseFloat(pos[1]);
+                      const startClientX = e.clientX;
+                      const startClientY = e.clientY;
+
+                      // determine which axis can be panned
+                      const canPanX = imgAspect > frameAspect;
+                      const canPanY = imgAspect < frameAspect;
+                      // renderedSize of image when covering frame
+                      const scale = canPanX ? frameH / natH : frameW / natW;
+                      const renderedW = natW * scale;
+                      const renderedH = natH * scale;
+                      const maxDriftX = renderedW - frameW;
+                      const maxDriftY = renderedH - frameH;
+
+                      const onMove = (ev: PointerEvent) => {
+                        const dx = ev.clientX - startClientX;
+                        const dy = ev.clientY - startClientY;
+                        if (canPanX && maxDriftX > 0) {
+                          pctX = Math.max(0, Math.min(100, parseFloat(pos[0]) - (dx / maxDriftX) * 100));
+                        }
+                        if (canPanY && maxDriftY > 0) {
+                          pctY = Math.max(0, Math.min(100, parseFloat(pos[1]) - (dy / maxDriftY) * 100));
+                        }
+                        setForm((f) => ({ ...f, photoPosition: `${Math.round(pctX)}% ${Math.round(pctY)}%` }));
+                      };
+
+                      const onUp = () => {
+                        el.style.cursor = "grab";
+                        el.removeEventListener("pointermove", onMove);
+                        el.removeEventListener("pointerup", onUp);
+                      };
+                      el.addEventListener("pointermove", onMove);
+                      el.addEventListener("pointerup", onUp);
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={form.photo}
-                      alt="Focal point preview"
+                      alt="Crop preview"
+                      draggable={false}
                       style={{
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
                         objectPosition: form.photoPosition || "50% 50%",
                         display: "block",
+                        userSelect: "none",
                       }}
                     />
-                    {/* Crosshair marker */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        left: (form.photoPosition || "50% 50%").split(" ")[0],
-                        top: (form.photoPosition || "50% 50%").split(" ")[1],
-                        transform: "translate(-50%, -50%)",
-                        width: 18,
-                        height: 18,
-                        borderRadius: "50%",
-                        border: "2px solid rgba(255,255,255,0.9)",
-                        boxShadow: "0 0 6px rgba(0,0,0,0.5)",
-                        pointerEvents: "none",
-                      }}
-                    />
+                    {/* Guide lines */}
+                    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+                      <div style={{ position: "absolute", left: "33.33%", top: 0, bottom: 0, width: 1, background: "rgba(255,255,255,0.1)" }} />
+                      <div style={{ position: "absolute", left: "66.66%", top: 0, bottom: 0, width: 1, background: "rgba(255,255,255,0.1)" }} />
+                      <div style={{ position: "absolute", top: "33.33%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
+                      <div style={{ position: "absolute", top: "66.66%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
+                    </div>
                   </div>
-                  <p style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.25)", marginTop: 4 }}>
-                    Position: {form.photoPosition || "50% 50%"}
-                  </p>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
+                    <p style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.25)" }}>
+                      Position: {form.photoPosition || "50% 50%"}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, photoPosition: "50% 50%" }))}
+                      style={{
+                        fontSize: "0.55rem",
+                        color: "rgba(255,255,255,0.35)",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        textDecoration: "underline",
+                        fontFamily: "var(--font-space-grotesk)",
+                      }}
+                    >
+                      Reset
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

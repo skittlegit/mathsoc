@@ -243,7 +243,7 @@ function Lightbox({
           transform: "translateX(-50%)",
           fontSize: "0.5rem",
           letterSpacing: "0.15em",
-          color: "rgba(255,255,255,0.22)",
+          color: "rgba(255,255,255,0.38)",
           fontFamily: "var(--font-jetbrains-mono)",
         }}
       >

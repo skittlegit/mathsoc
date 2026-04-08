@@ -66,7 +66,7 @@ export default function Footer() {
             style={{
               fontSize: "0.56rem",
               letterSpacing: "0.3em",
-              color: "rgba(255,255,255,0.2)",
+              color: "rgba(255,255,255,0.35)",
               textTransform: "uppercase",
             }}
           >
@@ -92,7 +92,7 @@ export default function Footer() {
               className="cursor-pointer bg-transparent border-none transition-colors"
               style={{
                 fontSize: "0.82rem",
-                color: "rgba(255,255,255,0.3)",
+                color: "rgba(255,255,255,0.45)",
               }}
             >
               →
@@ -109,7 +109,7 @@ export default function Footer() {
                 style={{
                   fontSize: "0.5rem",
                   letterSpacing: "0.3em",
-                  color: "rgba(255,255,255,0.1)",
+                  color: "rgba(255,255,255,0.22)",
                   textTransform: "uppercase",
                 }}
               >
@@ -138,7 +138,7 @@ export default function Footer() {
                 style={{
                   fontSize: "0.5rem",
                   letterSpacing: "0.3em",
-                  color: "rgba(255,255,255,0.1)",
+                  color: "rgba(255,255,255,0.22)",
                   textTransform: "uppercase",
                 }}
               >
@@ -184,7 +184,7 @@ export default function Footer() {
               style={{
                 fontSize: "0.6rem",
                 letterSpacing: "0.25em",
-                color: "rgba(255,255,255,0.15)",
+                color: "rgba(255,255,255,0.25)",
                 textTransform: "uppercase",
               }}
             >
@@ -195,7 +195,7 @@ export default function Footer() {
             style={{
               fontSize: "0.52rem",
               letterSpacing: "0.18em",
-              color: "rgba(255,255,255,0.07)",
+              color: "rgba(255,255,255,0.15)",
               textTransform: "uppercase",
             }}
           >

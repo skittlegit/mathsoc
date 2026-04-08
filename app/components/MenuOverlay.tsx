@@ -26,14 +26,14 @@ export default function MenuOverlay({
         <motion.div
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
           style={{ background: "rgba(0, 0, 0, 0.98)" }}
-          initial={{ clipPath: "circle(0% at calc(100% - 48px) 40px)" }}
-          animate={{ clipPath: "circle(150% at calc(100% - 48px) 40px)" }}
-          exit={{ clipPath: "circle(0% at calc(100% - 48px) 40px)" }}
+          initial={{ clipPath: "circle(0% at calc(100% - 48px) 48px)" }}
+          animate={{ clipPath: "circle(150% at calc(100% - 48px) 48px)" }}
+          exit={{ clipPath: "circle(0% at calc(100% - 48px) 48px)" }}
           transition={{ duration: 0.65, ease: [0.65, 0, 0.35, 1] }}
         >
           <button
             onClick={onClose}
-            className="absolute top-[26px] right-7 md:right-14 text-white font-semibold cursor-pointer bg-transparent border-none"
+            className="absolute top-8 right-8 md:top-5 md:right-14 w-8 h-8 flex items-center justify-center text-white font-semibold cursor-pointer bg-transparent border-none"
             style={{
               fontSize: "0.62rem",
               letterSpacing: "0.18em",

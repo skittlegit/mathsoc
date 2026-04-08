@@ -29,7 +29,7 @@ export default function ContactPage() {
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.35)",
+            color: "rgba(255,255,255,0.5)",
             textTransform: "uppercase",
           }}
         >
@@ -105,7 +105,7 @@ export default function ContactPage() {
                     style={{
                       fontSize: "0.52rem",
                       letterSpacing: "0.3em",
-                      color: "rgba(255,255,255,0.45)",
+                      color: "rgba(255,255,255,0.55)",
                       textTransform: "uppercase",
                       display: "block",
                       marginBottom: "8px",
@@ -135,7 +135,7 @@ export default function ContactPage() {
                     style={{
                       fontSize: "0.52rem",
                       letterSpacing: "0.3em",
-                      color: "rgba(255,255,255,0.45)",
+                      color: "rgba(255,255,255,0.55)",
                       textTransform: "uppercase",
                       display: "block",
                       marginBottom: "8px",
@@ -165,7 +165,7 @@ export default function ContactPage() {
                     style={{
                       fontSize: "0.52rem",
                       letterSpacing: "0.3em",
-                      color: "rgba(255,255,255,0.45)",
+                      color: "rgba(255,255,255,0.55)",
                       textTransform: "uppercase",
                       display: "block",
                       marginBottom: "8px",
@@ -224,7 +224,7 @@ export default function ContactPage() {
                 style={{
                   fontSize: "0.5rem",
                   letterSpacing: "0.3em",
-                  color: "rgba(255,255,255,0.45)",
+                  color: "rgba(255,255,255,0.55)",
                   textTransform: "uppercase",
                 }}
               >
@@ -236,11 +236,9 @@ export default function ContactPage() {
                 style={{
                   fontSize: "0.85rem",
                   color: "rgba(255,255,255,0.7)",
-                  wordBreak: "break-all",
-                  overflowWrap: "anywhere",
                 }}
               >
-                mu.mathematicsclub@mahindrauniversity.edu.in
+                mu.mathematicsclub<br className="md:hidden" />@mahindrauniversity.edu.in
               </a>
             </div>
 
@@ -250,7 +248,7 @@ export default function ContactPage() {
                 style={{
                   fontSize: "0.5rem",
                   letterSpacing: "0.3em",
-                  color: "rgba(255,255,255,0.45)",
+                  color: "rgba(255,255,255,0.55)",
                   textTransform: "uppercase",
                 }}
               >

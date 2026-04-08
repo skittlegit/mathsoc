@@ -167,7 +167,7 @@ function ResourceSection({
               className="mb-3"
               style={{
                 fontSize: "0.7rem",
-                color: "rgba(255,255,255,0.45)",
+                color: "rgba(255,255,255,0.55)",
                 letterSpacing: "0.1em",
                 fontFamily: "var(--font-jetbrains-mono)",
               }}
@@ -184,7 +184,7 @@ function ResourceSection({
               {item.desc}
             </p>
             <div className="mt-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <span style={{ fontSize: "0.52rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>Open</span>
+              <span style={{ fontSize: "0.52rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)" }}>Open</span>
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                 <path d="M3 8h10M8 3l5 5-5 5" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -208,7 +208,7 @@ export default function ResourcesPage() {
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.35)",
+            color: "rgba(255,255,255,0.5)",
             textTransform: "uppercase",
           }}
         >
