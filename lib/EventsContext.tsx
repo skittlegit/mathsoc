@@ -41,7 +41,3 @@ export function EventsProvider({ children }: { children: ReactNode }) {
 export function useEvents() {
   return useContext(EventsContext);
 }
-
-export function useEvents() {
-  return useContext(EventsContext);
-}
