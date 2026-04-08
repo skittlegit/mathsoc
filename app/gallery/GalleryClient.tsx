@@ -323,23 +323,11 @@ export default function GalleryClient({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35, duration: 0.7 }}
       >
-        <style jsx>{`
-          @media (min-width: 640px) {
-            .masonry-grid {
-              column-count: 3 !important;
-            }
-          }
-          @media (min-width: 900px) {
-            .masonry-grid {
-              column-count: 4 !important;
-            }
-          }
-          @media (min-width: 1280px) {
-            .masonry-grid {
-              column-count: 5 !important;
-            }
-          }
-        `}</style>
+        <style dangerouslySetInnerHTML={{ __html: `
+          @media (min-width: 640px) { .masonry-grid { column-count: 3 !important; } }
+          @media (min-width: 900px) { .masonry-grid { column-count: 4 !important; } }
+          @media (min-width: 1280px) { .masonry-grid { column-count: 5 !important; } }
+        ` }} />
         <div className="masonry-grid" style={{ columnCount: 2, columnGap: 6 }}>
           {all.map((item, i) => {
             const isVideo = /\.(mp4|webm|mov)$/i.test(
