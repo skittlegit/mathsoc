@@ -2,6 +2,10 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { signInAnonymously } from "firebase/auth";
+import { collection, doc, setDoc, deleteDoc, getDocs } from "firebase/firestore";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, db, storage } from "@/lib/firebase";
 
 interface EventItem {
   id: string;
@@ -83,6 +87,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [form, setForm] = useState<EventItem>({ ...emptyEvent });
@@ -110,22 +115,26 @@ export default function AdminPage() {
     startPosY: 50,
   });
 
-  /* ── File upload helper — uses /api/upload ── */
+  /* ── File upload helper — uses Firebase Storage ── */
   const uploadFile = async (file: File): Promise<string> => {
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    if (!res.ok) throw new Error("Upload failed");
-    const json = await res.json();
-    return json.url as string;
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+    const allowed = ["jpg", "jpeg", "png", "gif", "webp", "avif"];
+    if (!allowed.includes(ext)) throw new Error("File type not allowed");
+    const fileRef = storageRef(storage, `events/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`);
+    await uploadBytes(fileRef, file);
+    return getDownloadURL(fileRef);
   };
 
-  /* ── Fetch events from /api/events ── */
+  /* ── Fetch events from Firestore ── */
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await fetch("/api/events");
-      if (!res.ok) throw new Error("Failed to fetch");
-      const list: EventItem[] = await res.json();
+      const snap = await getDocs(collection(db, "events"));
+      const list: EventItem[] = snap.docs
+        .map((d) => {
+          const data = d.data();
+          return { ...data, id: d.id, slug: data.slug || d.id } as EventItem;
+        })
+        .sort((a, b) => b.year - a.year || b.date.localeCompare(a.date));
       setEvents(list);
     } catch {
       setSaveError("Failed to load events");
@@ -173,20 +182,9 @@ export default function AdminPage() {
         gallery: Array.isArray(form.gallery) ? form.gallery : [],
       };
 
-      const res = await fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error((err as { error?: string }).error || "Save failed");
-      }
-
-      const saved = await res.json() as EventItem;
+      await setDoc(doc(db, "events", id), payload);
       setSaveStatus("saved");
-      setLastSavedId(saved.id || id);
+      setLastSavedId(id);
       setTimeout(() => setSaveStatus("idle"), 3500);
       setTimeout(() => setLastSavedId(null), 6000);
 
@@ -220,13 +218,24 @@ export default function AdminPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/events?id=${encodeURIComponent(id)}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Delete failed");
+      await deleteDoc(doc(db, "events", id));
       setDeleteConfirm(null);
       if (form.id === id) cancelEdit();
       await fetchEvents();
     } catch {
       setSaveError("Delete failed");
+    }
+  };
+
+  const seedFromBackup = async () => {
+    try {
+      const res = await fetch("/api/events");
+      if (!res.ok) return;
+      const list = await res.json() as EventItem[];
+      await Promise.all(list.map((ev) => setDoc(doc(db, "events", ev.id), { ...ev, slug: ev.slug || ev.id })));
+      await fetchEvents();
+    } catch {
+      setSaveError("Seed failed");
     }
   };
 
@@ -263,6 +272,19 @@ export default function AdminPage() {
   /* ─────────────────────────────────────────────────
      PASSWORD GATE
   ───────────────────────────────────────────────── */
+  const handleAuth = async () => {
+    if (pwdInput !== "geometrystinks") { setPwdError(true); return; }
+    setAuthLoading(true);
+    try {
+      await signInAnonymously(auth);
+      setAuthed(true);
+    } catch {
+      setPwdError(true);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   if (!authed) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-7">
@@ -288,12 +310,7 @@ export default function AdminPage() {
               setPwdInput(e.target.value);
               setPwdError(false);
             }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                if (pwdInput === "geometrystinks") setAuthed(true);
-                else setPwdError(true);
-              }
-            }}
+            onKeyDown={(e) => { if (e.key === "Enter") handleAuth(); }}
             style={{
               ...inputBase,
               borderColor: pwdError ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.09)",
@@ -306,10 +323,8 @@ export default function AdminPage() {
             </p>
           )}
           <button
-            onClick={() => {
-              if (pwdInput === "geometrystinks") setAuthed(true);
-              else setPwdError(true);
-            }}
+            onClick={handleAuth}
+            disabled={authLoading}
             style={{
               marginTop: 16,
               width: "100%",
@@ -322,11 +337,12 @@ export default function AdminPage() {
               border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: "4px",
               color: "rgba(255,255,255,0.7)",
-              cursor: "pointer",
+              cursor: authLoading ? "not-allowed" : "pointer",
               fontFamily: "var(--font-space-grotesk)",
+              opacity: authLoading ? 0.5 : 1,
             }}
           >
-            Access
+            {authLoading ? "Signing in…" : "Access"}
           </button>
         </div>
       </div>
@@ -1022,7 +1038,23 @@ export default function AdminPage() {
                 fontStyle: "italic",
               }}
             >
-              No events yet. Create the first one above.
+              No events yet. Create the first one above, or{" "}
+              <button
+                onClick={seedFromBackup}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "rgba(255,255,255,0.45)",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  fontSize: "inherit",
+                  fontFamily: "var(--font-space-grotesk)",
+                  padding: 0,
+                }}
+              >
+                import existing events from backup
+              </button>
+              .
             </p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>

@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { EventItem } from "@/lib/types";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 interface EventsContextValue {
   events: EventItem[];
@@ -17,11 +19,13 @@ export function EventsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("/api/events");
-        if (!res.ok) throw new Error("Failed to fetch events");
-        const raw: (EventItem & { slug?: string })[] = await res.json();
-        // Ensure slug exists (fall back to id for legacy entries without slug)
-        const data: EventItem[] = raw.map((e) => ({ ...e, slug: e.slug || e.id }));
+        const snap = await getDocs(collection(db, "events"));
+        const data: EventItem[] = snap.docs
+          .map((d) => {
+            const docData = d.data();
+            return { ...docData, id: d.id, slug: docData.slug || d.id } as EventItem;
+          })
+          .sort((a, b) => b.year - a.year || b.date.localeCompare(a.date));
         setEvents(data);
       } catch {
         /* silent */
