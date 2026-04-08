@@ -2,20 +2,6 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  collection,
-  query,
-  orderBy,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { signInAnonymously } from "firebase/auth";
-import { db, storage, auth } from "@/lib/firebase";
 
 interface EventItem {
   id: string;
@@ -97,8 +83,6 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
-  const [authLoading, setAuthLoading] = useState(false);
-  const [authError, setAuthError] = useState("");
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [form, setForm] = useState<EventItem>({ ...emptyEvent });
@@ -126,57 +110,22 @@ export default function AdminPage() {
     startPosY: 50,
   });
 
-  /* ── File upload helper ── */
+  /* ── File upload helper — uses /api/upload ── */
   const uploadFile = async (file: File): Promise<string> => {
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `event_images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    const storageRef = ref(storage, path);
-    const task = uploadBytesResumable(storageRef, file);
-    return new Promise((resolve, reject) => {
-      task.on("state_changed", null, reject, () => {
-        getDownloadURL(task.snapshot.ref).then(resolve).catch(reject);
-      });
-    });
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    if (!res.ok) throw new Error("Upload failed");
+    const json = await res.json();
+    return json.url as string;
   };
 
-  /* ── Fetch events ── */
+  /* ── Fetch events from /api/events ── */
   const fetchEvents = useCallback(async () => {
     try {
-      const q = query(collection(db, "events"), orderBy("date", "desc"));
-      const snap = await getDocs(q);
-      const list: EventItem[] = [];
-      snap.forEach((d) => {
-        const data = d.data();
-        const rawDate = data.date;
-        let dateStr = "";
-        let year = new Date().getFullYear();
-        if (rawDate && typeof rawDate === "object" && "toDate" in rawDate) {
-          const dt = (rawDate as { toDate: () => Date }).toDate();
-          dateStr = dt
-            .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-            .toUpperCase();
-          year = dt.getFullYear();
-        } else if (typeof rawDate === "string") {
-          dateStr = rawDate;
-          const parsed = new Date(rawDate);
-          if (!isNaN(parsed.getTime())) year = parsed.getFullYear();
-        }
-        list.push({
-          id: d.id,
-          year,
-          date: dateStr,
-          title: (data.title as string) || "",
-          full: (data.title as string) || "",
-          location: (data.location as string) || "",
-          desc: (data.summary as string) || (data.content as string) || "",
-          tag: (data.category as string) || "Event",
-          photo: (data.mainImageUrl as string) || undefined,
-          photoPosition: (data.photoPosition as string) || "50% 50%",
-          photoScale: (data.photoScale as number) || 1,
-          content: (data.content as string) || undefined,
-          gallery: (data.additionalImageUrls as string[]) || undefined,
-        });
-      });
+      const res = await fetch("/api/events");
+      if (!res.ok) throw new Error("Failed to fetch");
+      const list: EventItem[] = await res.json();
       setEvents(list);
     } catch {
       setSaveError("Failed to load events");
@@ -189,7 +138,7 @@ export default function AdminPage() {
     fetchEvents();
   }, [fetchEvents]);
 
-  /* ── Submit / save ── */
+  /* ── Submit / save via /api/events ── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaveStatus("saving");
@@ -204,33 +153,40 @@ export default function AdminPage() {
         "-" +
         form.year;
 
+      // For new events generate an id from the slug
+      const id = form.id || slug;
+
       const payload = {
-        title: form.full || form.title,
-        summary: form.desc,
-        content: form.content || form.desc,
+        id,
         slug,
+        year: form.year,
         date: form.date,
+        title: form.title,
+        full: form.full || form.title,
         location: form.location,
-        category: form.tag,
-        mainImageUrl: form.photo || "",
+        desc: form.desc,
+        tag: form.tag,
+        ...(form.photo ? { photo: form.photo } : {}),
         photoPosition: form.photoPosition || "50% 50%",
         photoScale: form.photoScale || 1,
-        additionalImageUrls: Array.isArray(form.gallery) ? form.gallery : [],
+        ...(form.content ? { content: form.content } : {}),
+        gallery: Array.isArray(form.gallery) ? form.gallery : [],
       };
 
-      let savedId = form.id;
-      if (editing && form.id) {
-        await updateDoc(doc(db, "events", form.id), payload);
-      } else {
-        const docRef = await addDoc(collection(db, "events"), {
-          ...payload,
-          createdAt: serverTimestamp(),
-        });
-        savedId = docRef.id;
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error((err as { error?: string }).error || "Save failed");
       }
 
+      const saved = await res.json() as EventItem;
       setSaveStatus("saved");
-      setLastSavedId(savedId || null);
+      setLastSavedId(saved.id || id);
       setTimeout(() => setSaveStatus("idle"), 3500);
       setTimeout(() => setLastSavedId(null), 6000);
 
@@ -264,7 +220,8 @@ export default function AdminPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteDoc(doc(db, "events", id));
+      const res = await fetch(`/api/events?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
       setDeleteConfirm(null);
       if (form.id === id) cancelEdit();
       await fetchEvents();
@@ -303,26 +260,6 @@ export default function AdminPage() {
     e.currentTarget.style.cursor = "grab";
   };
 
-  /* ── Password sign-in ── */
-  const handleSignIn = async () => {
-    if (pwdInput !== "geometrystinks") {
-      setPwdError(true);
-      return;
-    }
-    setAuthLoading(true);
-    setAuthError("");
-    try {
-      await signInAnonymously(auth);
-    } catch {
-      // Anonymous auth may be disabled in Firebase console.
-      // We still allow access — Firestore writes will surface their own error.
-      setAuthError("Firebase auth unavailable — saves may fail until Anonymous Auth is enabled.");
-    } finally {
-      setAuthLoading(false);
-      setAuthed(true);
-    }
-  };
-
   /* ─────────────────────────────────────────────────
      PASSWORD GATE
   ───────────────────────────────────────────────── */
@@ -350,10 +287,12 @@ export default function AdminPage() {
             onChange={(e) => {
               setPwdInput(e.target.value);
               setPwdError(false);
-              setAuthError("");
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter") handleSignIn();
+              if (e.key === "Enter") {
+                if (pwdInput === "geometrystinks") setAuthed(true);
+                else setPwdError(true);
+              }
             }}
             style={{
               ...inputBase,
@@ -366,14 +305,11 @@ export default function AdminPage() {
               Incorrect password.
             </p>
           )}
-          {authError && (
-            <p style={{ fontSize: "0.65rem", color: "rgb(253,230,138)", marginTop: 8 }}>
-              {authError}
-            </p>
-          )}
           <button
-            onClick={handleSignIn}
-            disabled={authLoading}
+            onClick={() => {
+              if (pwdInput === "geometrystinks") setAuthed(true);
+              else setPwdError(true);
+            }}
             style={{
               marginTop: 16,
               width: "100%",
@@ -382,16 +318,15 @@ export default function AdminPage() {
               fontWeight: 600,
               letterSpacing: "0.15em",
               textTransform: "uppercase",
-              background: authLoading ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.06)",
+              background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.12)",
               borderRadius: "4px",
-              color: authLoading ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.7)",
-              cursor: authLoading ? "not-allowed" : "pointer",
+              color: "rgba(255,255,255,0.7)",
+              cursor: "pointer",
               fontFamily: "var(--font-space-grotesk)",
-              transition: "all 0.15s",
             }}
           >
-            {authLoading ? "Signing in…" : "Access"}
+            Access
           </button>
         </div>
       </div>

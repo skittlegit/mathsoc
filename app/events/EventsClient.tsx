@@ -513,7 +513,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                       className="font-bold"
                       style={{
                         fontSize: "clamp(2.5rem, 6vw, 5rem)",
-                        color: "rgba(255,255,255,0.2)",
+                        color: "rgba(255,255,255,0.3)",
                         letterSpacing: "0.1em",
                         lineHeight: 1,
                       }}
@@ -531,15 +531,16 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                   {rest.length > 0 && (
                     <div
                       style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                          "repeat(auto-fit, minmax(280px, 1fr))",
+                        display: "flex",
+                        flexWrap: "wrap",
                         gap: 32,
                         marginTop: 8,
                       }}
                     >
                       {rest.map((ev, i) => (
-                        <EventCard key={ev.id} ev={ev} index={i} />
+                        <div key={ev.id} style={{ flex: "1 1 280px", minWidth: 0 }}>
+                          <EventCard ev={ev} index={i} />
+                        </div>
                       ))}
                     </div>
                   )}

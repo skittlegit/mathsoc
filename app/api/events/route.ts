@@ -3,6 +3,7 @@ import path from "path";
 
 export interface EventItem {
   id: string;
+  slug: string;
   year: number;
   date: string;
   title: string;
@@ -11,6 +12,8 @@ export interface EventItem {
   desc: string;
   tag: string;
   photo?: string;
+  photoPosition?: string;
+  photoScale?: number;
   content?: string;
   gallery?: string[];
 }
@@ -40,8 +43,10 @@ export async function POST(request: Request) {
 
   const events = await readEvents();
   const existing = events.findIndex((e) => e.id === id);
+  const safeId = String(id).slice(0, 100);
   const event: EventItem = {
-    id: String(id).slice(0, 100),
+    id: safeId,
+    slug: body.slug ? String(body.slug).slice(0, 120) : safeId,
     year: Number(year),
     date: String(date).slice(0, 50),
     title: String(title).slice(0, 100),
@@ -50,6 +55,8 @@ export async function POST(request: Request) {
     desc: String(desc).slice(0, 1000),
     tag: String(tag).slice(0, 50),
     ...(body.photo ? { photo: String(body.photo).slice(0, 500) } : {}),
+    ...(body.photoPosition ? { photoPosition: String(body.photoPosition).slice(0, 30) } : {}),
+    ...(body.photoScale != null ? { photoScale: Number(body.photoScale) } : {}),
     ...(body.content ? { content: String(body.content).slice(0, 8000) } : {}),
     ...(body.gallery && Array.isArray(body.gallery)
       ? { gallery: (body.gallery as unknown[]).slice(0, 100).map((u) => String(u).slice(0, 500)) }
