@@ -513,7 +513,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                       className="font-bold"
                       style={{
                         fontSize: "clamp(2.5rem, 6vw, 5rem)",
-                        color: "rgba(255,255,255,0.04)",
+                        color: "rgba(255,255,255,0.2)",
                         letterSpacing: "0.1em",
                         lineHeight: 1,
                       }}
@@ -533,7 +533,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                       style={{
                         display: "grid",
                         gridTemplateColumns:
-                          "repeat(auto-fill, minmax(280px, 1fr))",
+                          "repeat(auto-fit, minmax(280px, 1fr))",
                         gap: 32,
                         marginTop: 8,
                       }}
