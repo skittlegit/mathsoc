@@ -5,6 +5,7 @@ import { join } from "path";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { EventsProvider } from "@/lib/EventsContext";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -100,7 +101,9 @@ export default function RootLayout({
           />
         </div>
         <Navbar />
-        <main className="relative z-10">{children}</main>
+        <EventsProvider>
+          <main className="relative z-10">{children}</main>
+        </EventsProvider>
         <Footer />
       </body>
     </html>

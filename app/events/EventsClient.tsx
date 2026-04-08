@@ -36,6 +36,7 @@ function FeaturedCard({ ev }: { ev: EventItem }) {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
+                objectPosition: ev.photoPosition || "center",
                 display: "block",
                 transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
               }}
@@ -104,7 +105,7 @@ function FeaturedCard({ ev }: { ev: EventItem }) {
           <p
             style={{
               fontSize: "0.9rem",
-              color: "rgba(255,255,255,0.5)",
+              color: "rgba(255,255,255,0.62)",
               lineHeight: 1.7,
               maxWidth: 640,
             }}
@@ -152,6 +153,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
+                objectPosition: ev.photoPosition || "center",
                 display: "block",
                 transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
               }}
@@ -192,7 +194,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
           <span
             style={{
               fontSize: "0.52rem",
-              color: "rgba(255,255,255,0.35)",
+              color: "rgba(255,255,255,0.45)",
               fontFamily: "var(--font-jetbrains-mono)",
               letterSpacing: "0.08em",
             }}
@@ -217,7 +219,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
         <p
           style={{
             fontSize: "0.8rem",
-            color: "rgba(255,255,255,0.42)",
+            color: "rgba(255,255,255,0.55)",
             lineHeight: 1.65,
           }}
         >

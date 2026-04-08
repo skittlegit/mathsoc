@@ -26,6 +26,7 @@ interface EventItem {
   desc: string;
   tag: string;
   photo?: string;
+  photoPosition?: string;
   content?: string;
   gallery?: string[];
 }
@@ -42,6 +43,7 @@ const emptyEvent: EventItem = {
   desc: "",
   tag: "Competition",
   photo: "",
+  photoPosition: "50% 50%",
   content: "",
   gallery: [],
 };
@@ -108,6 +110,7 @@ export default function AdminPage() {
           desc: (data.summary as string) || (data.content as string) || "",
           tag: (data.category as string) || "Event",
           photo: (data.mainImageUrl as string) || undefined,
+          photoPosition: (data.photoPosition as string) || "50% 50%",
           content: (data.content as string) || undefined,
           gallery: (data.additionalImageUrls as string[]) || undefined,
         });
@@ -146,6 +149,7 @@ export default function AdminPage() {
         location: form.location,
         category: form.tag,
         mainImageUrl: form.photo || "",
+        photoPosition: form.photoPosition || "50% 50%",
         additionalImageUrls: Array.isArray(form.gallery) ? form.gallery : [],
       };
 
@@ -511,6 +515,62 @@ export default function AdminPage() {
                 onChange={(e) => setForm({ ...form, photo: e.target.value })}
                 placeholder="Or paste a URL directly..."
               />
+
+              {/* Focal point control — click on image to set crop anchor */}
+              {form.photo && (
+                <div style={{ marginTop: 12 }}>
+                  <label style={labelStyle}>Image focal point (click to set)</label>
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      aspectRatio: "21/9",
+                      maxHeight: 200,
+                      overflow: "hidden",
+                      borderRadius: 3,
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      cursor: "crosshair",
+                    }}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+                      const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+                      setForm((f) => ({ ...f, photoPosition: `${x}% ${y}%` }));
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={form.photo}
+                      alt="Focal point preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: form.photoPosition || "50% 50%",
+                        display: "block",
+                      }}
+                    />
+                    {/* Crosshair marker */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: (form.photoPosition || "50% 50%").split(" ")[0],
+                        top: (form.photoPosition || "50% 50%").split(" ")[1],
+                        transform: "translate(-50%, -50%)",
+                        width: 18,
+                        height: 18,
+                        borderRadius: "50%",
+                        border: "2px solid rgba(255,255,255,0.9)",
+                        boxShadow: "0 0 6px rgba(0,0,0,0.5)",
+                        pointerEvents: "none",
+                      }}
+                    />
+                  </div>
+                  <p style={{ fontSize: "0.55rem", color: "rgba(255,255,255,0.25)", marginTop: 4 }}>
+                    Position: {form.photoPosition || "50% 50%"}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div style={{ marginBottom: 16 }}>

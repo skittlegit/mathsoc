@@ -124,3 +124,28 @@ input[type=number] {
 .skeleton-pulse {
   animation: skeletonPulse 1.8s ease-in-out infinite;
 }
+
+/* ── Smooth image reveal on load ── */
+img {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+/* ── Focus-visible for accessibility ── */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 1px solid rgba(255,255,255,0.25);
+  outline-offset: 2px;
+}
+
+/* ── Page transition smoothness ── */
+main {
+  animation: pageIn 0.5s ease both;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -6,6 +6,7 @@ import {
   motion,
   AnimatePresence,
 } from "framer-motion";
+import { useEvents } from "@/lib/EventsContext";
 import BlackjackGame from "./components/BlackjackGame";
 
 /* ═══════════════════════════════════════════════
@@ -207,23 +208,18 @@ function FloatingSymbols() {
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
-  const [eventPhoto, setEventPhoto] = useState<{ photo: string; full: string } | null>(null);
+  const { events: allEvents } = useEvents();
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+
+  const eventPhoto = (() => {
+    const ev = allEvents.find((e) => e.photo);
+    return ev?.photo ? { photo: ev.photo, full: ev.full } : null;
+  })();
 
   useEffect(() => {
     document.body.style.overflow = loading ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [loading]);
-
-  useEffect(() => {
-    fetch("/api/events")
-      .then((r) => r.json())
-      .then((events: Array<{ photo?: string; full: string }>) => {
-        const ev = events.find((e) => e.photo);
-        if (ev?.photo) setEventPhoto({ photo: ev.photo, full: ev.full });
-      })
-      .catch(() => {});
-  }, []);
 
   const handleLoadingComplete = useCallback(() => setLoading(false), []);
 
@@ -297,7 +293,7 @@ export default function Home() {
               style={{
                 fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)",
                 lineHeight: 1.85,
-                color: "rgba(255,255,255,0.58)",
+                color: "rgba(255,255,255,0.65)",
                 maxWidth: "34ch",
               }}
               initial={{ opacity: 0 }}
@@ -428,7 +424,7 @@ export default function Home() {
                   style={{
                     fontSize: "clamp(1.5rem, 2.8vw, 2.1rem)",
                     lineHeight: 1.65,
-                    color: "rgba(255,255,255,0.72)",
+                    color: "rgba(255,255,255,0.78)",
                     fontWeight: 400,
                     maxWidth: "28ch",
                   }}
@@ -502,34 +498,101 @@ export default function Home() {
 
           <Reveal>
             <div className="mt-8 max-w-3xl">
-              <p style={{ fontSize: "1rem", lineHeight: 2, color: "rgba(255,255,255,0.55)" }}>
+              <p style={{ fontSize: "1.05rem", lineHeight: 2, color: "rgba(255,255,255,0.65)" }}>
                 We&apos;ve sat through enough lectures to know that math
                 isn&apos;t about memorizing formulas — it&apos;s about the
-                thrill of understanding. We formed MathSoc at Mahindra University
-                to explore the beauty and power of mathematics beyond the classroom.
+                thrill of understanding. We explore the beauty and power of
+                mathematics beyond the classroom.
               </p>
             </div>
           </Reveal>
 
-          <Reveal delay={0.2}>
-            <div className="mt-16 md:mt-24 flex flex-wrap gap-x-12 md:gap-x-16 gap-y-3">
-              {["PURE MATH", "APPLIED MATH", "DATA SCIENCE", "CRYPTOGRAPHY"].map((s) => (
-                <motion.span
-                  key={s}
-                  className="font-bold uppercase"
+          <div className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-2 gap-px" style={{ background: "rgba(255,255,255,0.04)" }}>
+            {[
+              {
+                symbol: "∫",
+                title: "Pure Mathematics",
+                desc: "Abstract algebra, real analysis, topology, and number theory — chasing elegance in structure and proof.",
+              },
+              {
+                symbol: "∇",
+                title: "Applied Mathematics",
+                desc: "Differential equations, optimization, and numerical methods — turning theory into tools that solve real problems.",
+              },
+              {
+                symbol: "Σ",
+                title: "Data Science",
+                desc: "Probability, statistics, and machine learning — finding patterns and making predictions from raw data.",
+              },
+              {
+                symbol: "⊕",
+                title: "Cryptography",
+                desc: "Number theory meets information security — designing codes that keep the digital world safe.",
+              },
+            ].map((area, i) => (
+              <Reveal key={area.title} delay={i * 0.1}>
+                <motion.div
                   style={{
-                    fontSize: "clamp(1.8rem, 4.5vw, 3.2rem)",
-                    letterSpacing: "-0.01em",
-                    color: "rgba(255,255,255,0.08)",
+                    background: "#000",
+                    padding: "clamp(2rem, 4vw, 3.5rem)",
+                    position: "relative",
+                    cursor: "default",
                   }}
-                  whileHover={{ color: "rgba(255,255,255,0.3)" }}
-                  transition={{ duration: 0.3 }}
+                  whileHover={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+                  transition={{ duration: 0.35 }}
                 >
-                  {s}
-                </motion.span>
-              ))}
-            </div>
-          </Reveal>
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "clamp(1.5rem, 3vw, 2.5rem)",
+                      right: "clamp(1.5rem, 3vw, 2.5rem)",
+                      fontSize: "clamp(2.5rem, 5vw, 4rem)",
+                      color: "rgba(255,255,255,0.04)",
+                      fontWeight: 700,
+                      lineHeight: 1,
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }}
+                  >
+                    {area.symbol}
+                  </span>
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "0.48rem",
+                      letterSpacing: "0.3em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,255,255,0.25)",
+                      marginBottom: 16,
+                    }}
+                  >
+                    0{i + 1}
+                  </span>
+                  <h3
+                    className="font-semibold"
+                    style={{
+                      fontSize: "clamp(1.1rem, 2vw, 1.4rem)",
+                      color: "rgba(255,255,255,0.85)",
+                      marginBottom: 12,
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    {area.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: "0.88rem",
+                      lineHeight: 1.8,
+                    color: "rgba(255,255,255,0.55)",
+                      maxWidth: "32ch",
+                    }}
+                  >
+                    {area.desc}
+                  </p>
+                </motion.div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -589,7 +652,7 @@ export default function Home() {
             <p
               className="max-w-2xl mx-auto"
               style={{
-                color: "rgba(255,200,210,0.5)",
+                color: "rgba(255,200,210,0.6)",
                 fontSize: "0.98rem",
                 lineHeight: 2,
                 marginBottom: "3rem",

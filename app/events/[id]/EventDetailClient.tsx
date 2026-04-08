@@ -39,6 +39,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
+                objectPosition: event.photoPosition || "center",
                 display: "block",
               }}
             />
@@ -204,7 +205,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
               <p
                 key={i}
                 style={{
-                  color: "rgba(255,255,255,0.72)",
+                  color: "rgba(255,255,255,0.8)",
                   fontSize: "1rem",
                   lineHeight: 1.9,
                   marginBottom: 20,
@@ -234,16 +235,16 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                 color: "rgba(255,255,255,0.35)",
               }}
             >
-              Event Gallery
+              Event Gallery · {galleryItems.length} photos
             </span>
           </div>
 
           <div
-            className="px-2 sm:px-4"
+            className="px-7 md:px-14 max-w-6xl mx-auto"
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-              gap: 4,
+              columnCount: galleryItems.length === 1 ? 1 : galleryItems.length === 2 ? 2 : undefined,
+              columns: galleryItems.length > 2 ? "280px 3" : undefined,
+              columnGap: 6,
             }}
           >
             {galleryItems.map((src, i) => (
@@ -255,10 +256,12 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                 transition={{ delay: Math.min(i * 0.04, 0.3) }}
                 onClick={() => setLightbox(i)}
                 style={{
-                  aspectRatio: "4/3",
+                  breakInside: "avoid",
+                  marginBottom: 6,
                   overflow: "hidden",
                   background: "#03050d",
                   cursor: "pointer",
+                  borderRadius: 2,
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -268,13 +271,12 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                   loading="lazy"
                   style={{
                     width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                    height: "auto",
                     display: "block",
                     transition: "transform 0.4s ease",
                   }}
                   onMouseOver={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.04)")
+                    (e.currentTarget.style.transform = "scale(1.03)")
                   }
                   onMouseOut={(e) =>
                     (e.currentTarget.style.transform = "scale(1)")

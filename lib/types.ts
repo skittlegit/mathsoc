@@ -9,6 +9,7 @@ export interface EventItem {
   desc: string;
   tag: string;
   photo?: string;
+  photoPosition?: string; // e.g. "50% 30%" for object-position
   content?: string;
   gallery?: string[];
 }
