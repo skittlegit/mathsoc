@@ -3,6 +3,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+export interface GalleryImage {
+  src: string;
+  w: number;
+  h: number;
+}
+
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /* ─── Deterministic shuffle ─── */
@@ -59,11 +65,11 @@ function Lightbox({
   onNavigate,
 }: {
   src: string;
-  all: string[];
+  all: GalleryImage[];
   onClose: () => void;
   onNavigate: (idx: number) => void;
 }) {
-  const idx = all.indexOf(src);
+  const idx = all.findIndex((item) => item.src === src);
   const isVideo = /\.(mp4|webm|mov)$/i.test(decodeURIComponent(src));
 
   const handleKey = useCallback(
@@ -250,10 +256,12 @@ export default function GalleryClient({
   images,
   videos,
 }: {
-  images: string[];
+  images: GalleryImage[];
   videos: string[];
 }) {
-  const all = shuffle([...images, ...videos]);
+  // Merge images and video placeholders into a single shuffled list
+  const videoItems: GalleryImage[] = videos.map((src) => ({ src, w: 16, h: 9 }));
+  const all = shuffle([...images, ...videoItems]);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [loadedSet, setLoadedSet] = useState<Set<number>>(new Set());
 
@@ -331,10 +339,11 @@ export default function GalleryClient({
           }
         `}</style>
         <div className="masonry-grid" style={{ columnCount: 2, columnGap: 6 }}>
-          {all.map((src, i) => {
+          {all.map((item, i) => {
             const isVideo = /\.(mp4|webm|mov)$/i.test(
-              decodeURIComponent(src)
+              decodeURIComponent(item.src)
             );
+            const aspectRatio = `${item.w} / ${item.h}`;
             return (
               <motion.div
                 key={i}
@@ -350,30 +359,29 @@ export default function GalleryClient({
                   breakInside: "avoid",
                   background: "#050a1c",
                   position: "relative",
-                  minHeight: isVideo ? undefined : 120,
+                  aspectRatio,
                 }}
               >
                 {isVideo ? (
-                  <GalleryVideo src={src} />
+                  <GalleryVideo src={item.src} />
                 ) : (
                   <>
-                    {/* Skeleton shimmer — visible until image loads */}
+                    {/* Skeleton shimmer — exact same aspect ratio */}
                     {!loadedSet.has(i) && (
                       <div
                         className="skeleton-shimmer"
                         style={{
                           position: "absolute",
                           inset: 0,
-                          minHeight: 120,
                           zIndex: 1,
                         }}
                       />
                     )}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={src}
+                      src={item.src}
                       alt=""
-                      loading={i < 8 ? "eager" : "lazy"}
+                      loading="eager"
                       decoding="async"
                       onLoad={() =>
                         setLoadedSet((prev) => {
@@ -384,8 +392,11 @@ export default function GalleryClient({
                       }
                       style={{
                         width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                         display: "block",
-                        position: "relative",
+                        position: "absolute",
+                        inset: 0,
                         zIndex: 2,
                         opacity: loadedSet.has(i) ? 1 : 0,
                         transition: "opacity 0.4s ease",
@@ -403,7 +414,7 @@ export default function GalleryClient({
       <AnimatePresence>
         {lightboxIdx !== null && (
           <Lightbox
-            src={all[lightboxIdx]}
+            src={all[lightboxIdx].src}
             all={all}
             onClose={() => setLightboxIdx(null)}
             onNavigate={(idx) => setLightboxIdx(idx)}

@@ -21,7 +21,19 @@ export default function TeamPage() {
   for (const year of yearFolders) {
     const dataFile = join(teamDir, year, "data.json");
     if (existsSync(dataFile)) {
-      dataByYear[year] = JSON.parse(readFileSync(dataFile, "utf-8")) as YearData;
+      const raw = JSON.parse(readFileSync(dataFile, "utf-8")) as YearData;
+      // Strip members with no name or whose img path ends with '/' (folder-only)
+      dataByYear[year] = {
+        ...raw,
+        sections: raw.sections
+          .map((s) => ({
+            ...s,
+            members: s.members.filter(
+              (m) => m.name.trim() !== "" && !/\/$/.test(m.img.trim())
+            ),
+          }))
+          .filter((s) => s.members.length > 0),
+      };
     } else {
       // Auto-discover photos if no data.json
       const photoFiles = readdirSync(join(teamDir, year)).filter((f) =>
