@@ -1,7 +1,7 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
+import { getFirestore, type Firestore } from "firebase/firestore";
+import { getAuth, type Auth } from "firebase/auth";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,8 +12,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// Only initialize on the client — prevents prerender errors when env vars are absent
+let db!: Firestore;
+let auth!: Auth;
+let storage!: FirebaseStorage;
 
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
+if (typeof window !== "undefined") {
+  const app: FirebaseApp =
+    getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+  db = getFirestore(app);
+  auth = getAuth(app);
+  storage = getStorage(app);
+}
+
+export { db, auth, storage };
