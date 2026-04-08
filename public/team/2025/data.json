@@ -25,7 +25,7 @@
       "label": "Secondary Leads",
       "members": [
         { "name": "Aakash Akolkar", "role": "Logistics Vice Head", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in//", "email": "" },
-        { "name": "Rishita Sarda", "role": "Content Vice Head", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in//", "email": "" },
+        { "name": "Rishita Sarda", "role": "Content Vice Head", "img": "/team/2025/rishita.jpeg", "email": "rishu.r.sarda@gmail.com" },
         { "name": "Hinduja", "role": "Media Vice Head", "img": "/team/2024/hinduja2.jpg", "instagram": "https://www.instagram.com/hiinduja_", "linkedin": "https://www.linkedin.com/in/hinduja-reddy-b87b8932b", "email": "hiinduja.13@gmail.com" },
         { "name": "Tanvi Kotari", "role": "Design Vice Head", "img": "/team/2025/tanvi.jpg", "email": "se24ucam010@mahindrauniversity.edu.in" },
         { "name": "K Vishnu Vardhan Rao ", "role": "Tech Vice Head", "img": "/team/2025/vishnu.jpg", "linkedin": "https://www.linkedin.com/in/k-vishnu-vardhan-rao", "email": "kalvakuntlavishnuvardhan@gmail.com" },
@@ -41,8 +41,8 @@
         { "name": "Kaviyarasi Chaturvedi", "role": "Executive", "img": "/team/2025/kaviyarasi.png", "instagram": "https://www.instagram.com/thisaintkavs/", "linkedin": "https://www.linkedin.com/in/kaviyarasi-chaturvedi-308aaa373/", "email": "se25ucse108@mahindrauniversity.edu.in" },
         { "name": "Kamalika Metikela", "role": "Executive", "img": "/team/2025/kamalika.jpg", "instagram": "https://www.instagram.com/whentheoceanssink/", "email": "se25ucam039@mahindrauniversity.edu.in" },
         { "name": "Shubh Sharma", "role": "Executive", "img": "/team/2025/shubh.png", "instagram": "https://www.instagram.com/shubhsharma1402/", "email": "shubhsharma1402@gmail.com" },
-        { "name": "", "role": "Executive", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in/", "email": "" },
-        { "name": "", "role": "Executive", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in/", "email": "" },
+        { "name": "Sreethan Sai Jawaji", "role": "Executive", "img": "/team/2025/sreethan.jpg", "instagram": "https://www.instagram.com/Sreethan._/", "email": "sreethansaijawaji@gmail.com" },
+        { "name": "Yuvraj Singh Visen", "role": "Executive", "img": "/team/2025/yuvraj.png", "instagram": "https://www.instagram.com/in_yu_vi_trust/", "linkedin": "https://www.linkedin.com/in/yuvrajvisen/", "email": "se25ucam033@mahindrauniversity.edu.in" },
         { "name": "", "role": "Executive", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in/", "email": "" },
         { "name": "", "role": "Executive", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in/", "email": "" }
       ]
