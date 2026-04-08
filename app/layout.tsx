@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "MathSoc — Mathematics Society",
+  title: "MathSoc",
   description:
     "The official Mathematics Society. Where curiosity becomes proof and problems become art.",
 };
