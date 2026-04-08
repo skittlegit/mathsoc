@@ -23,7 +23,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
         const data: EventItem[] = snap.docs
           .map((d) => {
             const docData = d.data();
-            return { ...docData, id: d.id, slug: docData.slug || d.id } as EventItem;
+            return { ...docData, id: d.id, slug: docData.slug || d.id } as unknown as EventItem;
           })
           .sort((a, b) => b.year - a.year || b.date.localeCompare(a.date));
         setEvents(data);

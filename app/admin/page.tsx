@@ -132,7 +132,7 @@ export default function AdminPage() {
       const list: EventItem[] = snap.docs
         .map((d) => {
           const data = d.data();
-          return { ...data, id: d.id, slug: data.slug || d.id } as EventItem;
+          return { ...data, id: d.id, slug: data.slug || d.id } as unknown as EventItem;
         })
         .sort((a, b) => b.year - a.year || b.date.localeCompare(a.date));
       setEvents(list);
