@@ -29,7 +29,7 @@ export default function ContactPage() {
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.35)",
             textTransform: "uppercase",
           }}
         >
@@ -65,7 +65,7 @@ export default function ContactPage() {
               style={{
                 fontSize: "clamp(1rem, 1.7vw, 1.15rem)",
                 lineHeight: 2,
-                color: "rgba(255,255,255,0.42)",
+                color: "rgba(255,255,255,0.6)",
               }}
             >
               We&apos;d love to hear from you — whether it&apos;s a question
@@ -92,7 +92,7 @@ export default function ContactPage() {
                 <p
                   style={{
                     fontSize: "0.9rem",
-                    color: "rgba(255,255,255,0.25)",
+                    color: "rgba(255,255,255,0.45)",
                   }}
                 >
                   We&apos;ll get back to you soon.
@@ -105,7 +105,7 @@ export default function ContactPage() {
                     style={{
                       fontSize: "0.52rem",
                       letterSpacing: "0.3em",
-                      color: "rgba(255,255,255,0.15)",
+                      color: "rgba(255,255,255,0.35)",
                       textTransform: "uppercase",
                       display: "block",
                       marginBottom: "8px",
@@ -135,7 +135,7 @@ export default function ContactPage() {
                     style={{
                       fontSize: "0.52rem",
                       letterSpacing: "0.3em",
-                      color: "rgba(255,255,255,0.15)",
+                      color: "rgba(255,255,255,0.35)",
                       textTransform: "uppercase",
                       display: "block",
                       marginBottom: "8px",
@@ -165,7 +165,7 @@ export default function ContactPage() {
                     style={{
                       fontSize: "0.52rem",
                       letterSpacing: "0.3em",
-                      color: "rgba(255,255,255,0.15)",
+                      color: "rgba(255,255,255,0.35)",
                       textTransform: "uppercase",
                       display: "block",
                       marginBottom: "8px",
@@ -224,7 +224,7 @@ export default function ContactPage() {
                 style={{
                   fontSize: "0.5rem",
                   letterSpacing: "0.3em",
-                  color: "rgba(255,255,255,0.1)",
+                  color: "rgba(255,255,255,0.3)",
                   textTransform: "uppercase",
                 }}
               >
@@ -235,7 +235,7 @@ export default function ContactPage() {
                 className="link-underline hover:text-white transition-colors duration-300"
                 style={{
                   fontSize: "0.85rem",
-                  color: "rgba(255,255,255,0.35)",
+                  color: "rgba(255,255,255,0.55)",
                   wordBreak: "break-all",
                   overflowWrap: "anywhere",
                 }}
@@ -250,7 +250,7 @@ export default function ContactPage() {
                 style={{
                   fontSize: "0.5rem",
                   letterSpacing: "0.3em",
-                  color: "rgba(255,255,255,0.1)",
+                  color: "rgba(255,255,255,0.3)",
                   textTransform: "uppercase",
                 }}
               >
@@ -259,7 +259,7 @@ export default function ContactPage() {
               <p
                 style={{
                   fontSize: "0.95rem",
-                  color: "rgba(255,255,255,0.25)",
+                  color: "rgba(255,255,255,0.5)",
                   lineHeight: 1.8,
                 }}
               >

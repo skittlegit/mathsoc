@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import MenuOverlay from "./MenuOverlay";
 
 const NAV_LINKS = [
@@ -18,27 +18,22 @@ const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { scrollY } = useScroll();
-  const bgOpacity = useTransform(scrollY, [100, 400], [0, 1]);
 
   return (
     <>
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50 px-7 md:px-14"
-        initial={{ y: -72 }}
+        className="fixed top-4 left-4 right-4 md:left-8 md:right-8 z-50 px-5 md:px-8"
+        initial={{ y: -80 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, delay: 0.1, ease }}
+        style={{
+          borderRadius: 14,
+          background: "rgba(0,0,0,0.5)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          border: "1px solid rgba(255,255,255,0.06)",
+        }}
       >
-        <motion.div
-          className="absolute inset-0 -z-10"
-          style={{
-            opacity: bgOpacity,
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            borderBottom: "1px solid rgba(255,255,255,0.04)",
-          }}
-        />
 
         <div className="flex items-center justify-between h-[72px]">
         {/* Left: Logo + name */}

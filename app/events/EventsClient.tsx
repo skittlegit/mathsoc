@@ -3,14 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import type { EventItem } from "./page";
+import type { EventItem } from "@/lib/types";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FILTERS = ["All", "Competition", "Academic", "Orientation"];
 
 function EventRow({ ev, index }: { ev: EventItem; index: number }) {
   return (
-    <Link href={`/events/${ev.id}`} className="block">
+    <Link href={`/events/${ev.slug}`} className="block">
     <motion.div
       initial={{ opacity: 0, x: -24 }}
       animate={{ opacity: 1, x: 0 }}
@@ -30,7 +30,7 @@ function EventRow({ ev, index }: { ev: EventItem; index: number }) {
         <p
           style={{
             fontSize: "0.62rem",
-            color: "rgba(255,255,255,0.38)",
+            color: "rgba(255,255,255,0.5)",
             letterSpacing: "0.1em",
             fontFamily: "var(--font-jetbrains-mono)",
           }}
@@ -55,7 +55,7 @@ function EventRow({ ev, index }: { ev: EventItem; index: number }) {
             style={{
               fontSize: "0.48rem",
               letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.35)",
+              color: "rgba(255,255,255,0.5)",
               border: "1px solid rgba(255,255,255,0.12)",
               padding: "2px 8px",
               textTransform: "uppercase",
@@ -67,7 +67,7 @@ function EventRow({ ev, index }: { ev: EventItem; index: number }) {
         <p
           style={{
             fontSize: "0.88rem",
-            color: "rgba(255,255,255,0.55)",
+            color: "rgba(255,255,255,0.65)",
             lineHeight: 1.75,
           }}
         >
@@ -117,7 +117,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.35)",
             textTransform: "uppercase",
           }}
         >
@@ -151,7 +151,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
             style={{
               fontSize: "0.5rem",
               letterSpacing: "0.22em",
-              color: "rgba(255,255,255,0.12)",
+              color: "rgba(255,255,255,0.3)",
               textTransform: "uppercase",
               lineHeight: "28px",
             }}
@@ -171,7 +171,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                 color:
                   activeFilter === f
                     ? "rgba(255,255,255,0.8)"
-                    : "rgba(255,255,255,0.2)",
+                    : "rgba(255,255,255,0.4)",
                 border:
                   activeFilter === f
                     ? "1px solid rgba(255,255,255,0.15)"

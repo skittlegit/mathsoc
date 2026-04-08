@@ -218,7 +218,7 @@ function MemberCard({ member, year }: { member: TeamMember; year: string }) {
             fontSize: "0.42rem",
             letterSpacing: "0.16em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.28)",
+            color: "rgba(255,255,255,0.45)",
             marginTop: 5,
             lineHeight: 1.4,
           }}
@@ -264,7 +264,7 @@ function SectionLabel({ label }: { label: string }) {
           fontSize: "0.44rem",
           letterSpacing: "0.35em",
           textTransform: "uppercase",
-          color: "rgba(255,255,255,0.28)",
+          color: "rgba(255,255,255,0.4)",
         }}
       >
         {label}
@@ -324,7 +324,7 @@ export default function TeamClient({
             display: "block",
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.35)",
             textTransform: "uppercase",
             marginBottom: 10,
           }}
@@ -352,7 +352,7 @@ export default function TeamClient({
           transition={{ delay: 0.25, duration: 0.6 }}
           style={{
             fontSize: "0.55rem",
-            color: "rgba(255,255,255,0.22)",
+            color: "rgba(255,255,255,0.4)",
             letterSpacing: "0.08em",
             maxWidth: 480,
           }}
@@ -389,7 +389,7 @@ export default function TeamClient({
                   color:
                     activeYear === year
                       ? "rgba(255,255,255,0.82)"
-                      : "rgba(255,255,255,0.3)",
+                      : "rgba(255,255,255,0.45)",
                   cursor: "pointer",
                   transition: "all 0.2s",
                 }}

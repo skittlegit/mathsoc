@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import type { EventItem } from "../page";
+import type { EventItem } from "@/lib/types";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -23,7 +23,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
             fontSize: "0.52rem",
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "rgba(255,255,255,0.28)",
+            color: "rgba(255,255,255,0.45)",
             display: "inline-flex",
             alignItems: "center",
             gap: 8,
@@ -103,7 +103,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           <span
             style={{
               fontSize: "0.72rem",
-              color: "rgba(255,255,255,0.3)",
+              color: "rgba(255,255,255,0.5)",
               fontFamily: "var(--font-jetbrains-mono)",
               letterSpacing: "0.1em",
             }}
@@ -114,7 +114,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
             style={{
               fontSize: "0.45rem",
               letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.28)",
+              color: "rgba(255,255,255,0.45)",
               border: "1px solid rgba(255,255,255,0.1)",
               padding: "2px 8px",
               textTransform: "uppercase",
@@ -157,7 +157,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
               <p
                 key={i}
                 style={{
-                  color: "rgba(255,255,255,0.6)",
+                  color: "rgba(255,255,255,0.72)",
                   fontSize: "1rem",
                   lineHeight: 1.9,
                   marginBottom: 20,
@@ -184,7 +184,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                 fontSize: "0.48rem",
                 letterSpacing: "0.35em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.2)",
+                color: "rgba(255,255,255,0.35)",
               }}
             >
               Event Gallery

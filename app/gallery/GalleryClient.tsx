@@ -46,8 +46,10 @@ function GalleryVideo({ src }: { src: string }) {
       muted
       loop
       playsInline
-      preload="none"
+      preload="metadata"
       style={{
+        position: "absolute",
+        inset: 0,
         width: "100%",
         height: "100%",
         objectFit: "cover",
@@ -276,7 +278,7 @@ export default function GalleryClient({
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.45)",
+            color: "rgba(255,255,255,0.55)",
             textTransform: "uppercase",
             display: "block",
             marginBottom: 10,
@@ -303,7 +305,7 @@ export default function GalleryClient({
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.45)",
+            color: "rgba(255,255,255,0.55)",
             textTransform: "uppercase",
           }}
           initial={{ opacity: 0 }}

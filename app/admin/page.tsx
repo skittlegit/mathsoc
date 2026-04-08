@@ -1,6 +1,19 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 
 interface EventItem {
   id: string;
@@ -32,17 +45,6 @@ const emptyEvent: EventItem = {
   gallery: [],
 };
 
-function slugify(text: string, year: number) {
-  return (
-    text
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "") +
-    "-" +
-    year
-  );
-}
-
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
@@ -60,12 +62,15 @@ export default function AdminPage() {
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const uploadFile = async (file: File): Promise<string> => {
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    if (!res.ok) throw new Error("Upload failed");
-    const { url } = await res.json();
-    return url as string;
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `event_images/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const storageRef = ref(storage, path);
+    const task = uploadBytesResumable(storageRef, file);
+    return new Promise((resolve, reject) => {
+      task.on("state_changed", null, reject, () => {
+        getDownloadURL(task.snapshot.ref).then(resolve).catch(reject);
+      });
+    });
   };
 
   const showToast = (msg: string, type: "ok" | "err" = "ok") => {
@@ -75,10 +80,38 @@ export default function AdminPage() {
 
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await fetch("/api/events");
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      setEvents(data);
+      const q = query(collection(db, "events"), orderBy("date", "desc"));
+      const snap = await getDocs(q);
+      const list: EventItem[] = [];
+      snap.forEach((d) => {
+        const data = d.data();
+        const rawDate = data.date;
+        let dateStr = "";
+        let year = new Date().getFullYear();
+        if (rawDate && typeof rawDate === "object" && "toDate" in rawDate) {
+          const dt = (rawDate as { toDate: () => Date }).toDate();
+          dateStr = dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase();
+          year = dt.getFullYear();
+        } else if (typeof rawDate === "string") {
+          dateStr = rawDate;
+          const parsed = new Date(rawDate);
+          if (!isNaN(parsed.getTime())) year = parsed.getFullYear();
+        }
+        list.push({
+          id: d.id,
+          year,
+          date: dateStr,
+          title: (data.title as string) || "",
+          full: (data.title as string) || "",
+          location: (data.location as string) || "",
+          desc: (data.summary as string) || (data.content as string) || "",
+          tag: (data.category as string) || "Event",
+          photo: (data.mainImageUrl as string) || undefined,
+          content: (data.content as string) || undefined,
+          gallery: (data.additionalImageUrls as string[]) || undefined,
+        });
+      });
+      setEvents(list);
     } catch {
       showToast("Failed to load events", "err");
     } finally {
@@ -94,22 +127,36 @@ export default function AdminPage() {
     e.preventDefault();
     setSaving(true);
 
-    const payload = {
-      ...form,
-      id: form.id || slugify(form.title, form.year),
-      gallery: Array.isArray(form.gallery) ? form.gallery : [],
-    };
-
     try {
-      const res = await fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Save failed");
+      const slug =
+        form.title
+          .toLowerCase()
+          .replace(/[^\w\s]/gi, "")
+          .replace(/\s+/g, "-") +
+        "-" +
+        form.year;
+
+      const firestoreData = {
+        title: form.full || form.title,
+        summary: form.desc,
+        content: form.content || form.desc,
+        slug,
+        date: form.date,
+        location: form.location,
+        category: form.tag,
+        mainImageUrl: form.photo || "",
+        additionalImageUrls: Array.isArray(form.gallery) ? form.gallery : [],
+      };
+
+      if (editing && form.id) {
+        await updateDoc(doc(db, "events", form.id), firestoreData);
+      } else {
+        await addDoc(collection(db, "events"), {
+          ...firestoreData,
+          createdAt: serverTimestamp(),
+        });
       }
+
       showToast(editing ? "Event updated" : "Event created");
       setForm({ ...emptyEvent });
       setEditing(false);
@@ -134,10 +181,7 @@ export default function AdminPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/events?id=${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Delete failed");
+      await deleteDoc(doc(db, "events", id));
       showToast("Event deleted");
       setDeleteConfirm(null);
       if (form.id === id) cancelEdit();

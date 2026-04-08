@@ -167,7 +167,7 @@ function ResourceSection({
               className="mb-3"
               style={{
                 fontSize: "0.7rem",
-                color: "rgba(255,255,255,0.15)",
+                color: "rgba(255,255,255,0.35)",
                 letterSpacing: "0.1em",
                 fontFamily: "var(--font-jetbrains-mono)",
               }}
@@ -177,7 +177,7 @@ function ResourceSection({
             <p
               style={{
                 fontSize: "0.85rem",
-                color: "rgba(255,255,255,0.22)",
+                color: "rgba(255,255,255,0.5)",
                 lineHeight: 1.7,
               }}
             >
@@ -208,7 +208,7 @@ export default function ResourcesPage() {
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
-            color: "rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.35)",
             textTransform: "uppercase",
           }}
         >
@@ -238,7 +238,7 @@ export default function ResourcesPage() {
           style={{
             fontSize: "clamp(1rem, 1.7vw, 1.15rem)",
             lineHeight: 2,
-            color: "rgba(255,255,255,0.35)",
+            color: "rgba(255,255,255,0.55)",
           }}
         >
           Our curated collection of books, platforms, and tools. Whether
