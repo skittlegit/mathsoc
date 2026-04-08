@@ -13,4 +13,13 @@ export interface EventItem {
   photoScale?: number; // e.g. 1.5 for 150% zoom
   content?: string;
   gallery?: string[];
+  link?: string; // optional external URL (e.g. mcse.in)
+}
+
+export interface Announcement {
+  id: string;
+  text: string;
+  link?: string; // optional URL to navigate to
+  active: boolean;
+  createdAt: string; // ISO date string
 }

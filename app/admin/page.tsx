@@ -22,9 +22,10 @@ interface EventItem {
   photoScale?: number;
   content?: string;
   gallery?: string[];
+  link?: string;
 }
 
-const TAGS = ["Competition", "Academic", "Orientation"];
+const TAGS = ["Competition", "Academic", "Orientation", "Community Service"];
 
 const emptyEvent: EventItem = {
   id: "",
@@ -40,6 +41,7 @@ const emptyEvent: EventItem = {
   photoScale: 1,
   content: "",
   gallery: [],
+  link: "",
 };
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -102,6 +104,12 @@ export default function AdminPage() {
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
+  /* Announcements state */
+  const [announcements, setAnnouncements] = useState<{ id: string; text: string; link: string; active: boolean; createdAt: string }[]>([]);
+  const [annText, setAnnText] = useState("");
+  const [annLink, setAnnLink] = useState("");
+  const [annSaving, setAnnSaving] = useState(false);
+
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cropContainerRef = useRef<HTMLDivElement>(null);
@@ -146,7 +154,54 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchEvents();
+    fetchAnnouncements();
   }, [fetchEvents]);
+
+  /* ── Fetch announcements from Firestore ── */
+  const fetchAnnouncements = async () => {
+    try {
+      const snap = await getDocs(collection(db, "announcements"));
+      const list = snap.docs
+        .map((d) => ({ ...d.data(), id: d.id } as { id: string; text: string; link: string; active: boolean; createdAt: string }))
+        .sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+      setAnnouncements(list);
+    } catch { /* silent */ }
+  };
+
+  const handleCreateAnnouncement = async () => {
+    if (!annText.trim()) return;
+    setAnnSaving(true);
+    try {
+      const id = `ann-${Date.now()}`;
+      await setDoc(doc(db, "announcements", id), {
+        text: annText.trim(),
+        link: annLink.trim(),
+        active: true,
+        createdAt: new Date().toISOString(),
+      });
+      setAnnText("");
+      setAnnLink("");
+      await fetchAnnouncements();
+    } catch {
+      setSaveError("Failed to save announcement");
+    } finally {
+      setAnnSaving(false);
+    }
+  };
+
+  const toggleAnnouncement = async (id: string, active: boolean) => {
+    try {
+      await setDoc(doc(db, "announcements", id), { active }, { merge: true });
+      await fetchAnnouncements();
+    } catch { /* silent */ }
+  };
+
+  const deleteAnnouncement = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "announcements", id));
+      await fetchAnnouncements();
+    } catch { /* silent */ }
+  };
 
   /* ── Submit / save via /api/events ── */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -181,6 +236,7 @@ export default function AdminPage() {
         photoScale: form.photoScale || 1,
         ...(form.content ? { content: form.content } : {}),
         gallery: Array.isArray(form.gallery) ? form.gallery : [],
+        ...(form.link ? { link: form.link } : {}),
       };
 
       await setDoc(doc(db, "events", id), payload);
@@ -506,9 +562,18 @@ export default function AdminPage() {
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
                 placeholder="e.g. ECR-5"
-                required
               />
             </div>
+          </div>
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={lbl}>External Link (optional)</label>
+            <input
+              style={inputBase}
+              value={form.link ?? ""}
+              onChange={(e) => setForm({ ...form, link: e.target.value })}
+              placeholder="e.g. mcse.in"
+            />
           </div>
 
           <div style={{ marginBottom: 14 }}>
@@ -1278,6 +1343,138 @@ export default function AdminPage() {
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+
+        {/* ══════════════════ ANNOUNCEMENTS ══════════════════ */}
+        <div style={{ marginTop: 56 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+            <span style={{ fontSize: "0.52rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
+              Announcements
+            </span>
+            <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.22)", fontFamily: "var(--font-jetbrains-mono)" }}>
+              ({announcements.filter((a) => a.active).length} active)
+            </span>
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
+          </div>
+
+          {/* New announcement form */}
+          <div style={{
+            padding: "20px",
+            border: "1px solid rgba(255,255,255,0.06)",
+            borderRadius: "8px",
+            background: "rgba(255,255,255,0.012)",
+            marginBottom: 20,
+          }}>
+            <div style={{ marginBottom: 12 }}>
+              <label style={lbl}>Announcement Text</label>
+              <input
+                style={inputBase}
+                value={annText}
+                onChange={(e) => setAnnText(e.target.value)}
+                placeholder="e.g. MCSE 2025 registrations are now open!"
+                onKeyDown={(e) => { if (e.key === "Enter") handleCreateAnnouncement(); }}
+              />
+            </div>
+            <div style={{ display: "flex", gap: 12, alignItems: "flex-end" }}>
+              <div style={{ flex: 1 }}>
+                <label style={lbl}>Link (optional)</label>
+                <input
+                  style={inputBase}
+                  value={annLink}
+                  onChange={(e) => setAnnLink(e.target.value)}
+                  placeholder="e.g. mcse.in"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleCreateAnnouncement}
+                disabled={annSaving || !annText.trim()}
+                style={{
+                  padding: "10px 24px",
+                  fontSize: "0.62rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: "4px",
+                  color: annText.trim() ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.25)",
+                  cursor: annSaving || !annText.trim() ? "not-allowed" : "pointer",
+                  fontFamily: "var(--font-space-grotesk)",
+                  flexShrink: 0,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {annSaving ? "Saving…" : "Add"}
+              </button>
+            </div>
+          </div>
+
+          {/* Existing announcements */}
+          {announcements.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {announcements.map((a) => (
+                <div
+                  key={a.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "10px 14px",
+                    borderRadius: 6,
+                    border: "1px solid rgba(255,255,255,0.03)",
+                    opacity: a.active ? 1 : 0.4,
+                    transition: "opacity 0.3s",
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.75)", margin: 0, marginBottom: 2 }}>
+                      {a.text}
+                    </p>
+                    {a.link && (
+                      <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-jetbrains-mono)", margin: 0 }}>
+                        {a.link}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => toggleAnnouncement(a.id, !a.active)}
+                    style={{
+                      padding: "5px 12px",
+                      fontSize: "0.52rem",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      background: a.active ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.04)",
+                      border: `1px solid ${a.active ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.08)"}`,
+                      borderRadius: "3px",
+                      color: a.active ? "rgb(134,239,172)" : "rgba(255,255,255,0.4)",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-space-grotesk)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {a.active ? "Active" : "Inactive"}
+                  </button>
+                  <button
+                    onClick={() => deleteAnnouncement(a.id)}
+                    style={{
+                      padding: "5px 10px",
+                      fontSize: "0.58rem",
+                      background: "transparent",
+                      border: "1px solid rgba(255,255,255,0.05)",
+                      borderRadius: "3px",
+                      color: "rgba(255,255,255,0.28)",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-space-grotesk)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </div>

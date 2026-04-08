@@ -7,6 +7,7 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useEvents } from "@/lib/EventsContext";
+import { useAnnouncements } from "@/lib/AnnouncementsContext";
 import BlackjackGame from "./components/BlackjackGame";
 
 /* ═══════════════════════════════════════════════
@@ -209,6 +210,7 @@ function FloatingSymbols() {
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const { events: allEvents } = useEvents();
+  const { announcements } = useAnnouncements();
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   const eventPhoto = (() => {
@@ -396,6 +398,69 @@ export default function Home() {
 
         </div>
       </section>
+
+      {/* ═══ ANNOUNCEMENT BANNER ═══ */}
+      {announcements.length > 0 && (
+        <section
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+            background: "rgba(255,255,255,0.015)",
+          }}
+        >
+          <div className="px-7 md:px-14 max-w-6xl mx-auto py-5">
+            {announcements.map((a) => (
+              <div
+                key={a.id}
+                className="flex items-center gap-4 flex-wrap"
+                style={{ lineHeight: 1.6 }}
+              >
+                <span
+                  style={{
+                    fontSize: "0.42rem",
+                    letterSpacing: "0.25em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,200,210,0.7)",
+                    fontWeight: 700,
+                    flexShrink: 0,
+                    border: "1px solid rgba(255,200,210,0.2)",
+                    padding: "2px 8px",
+                    borderRadius: 2,
+                  }}
+                >
+                  New
+                </span>
+                <span
+                  style={{
+                    fontSize: "0.82rem",
+                    color: "rgba(255,255,255,0.75)",
+                  }}
+                >
+                  {a.text}
+                </span>
+                {a.link && (
+                  <a
+                    href={a.link.startsWith("http") ? a.link : `https://${a.link}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: "0.68rem",
+                      color: "rgba(255,255,255,0.5)",
+                      fontFamily: "var(--font-jetbrains-mono)",
+                      letterSpacing: "0.06em",
+                      textDecoration: "underline",
+                      textUnderlineOffset: "3px",
+                      textDecorationColor: "rgba(255,255,255,0.15)",
+                    }}
+                  >
+                    {a.link.replace(/^https?:\/\//, "")} ↗
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ═══ WHO WE ARE ═══ */}
       <section

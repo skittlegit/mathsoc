@@ -158,25 +158,58 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           >
             {event.date}
           </span>
-          <span
-            style={{
-              width: 3,
-              height: 3,
-              borderRadius: "50%",
-              background: "rgba(255,255,255,0.15)",
-              display: "inline-block",
-            }}
-          />
-          <span
-            style={{
-              fontSize: "0.72rem",
-              color: "rgba(255,255,255,0.55)",
-              fontFamily: "var(--font-jetbrains-mono)",
-              letterSpacing: "0.1em",
-            }}
-          >
-            {event.location}
-          </span>
+          {event.location && (
+            <>
+              <span
+                style={{
+                  width: 3,
+                  height: 3,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.15)",
+                  display: "inline-block",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  color: "rgba(255,255,255,0.55)",
+                  fontFamily: "var(--font-jetbrains-mono)",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                {event.location}
+              </span>
+            </>
+          )}
+          {event.link && (
+            <>
+              <span
+                style={{
+                  width: 3,
+                  height: 3,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.15)",
+                  display: "inline-block",
+                }}
+              />
+              <a
+                href={event.link.startsWith("http") ? event.link : `https://${event.link}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: "0.72rem",
+                  color: "rgba(255,255,255,0.65)",
+                  fontFamily: "var(--font-jetbrains-mono)",
+                  letterSpacing: "0.1em",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "3px",
+                  textDecorationColor: "rgba(255,255,255,0.2)",
+                }}
+              >
+                {event.link.replace(/^https?:\/\//, "")} ↗
+              </a>
+            </>
+          )}
           <span
             style={{
               fontSize: "0.45rem",
@@ -199,6 +232,8 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           style={{
             borderTop: "1px solid rgba(255,255,255,0.06)",
             paddingTop: 40,
+            overflowWrap: "break-word",
+            wordBreak: "break-word",
           }}
         >
           {bodyText.split("\n").map((para, i) =>
@@ -210,6 +245,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                   fontSize: "1rem",
                   lineHeight: 1.9,
                   marginBottom: 20,
+                  maxWidth: "72ch",
                 }}
               >
                 {para}

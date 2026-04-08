@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { EventItem } from "@/lib/types";
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const FILTERS = ["All", "Competition", "Academic", "Orientation"];
+const FILTERS = ["All", "Competition", "Academic", "Orientation", "Community Service"];
 
 /* ── Featured card — big hero image ── */
 function FeaturedCard({ ev }: { ev: EventItem }) {
@@ -67,16 +67,33 @@ function FeaturedCard({ ev }: { ev: EventItem }) {
                 display: "inline-block",
               }}
             />
-            <span
-              style={{
-                fontSize: "0.6rem",
-                color: "rgba(255,255,255,0.4)",
-                fontFamily: "var(--font-jetbrains-mono)",
-                letterSpacing: "0.08em",
-              }}
-            >
-              {ev.location}
-            </span>
+            {ev.location && (
+              <span
+                style={{
+                  fontSize: "0.6rem",
+                  color: "rgba(255,255,255,0.4)",
+                  fontFamily: "var(--font-jetbrains-mono)",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                {ev.location}
+              </span>
+            )}
+            {ev.link && (
+              <span
+                style={{
+                  fontSize: "0.6rem",
+                  color: "rgba(255,255,255,0.45)",
+                  fontFamily: "var(--font-jetbrains-mono)",
+                  letterSpacing: "0.08em",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "2px",
+                  textDecorationColor: "rgba(255,255,255,0.15)",
+                }}
+              >
+                {ev.link.replace(/^https?:\/\//, "")}
+              </span>
+            )}
             <span
               style={{
                 fontSize: "0.44rem",
@@ -195,16 +212,18 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
               display: "inline-block",
             }}
           />
-          <span
-            style={{
-              fontSize: "0.52rem",
-              color: "rgba(255,255,255,0.55)",
-              fontFamily: "var(--font-jetbrains-mono)",
-              letterSpacing: "0.08em",
-            }}
-          >
-            {ev.location}
-          </span>
+          {(ev.location || ev.link) && (
+            <span
+              style={{
+                fontSize: "0.52rem",
+                color: "rgba(255,255,255,0.55)",
+                fontFamily: "var(--font-jetbrains-mono)",
+                letterSpacing: "0.08em",
+              }}
+            >
+              {ev.location || ev.link?.replace(/^https?:\/\//, "")}
+            </span>
+          )}
         </div>
 
         <h3
@@ -488,7 +507,9 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
             )}
 
             {years.map((year) => {
-              const yearEvents = filtered.filter((e) => e.year === year);
+              const yearEvents = filtered
+                .filter((e) => e.year === year)
+                .sort((a, b) => b.date.localeCompare(a.date));
               if (yearEvents.length === 0) return null;
 
               const [featured, ...rest] = yearEvents;
@@ -525,16 +546,14 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                   {rest.length > 0 && (
                     <div
                       style={{
-                        display: "flex",
-                        flexWrap: "wrap",
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
                         gap: 32,
                         marginTop: 8,
                       }}
                     >
                       {rest.map((ev, i) => (
-                        <div key={ev.id} style={{ flex: "1 1 280px", minWidth: 0 }}>
-                          <EventCard ev={ev} index={i} />
-                        </div>
+                        <EventCard key={ev.id} ev={ev} index={i} />
                       ))}
                     </div>
                   )}
