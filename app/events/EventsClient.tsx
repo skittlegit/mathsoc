@@ -37,6 +37,8 @@ function FeaturedCard({ ev }: { ev: EventItem }) {
                 height: "100%",
                 objectFit: "cover",
                 objectPosition: ev.photoPosition || "center",
+                transform: `scale(${ev.photoScale || 1})`,
+                transformOrigin: ev.photoPosition || "center",
                 display: "block",
                 transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
               }}
@@ -154,6 +156,8 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
                 height: "100%",
                 objectFit: "cover",
                 objectPosition: ev.photoPosition || "center",
+                transform: `scale(${ev.photoScale || 1})`,
+                transformOrigin: ev.photoPosition || "center",
                 display: "block",
                 transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
               }}

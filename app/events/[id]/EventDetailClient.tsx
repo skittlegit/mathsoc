@@ -40,6 +40,8 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                 height: "100%",
                 objectFit: "cover",
                 objectPosition: event.photoPosition || "center",
+                transform: `scale(${event.photoScale || 1})`,
+                transformOrigin: event.photoPosition || "center",
                 display: "block",
               }}
             />

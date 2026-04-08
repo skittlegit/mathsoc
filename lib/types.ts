@@ -10,6 +10,7 @@ export interface EventItem {
   tag: string;
   photo?: string;
   photoPosition?: string; // e.g. "50% 30%" for object-position
+  photoScale?: number; // e.g. 1.5 for 150% zoom
   content?: string;
   gallery?: string[];
 }

@@ -14,7 +14,8 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { signInAnonymously } from "firebase/auth";
+import { db, storage, auth } from "@/lib/firebase";
 
 interface EventItem {
   id: string;
@@ -27,6 +28,7 @@ interface EventItem {
   tag: string;
   photo?: string;
   photoPosition?: string;
+  photoScale?: number;
   content?: string;
   gallery?: string[];
 }
@@ -44,6 +46,7 @@ const emptyEvent: EventItem = {
   tag: "Competition",
   photo: "",
   photoPosition: "50% 50%",
+  photoScale: 1,
   content: "",
   gallery: [],
 };
@@ -167,6 +170,7 @@ export default function AdminPage() {
           tag: (data.category as string) || "Event",
           photo: (data.mainImageUrl as string) || undefined,
           photoPosition: (data.photoPosition as string) || "50% 50%",
+          photoScale: (data.photoScale as number) || 1,
           content: (data.content as string) || undefined,
           gallery: (data.additionalImageUrls as string[]) || undefined,
         });
@@ -208,6 +212,7 @@ export default function AdminPage() {
         category: form.tag,
         mainImageUrl: form.photo || "",
         photoPosition: form.photoPosition || "50% 50%",
+        photoScale: form.photoScale || 1,
         additionalImageUrls: Array.isArray(form.gallery) ? form.gallery : [],
       };
 
@@ -324,10 +329,12 @@ export default function AdminPage() {
               setPwdInput(e.target.value);
               setPwdError(false);
             }}
-            onKeyDown={(e) => {
+            onKeyDown={async (e) => {
               if (e.key === "Enter") {
-                if (pwdInput === "geometrystinks") setAuthed(true);
-                else setPwdError(true);
+                if (pwdInput === "geometrystinks") {
+                  await signInAnonymously(auth);
+                  setAuthed(true);
+                } else setPwdError(true);
               }
             }}
             style={{
@@ -342,9 +349,11 @@ export default function AdminPage() {
             </p>
           )}
           <button
-            onClick={() => {
-              if (pwdInput === "geometrystinks") setAuthed(true);
-              else setPwdError(true);
+            onClick={async () => {
+              if (pwdInput === "geometrystinks") {
+                await signInAnonymously(auth);
+                setAuthed(true);
+              } else setPwdError(true);
             }}
             style={{
               marginTop: 16,
@@ -663,6 +672,8 @@ export default function AdminPage() {
                       height: "100%",
                       objectFit: "cover",
                       objectPosition: form.photoPosition || "50% 50%",
+                      transform: `scale(${form.photoScale || 1})`,
+                      transformOrigin: form.photoPosition || "50% 50%",
                       display: "block",
                       pointerEvents: "none",
                     }}
@@ -715,11 +726,11 @@ export default function AdminPage() {
                       letterSpacing: "0.08em",
                     }}
                   >
-                    position: {form.photoPosition || "50% 50%"}
+                    position: {form.photoPosition || "50% 50%"} · zoom: {(form.photoScale || 1).toFixed(1)}×
                   </span>
                   <button
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, photoPosition: "50% 50%" }))}
+                    onClick={() => setForm((f) => ({ ...f, photoPosition: "50% 50%", photoScale: 1 }))}
                     style={{
                       fontSize: "0.52rem",
                       color: "rgba(255,255,255,0.45)",
@@ -732,6 +743,20 @@ export default function AdminPage() {
                   >
                     Reset center
                   </button>
+                </div>
+                {/* Zoom slider */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10 }}>
+                  <span style={{ ...lbl, margin: 0, whiteSpace: "nowrap" }}>Zoom 1×</span>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.05}
+                    value={form.photoScale || 1}
+                    onChange={(e) => setForm((f) => ({ ...f, photoScale: parseFloat(e.target.value) }))}
+                    style={{ flex: 1, accentColor: "rgba(255,255,255,0.55)", cursor: "pointer" }}
+                  />
+                  <span style={{ ...lbl, margin: 0, whiteSpace: "nowrap" }}>3×</span>
                 </div>
               </div>
             )}

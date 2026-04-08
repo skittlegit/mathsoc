@@ -49,6 +49,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
             tag: (data.category as string) || "Event",
             photo: (data.mainImageUrl as string) || undefined,
             photoPosition: (data.photoPosition as string) || undefined,
+            photoScale: (data.photoScale as number) || undefined,
             content: (data.content as string) || undefined,
             gallery: (data.additionalImageUrls as string[]) || undefined,
           });
