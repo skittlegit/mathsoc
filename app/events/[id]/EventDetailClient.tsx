@@ -169,7 +169,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25, duration: 0.7, ease: EASE }}
-          style={{ borderTop: "1px solid var(--c-border)", paddingTop: 40 }}
+          style={{ borderTop: "1px solid var(--c-border)", paddingTop: 40, maxWidth: 680 }}
         >
           {bodyText.split("\n").map((para, i) =>
             para.trim() ? <p key={i}>{para}</p> : <div key={i} style={{ height: 8 }} />,

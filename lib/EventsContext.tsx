@@ -17,6 +17,7 @@ const EventsContext = createContext<EventsContextValue>({ events: [], loading: t
 
 function readCache(): EventItem[] | null {
   try {
+    if (typeof window === "undefined") return null;
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
     const { ts, data } = JSON.parse(raw);
@@ -33,19 +34,19 @@ function writeCache(data: EventItem[]) {
   } catch { /* quota exceeded — ignore */ }
 }
 
+/* Read cache synchronously so first render uses cached data */
+function getInitialState(): { events: EventItem[]; hasCache: boolean } {
+  const cached = readCache();
+  return cached ? { events: cached, hasCache: true } : { events: [], hasCache: false };
+}
+
 export function EventsProvider({ children }: { children: ReactNode }) {
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [initial] = useState(getInitialState);
+  const [events, setEvents] = useState<EventItem[]>(initial.events);
+  const [loading, setLoading] = useState(!initial.hasCache);
 
   useEffect(() => {
-    // Load from cache immediately
-    const cached = readCache();
-    if (cached) {
-      setEvents(cached);
-      setLoading(false);
-    }
-
-    // Always fetch fresh data
+    // Always fetch fresh data in background
     (async () => {
       try {
         const snap = await getDocs(collection(db, "events"));

@@ -292,9 +292,17 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 56 }}>
-                    {yearEvents.map((ev, i) => (
-                      <FeaturedCard key={ev.id} ev={ev} eager={i === 0} />
-                    ))}
+                    {/* First event = featured hero, rest = compact grid */}
+                    {yearEvents.length > 0 && (
+                      <FeaturedCard ev={yearEvents[0]} eager={true} />
+                    )}
+                    {yearEvents.length > 1 && (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 32 }}>
+                        {yearEvents.slice(1).map((ev, i) => (
+                          <EventCard key={ev.id} ev={ev} index={i} />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
