@@ -105,9 +105,13 @@ export default function AdminPage() {
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   /* Announcements state */
-  const [announcements, setAnnouncements] = useState<{ id: string; text: string; link: string; active: boolean; createdAt: string }[]>([]);
-  const [annText, setAnnText] = useState("");
+  const [announcements, setAnnouncements] = useState<{ id: string; title: string; location: string; date: string; time: string; link: string; prizePool: string; active: boolean; createdAt: string }[]>([]);
+  const [annTitle, setAnnTitle] = useState("");
+  const [annLocation, setAnnLocation] = useState("");
+  const [annDate, setAnnDate] = useState("");
+  const [annTime, setAnnTime] = useState("");
   const [annLink, setAnnLink] = useState("");
+  const [annPrize, setAnnPrize] = useState("");
   const [annSaving, setAnnSaving] = useState(false);
 
   const coverInputRef = useRef<HTMLInputElement>(null);
@@ -162,25 +166,33 @@ export default function AdminPage() {
     try {
       const snap = await getDocs(collection(db, "announcements"));
       const list = snap.docs
-        .map((d) => ({ ...d.data(), id: d.id } as { id: string; text: string; link: string; active: boolean; createdAt: string }))
+        .map((d) => ({ ...d.data(), id: d.id } as { id: string; title: string; location: string; date: string; time: string; link: string; prizePool: string; active: boolean; createdAt: string }))
         .sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
       setAnnouncements(list);
     } catch { /* silent */ }
   };
 
   const handleCreateAnnouncement = async () => {
-    if (!annText.trim()) return;
+    if (!annTitle.trim() || !annDate.trim() || !annTime.trim() || !annLocation.trim()) return;
     setAnnSaving(true);
     try {
       const id = `ann-${Date.now()}`;
       await setDoc(doc(db, "announcements", id), {
-        text: annText.trim(),
-        link: annLink.trim(),
+        title: annTitle.trim(),
+        location: annLocation.trim(),
+        date: annDate.trim(),
+        time: annTime.trim(),
+        ...(annLink.trim() ? { link: annLink.trim() } : {}),
+        ...(annPrize.trim() ? { prizePool: annPrize.trim() } : {}),
         active: true,
         createdAt: new Date().toISOString(),
       });
-      setAnnText("");
+      setAnnTitle("");
+      setAnnLocation("");
+      setAnnDate("");
+      setAnnTime("");
       setAnnLink("");
+      setAnnPrize("");
       await fetchAnnouncements();
     } catch {
       setSaveError("Failed to save announcement");
@@ -1367,15 +1379,54 @@ export default function AdminPage() {
             background: "rgba(255,255,255,0.012)",
             marginBottom: 20,
           }}>
-            <div style={{ marginBottom: 12 }}>
-              <label style={lbl}>Announcement Text</label>
-              <input
-                style={inputBase}
-                value={annText}
-                onChange={(e) => setAnnText(e.target.value)}
-                placeholder="e.g. MCSE 2025 registrations are now open!"
-                onKeyDown={(e) => { if (e.key === "Enter") handleCreateAnnouncement(); }}
-              />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+              <div>
+                <label style={lbl}>Event Title *</label>
+                <input
+                  style={inputBase}
+                  value={annTitle}
+                  onChange={(e) => setAnnTitle(e.target.value)}
+                  placeholder="e.g. MCSE 2026"
+                />
+              </div>
+              <div>
+                <label style={lbl}>Location *</label>
+                <input
+                  style={inputBase}
+                  value={annLocation}
+                  onChange={(e) => setAnnLocation(e.target.value)}
+                  placeholder="e.g. Auditorium, Block A"
+                />
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 12 }}>
+              <div>
+                <label style={lbl}>Date *</label>
+                <input
+                  style={inputBase}
+                  value={annDate}
+                  onChange={(e) => setAnnDate(e.target.value)}
+                  placeholder="e.g. April 20, 2026"
+                />
+              </div>
+              <div>
+                <label style={lbl}>Time *</label>
+                <input
+                  style={inputBase}
+                  value={annTime}
+                  onChange={(e) => setAnnTime(e.target.value)}
+                  placeholder="e.g. 4:00 PM"
+                />
+              </div>
+              <div>
+                <label style={lbl}>Prize Pool (optional)</label>
+                <input
+                  style={inputBase}
+                  value={annPrize}
+                  onChange={(e) => setAnnPrize(e.target.value)}
+                  placeholder="e.g. ₹10,000"
+                />
+              </div>
             </div>
             <div style={{ display: "flex", gap: 12, alignItems: "flex-end" }}>
               <div style={{ flex: 1 }}>
@@ -1390,7 +1441,7 @@ export default function AdminPage() {
               <button
                 type="button"
                 onClick={handleCreateAnnouncement}
-                disabled={annSaving || !annText.trim()}
+                disabled={annSaving || !annTitle.trim() || !annDate.trim() || !annTime.trim() || !annLocation.trim()}
                 style={{
                   padding: "10px 24px",
                   fontSize: "0.62rem",
@@ -1400,14 +1451,14 @@ export default function AdminPage() {
                   background: "rgba(255,255,255,0.06)",
                   border: "1px solid rgba(255,255,255,0.12)",
                   borderRadius: "4px",
-                  color: annText.trim() ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.25)",
-                  cursor: annSaving || !annText.trim() ? "not-allowed" : "pointer",
+                  color: (annTitle.trim() && annDate.trim() && annTime.trim() && annLocation.trim()) ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.25)",
+                  cursor: annSaving || !annTitle.trim() ? "not-allowed" : "pointer",
                   fontFamily: "var(--font-space-grotesk)",
                   flexShrink: 0,
                   whiteSpace: "nowrap",
                 }}
               >
-                {annSaving ? "Saving…" : "Add"}
+                {annSaving ? "Saving…" : "Add Alert"}
               </button>
             </div>
           </div>
@@ -1430,14 +1481,14 @@ export default function AdminPage() {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.75)", margin: 0, marginBottom: 2 }}>
-                      {a.text}
+                    <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.75)", margin: 0, marginBottom: 2, fontWeight: 600 }}>
+                      {a.title}
                     </p>
-                    {a.link && (
-                      <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-jetbrains-mono)", margin: 0 }}>
-                        {a.link}
-                      </p>
-                    )}
+                    <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-jetbrains-mono)", margin: 0 }}>
+                      {a.date} · {a.time} · {a.location}
+                      {a.prizePool ? ` · ${a.prizePool}` : ""}
+                      {a.link ? ` · ${a.link}` : ""}
+                    </p>
                   </div>
                   <button
                     onClick={() => toggleAnnouncement(a.id, !a.active)}

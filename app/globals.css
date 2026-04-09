@@ -155,3 +155,155 @@ textarea:focus-visible {
     border-bottom: 1px solid rgba(255,255,255,0.04);
   }
 }
+
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS & UTILITY CLASSES
+═══════════════════════════════════════════════ */
+
+/* ── Page container ── */
+.page-container {
+  @apply px-7 md:px-14 max-w-6xl mx-auto;
+}
+
+/* ── Eyebrow label ── */
+.eyebrow {
+  font-size: 0.56rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  display: block;
+}
+
+/* ── Tag badge ── */
+.tag-badge {
+  display: inline-block;
+  font-size: 0.42rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 2px;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-jetbrains-mono), monospace;
+  white-space: nowrap;
+}
+
+/* ── Monospace meta text ── */
+.meta-mono {
+  font-family: var(--font-jetbrains-mono), monospace;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.06em;
+}
+
+/* ── Separator dot ── */
+.sep-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* ── Prose body (event descriptions) ── */
+.prose-body {
+  font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+  line-height: 2;
+  color: rgba(255,255,255,0.7);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.prose-body p {
+  max-width: 72ch;
+  margin-bottom: 1em;
+}
+
+/* ── Event image wrapper ── */
+.ev-img-wrap {
+  overflow: hidden;
+  position: relative;
+  background: #03050d;
+  border-radius: 2px;
+}
+
+.ev-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ev-img-wrap:hover img {
+  transform: scale(1.04);
+}
+
+/* ── Lightbox overlay ── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Lightbox nav buttons ── */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  font-size: 1.2rem;
+  z-index: 10;
+  transition: background 0.15s;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* ── Filter chip ── */
+.filter-chip {
+  padding: 6px 18px;
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 2px;
+  background: transparent;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  transition: all 0.2s;
+}
+
+.filter-chip:hover {
+  border-color: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.7);
+}
+
+.filter-chip[data-active="true"] {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── Skeleton bone ── */
+.skel {
+  background: rgba(255,255,255,0.03);
+  border-radius: 2px;
+  animation: skeletonPulse 1.8s ease-in-out infinite;
+}

@@ -14,12 +14,17 @@ export interface EventItem {
   content?: string;
   gallery?: string[];
   link?: string; // optional external URL (e.g. mcse.in)
+  author?: string; // optional event author
 }
 
 export interface Announcement {
   id: string;
-  text: string;
-  link?: string; // optional URL to navigate to
+  title: string;
+  location: string;
+  date: string;       // e.g. "April 15, 2026"
+  time: string;       // e.g. "4:00 PM"
+  link?: string;      // optional URL
+  prizePool?: string; // optional e.g. "₹10,000"
   active: boolean;
-  createdAt: string; // ISO date string
+  createdAt: string;  // ISO date string
 }

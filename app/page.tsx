@@ -399,7 +399,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ ANNOUNCEMENT BANNER ═══ */}
+      {/* ═══ ALERT BANNER ═══ */}
       {announcements.length > 0 && (
         <section
           style={{
@@ -408,13 +408,14 @@ export default function Home() {
             background: "rgba(255,255,255,0.015)",
           }}
         >
-          <div className="px-7 md:px-14 max-w-6xl mx-auto py-5">
+          <div className="px-7 md:px-14 max-w-6xl mx-auto py-6">
             {announcements.map((a) => (
               <div
                 key={a.id}
-                className="flex items-center gap-4 flex-wrap"
+                className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
                 style={{ lineHeight: 1.6 }}
               >
+                {/* Badge */}
                 <span
                   style={{
                     fontSize: "0.42rem",
@@ -426,32 +427,55 @@ export default function Home() {
                     border: "1px solid rgba(255,200,210,0.2)",
                     padding: "2px 8px",
                     borderRadius: 2,
+                    alignSelf: "flex-start",
                   }}
                 >
-                  New
+                  Upcoming
                 </span>
-                <span
-                  style={{
-                    fontSize: "0.82rem",
-                    color: "rgba(255,255,255,0.75)",
-                  }}
-                >
-                  {a.text}
-                </span>
+
+                {/* Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ fontSize: "0.92rem", color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>
+                    {a.title}
+                  </span>
+                  <div
+                    className="flex items-center gap-2 flex-wrap mt-1"
+                    style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-jetbrains-mono)", letterSpacing: "0.04em" }}
+                  >
+                    <span>{a.date}</span>
+                    <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
+                    <span>{a.time}</span>
+                    <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
+                    <span>{a.location}</span>
+                    {a.prizePool && (
+                      <>
+                        <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
+                        <span style={{ color: "rgba(255,200,210,0.65)" }}>Prize: {a.prizePool}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Link */}
                 {a.link && (
                   <a
                     href={a.link.startsWith("http") ? a.link : `https://${a.link}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      fontSize: "0.68rem",
-                      color: "rgba(255,255,255,0.5)",
+                      fontSize: "0.56rem",
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,255,255,0.55)",
                       fontFamily: "var(--font-jetbrains-mono)",
-                      letterSpacing: "0.06em",
-                      textDecoration: "underline",
-                      textUnderlineOffset: "3px",
-                      textDecorationColor: "rgba(255,255,255,0.15)",
+                      textDecoration: "none",
+                      borderBottom: "1px solid rgba(255,255,255,0.18)",
+                      paddingBottom: 2,
+                      flexShrink: 0,
+                      transition: "color 0.2s",
                     }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.85)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.55)"; }}
                   >
                     {a.link.replace(/^https?:\/\//, "")} ↗
                   </a>
@@ -464,12 +488,12 @@ export default function Home() {
 
       {/* ═══ WHO WE ARE ═══ */}
       <section
-        className="px-7 md:px-14 py-36 md:py-56"
+        className="px-7 md:px-14 py-32 md:py-48"
         style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
       >
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <div className="flex items-center gap-6 mb-8">
+            <div className="flex items-center gap-6 mb-14">
               <span
                 style={{
                   fontSize: "0.56rem",
@@ -480,109 +504,103 @@ export default function Home() {
               >
                 Who We Are
               </span>
+              <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
-            {/* Left — text */}
-            <div>
-              <Reveal delay={0.1}>
-                <p
+          {/* Top — statement + CTA */}
+          <div className="mb-20">
+            <Reveal delay={0.1}>
+              <p
+                style={{
+                  fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
+                  lineHeight: 1.55,
+                  color: "rgba(255,255,255,0.82)",
+                  fontWeight: 400,
+                  maxWidth: "38ch",
+                }}
+              >
+                We&apos;re{" "}
+                <span style={{ color: "rgba(255,255,255,0.96)", fontWeight: 600 }}>MathSoc</span>{" "}
+                — the Mathematics Society at Mahindra University. A community
+                united by curiosity, rigor, and a passion for mathematical
+                sciences beyond the classroom.
+              </p>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <Link
+                href="/events"
+                className="inline-flex items-center gap-3 mt-10 group"
+                style={{ textDecoration: "none" }}
+              >
+                <span
                   style={{
-                    fontSize: "clamp(1.5rem, 2.8vw, 2.1rem)",
-                    lineHeight: 1.65,
-                    color: "rgba(255,255,255,0.78)",
-                    fontWeight: 400,
-                    maxWidth: "28ch",
+                    fontSize: "0.6rem",
+                    letterSpacing: "0.25em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.6)",
+                    fontWeight: 600,
+                    transition: "color 0.2s",
                   }}
+                  className="group-hover:text-white"
                 >
-                  We&apos;re{" "}
-                  <span style={{ color: "rgba(255,255,255,0.95)", fontWeight: 600 }}>MathSoc</span>{" "}
-                  — the Mathematics Society at Mahindra University. A community united by
-                  curiosity, rigor, and a passion for mathematical sciences beyond the classroom.
-                </p>
-              </Reveal>
-              <Reveal delay={0.2}>
-                <Link
-                  href="/events"
-                  className="inline-flex items-center gap-3 mt-10 group"
-                  style={{ textDecoration: "none" }}
+                  View Our Events
+                </span>
+                <span
+                  style={{
+                    fontSize: "1rem",
+                    color: "rgba(255,255,255,0.4)",
+                    transition: "transform 0.3s, color 0.2s",
+                  }}
+                  className="group-hover:translate-x-1 group-hover:text-white inline-block"
                 >
-                  <span
-                    style={{
-                      fontSize: "0.6rem",
-                      letterSpacing: "0.25em",
-                      textTransform: "uppercase",
-                      color: "rgba(255,255,255,0.6)",
-                      fontWeight: 600,
-                      transition: "color 0.2s",
-                    }}
-                    className="group-hover:text-white"
-                  >
-                    View Our Events
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "1rem",
-                      color: "rgba(255,255,255,0.4)",
-                      transition: "transform 0.3s, color 0.2s",
-                    }}
-                    className="group-hover:translate-x-1 group-hover:text-white inline-block"
-                  >
-                    →
-                  </span>
-                </Link>
-              </Reveal>
-            </div>
+                  →
+                </span>
+              </Link>
+            </Reveal>
+          </div>
 
-            {/* Right — event image */}
-            <Reveal direction="fade" delay={0.2}>
+          {/* Bottom — event photo (full-width, cinematic) */}
+          {eventPhoto && (
+            <Reveal direction="fade" delay={0.15}>
               <Link href="/events" className="block group">
                 <div
                   style={{
                     width: "100%",
-                    aspectRatio: "4/3",
+                    aspectRatio: "21/9",
                     overflow: "hidden",
                     position: "relative",
                     background: "rgba(255,255,255,0.018)",
                     borderRadius: 3,
                   }}
                 >
-                  {eventPhoto ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={eventPhoto.photo}
-                      alt={eventPhoto.full}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                        transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
-                      }}
-                      className="group-hover:scale-[1.03]"
-                    />
-                  ) : (
-                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ fontSize: "5rem", color: "rgba(255,255,255,0.04)" }}>∑</span>
-                    </div>
-                  )}
-                </div>
-                {eventPhoto && (
-                  <p
-                    className="mt-4"
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={eventPhoto.photo}
+                    alt={eventPhoto.full}
                     style={{
-                      fontSize: "0.7rem",
-                      letterSpacing: "0.08em",
-                      color: "rgba(255,255,255,0.5)",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                      transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
                     }}
-                  >
-                    {eventPhoto.full}
-                  </p>
-                )}
+                    className="group-hover:scale-[1.03]"
+                  />
+                </div>
+                <p
+                  className="mt-4"
+                  style={{
+                    fontSize: "0.7rem",
+                    letterSpacing: "0.08em",
+                    color: "rgba(255,255,255,0.45)",
+                  }}
+                >
+                  {eventPhoto.full}
+                </p>
               </Link>
             </Reveal>
-          </div>
+          )}
         </div>
       </section>
 
