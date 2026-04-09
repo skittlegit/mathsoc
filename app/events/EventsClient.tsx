@@ -83,7 +83,7 @@ function EventImage({
 }
 
 /* ── Featured card — big hero image ── */
-function FeaturedCard({ ev }: { ev: EventItem }) {
+function FeaturedCard({ ev, eager = false }: { ev: EventItem; eager?: boolean }) {
   return (
     <Link href={`/events/${ev.slug}`} className="block group">
       <motion.article
@@ -91,7 +91,7 @@ function FeaturedCard({ ev }: { ev: EventItem }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE }}
       >
-        <EventImage ev={ev} ratio="16/9" eager />
+        <EventImage ev={ev} ratio="16/9" eager={eager} />
 
         <div style={{ marginTop: 20 }}>
           <div className="mb-3">
@@ -279,7 +279,6 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
             {years.map((year) => {
               const yearEvents = filtered.filter((e) => e.year === year).sort((a, b) => b.date.localeCompare(a.date));
               if (yearEvents.length === 0) return null;
-              const [featured, ...rest] = yearEvents;
 
               return (
                 <div key={year} style={{ marginBottom: 72 }}>
@@ -292,22 +291,11 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                     </span>
                   </div>
 
-                  <div style={{ marginBottom: rest.length > 0 ? 40 : 0 }}>
-                    <FeaturedCard ev={featured} />
+                  <div style={{ display: "flex", flexDirection: "column", gap: 56 }}>
+                    {yearEvents.map((ev, i) => (
+                      <FeaturedCard key={ev.id} ev={ev} eager={i === 0} />
+                    ))}
                   </div>
-
-                  {rest.length > 0 && (
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                        gap: 32,
-                        marginTop: 8,
-                      }}
-                    >
-                      {rest.map((ev, i) => <EventCard key={ev.id} ev={ev} index={i} />)}
-                    </div>
-                  )}
                 </div>
               );
             })}

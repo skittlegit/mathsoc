@@ -131,7 +131,7 @@ function SocialIcon({
 }
 
 /* ─── Photo with initials fallback ─── */
-function MemberPhoto({ src, alt, init }: { src: string; alt: string; init: string }) {
+function MemberPhoto({ src, alt, init, priority = false }: { src: string; alt: string; init: string; priority?: boolean }) {
   const [failed, setFailed] = useState(false);
   if (failed) {
     return (
@@ -160,7 +160,8 @@ function MemberPhoto({ src, alt, init }: { src: string; alt: string; init: strin
       alt={alt}
       fill
       sizes="(max-width: 768px) 50vw, 200px"
-      loading="lazy"
+      loading={priority ? "eager" : "lazy"}
+      priority={priority}
       onError={() => setFailed(true)}
       style={{
         objectFit: "cover",
@@ -171,7 +172,7 @@ function MemberPhoto({ src, alt, init }: { src: string; alt: string; init: strin
 }
 
 /* ─── Member card ─── */
-function MemberCard({ member, year }: { member: TeamMember; year: string }) {
+function MemberCard({ member, year, priority = false }: { member: TeamMember; year: string; priority?: boolean }) {
   const init = getInitials(member.name);
   const src = getImgSrc(member.img, year);
   const hasSocials = !!(member.email || member.instagram || member.linkedin || member.website);
@@ -196,7 +197,7 @@ function MemberCard({ member, year }: { member: TeamMember; year: string }) {
           flexShrink: 0,
         }}
       >
-        <MemberPhoto src={src} alt={member.name} init={init} />
+        <MemberPhoto src={src} alt={member.name} init={init} priority={priority} />
       </div>
 
       {/* Info strip */}
@@ -305,7 +306,7 @@ function YearSection({ year, data }: { year: string; data: YearData }) {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ delay: mi * 0.04, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <MemberCard member={member} year={year} />
+                <MemberCard member={member} year={year} priority={si === 0 && mi < 8} />
               </motion.div>
             ))}
           </div>

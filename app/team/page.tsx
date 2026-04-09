@@ -55,7 +55,26 @@ export default function TeamPage() {
     }
   }
 
-  return <TeamClient years={yearFolders} dataByYear={dataByYear} />;
+  // Collect image URLs from the latest year for preloading
+  const latestYear = yearFolders[0];
+  const preloadUrls: string[] = [];
+  if (latestYear && dataByYear[latestYear]) {
+    for (const section of dataByYear[latestYear].sections) {
+      for (const m of section.members) {
+        const src = m.img.startsWith("/") ? m.img : `/team/${latestYear}/${m.img}`;
+        preloadUrls.push(src);
+      }
+    }
+  }
+
+  return (
+    <>
+      {preloadUrls.map((url) => (
+        <link key={url} rel="preload" as="image" href={url} />
+      ))}
+      <TeamClient years={yearFolders} dataByYear={dataByYear} />
+    </>
+  );
 }
 
 function toTitle(str: string) {
