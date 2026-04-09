@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { EventItem } from "@/lib/types";
 
@@ -38,6 +39,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
             style={{
+              position: "relative",
               width: "100%",
               aspectRatio: "21/9",
               minHeight: 280,
@@ -46,14 +48,13 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
               background: "#03050d",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={event.photo}
               alt={event.full}
-              loading="eager"
+              fill
+              preload
+              sizes="100vw"
               style={{
-                width: "100%",
-                height: "100%",
                 objectFit: "cover",
                 objectPosition: event.photoPosition || "center",
                 transform: `scale(${event.photoScale || 1})`,
@@ -169,7 +170,12 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25, duration: 0.7, ease: EASE }}
-          style={{ borderTop: "1px solid var(--c-border)", paddingTop: 40 }}
+          style={{
+            borderTop: "1px solid var(--c-border)",
+            paddingTop: 40,
+            maxWidth: 680,
+            width: "100%",
+          }}
         >
           {bodyText.split("\n").map((para, i) =>
             para.trim() ? <p key={i}>{para}</p> : <div key={i} style={{ height: 8 }} />,
@@ -237,7 +243,6 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
             transition={{ duration: 0.2 }}
             onClick={() => setLightbox(null)}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <motion.img
               key={lightbox}
               src={galleryItems[lightbox]}

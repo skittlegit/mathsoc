@@ -131,8 +131,9 @@ function SocialIcon({
 }
 
 /* ─── Photo with initials fallback ─── */
-function MemberPhoto({ src, alt, init, priority = false }: { src: string; alt: string; init: string; priority?: boolean }) {
+function MemberPhoto({ src, alt, init, eager = false }: { src: string; alt: string; init: string; eager?: boolean }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   if (failed) {
     return (
       <div
@@ -155,24 +156,38 @@ function MemberPhoto({ src, alt, init, priority = false }: { src: string; alt: s
     );
   }
   return (
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      sizes="(max-width: 768px) 50vw, 200px"
-      loading={priority ? "eager" : "lazy"}
-      priority={priority}
-      onError={() => setFailed(true)}
-      style={{
-        objectFit: "cover",
-        objectPosition: "center top",
-      }}
-    />
+    <>
+      {!loaded && (
+        <div
+          className="skeleton-shimmer"
+          style={{
+            position: "absolute",
+            inset: 0,
+          }}
+        />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(min-width: 768px) 18rem, (min-width: 640px) 33vw, 50vw"
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        onError={() => setFailed(true)}
+        onLoad={() => setLoaded(true)}
+        style={{
+          objectFit: "cover",
+          objectPosition: "center top",
+          opacity: loaded ? 1 : 0,
+          transition: "opacity 0.35s ease",
+        }}
+      />
+    </>
   );
 }
 
 /* ─── Member card ─── */
-function MemberCard({ member, year, priority = false }: { member: TeamMember; year: string; priority?: boolean }) {
+function MemberCard({ member, year, eager = false }: { member: TeamMember; year: string; eager?: boolean }) {
   const init = getInitials(member.name);
   const src = getImgSrc(member.img, year);
   const hasSocials = !!(member.email || member.instagram || member.linkedin || member.website);
@@ -197,7 +212,7 @@ function MemberCard({ member, year, priority = false }: { member: TeamMember; ye
           flexShrink: 0,
         }}
       >
-        <MemberPhoto src={src} alt={member.name} init={init} priority={priority} />
+        <MemberPhoto src={src} alt={member.name} init={init} eager={eager} />
       </div>
 
       {/* Info strip */}
@@ -306,7 +321,7 @@ function YearSection({ year, data }: { year: string; data: YearData }) {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ delay: mi * 0.04, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <MemberCard member={member} year={year} priority={si === 0 && mi < 12} />
+                <MemberCard member={member} year={year} eager={si === 0 && mi < 6} />
               </motion.div>
             ))}
           </div>

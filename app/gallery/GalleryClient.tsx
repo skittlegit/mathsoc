@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface GalleryImage {
@@ -10,6 +11,7 @@ export interface GalleryImage {
 }
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const EAGER_GALLERY_IMAGES = 6;
 
 /* ─── Deterministic shuffle ─── */
 function shuffle<T>(arr: T[], seed = 42): T[] {
@@ -270,8 +272,7 @@ export default function GalleryClient({
   // Merge images and video placeholders into a single shuffled list
   // Default videos to 4:5 portrait-ish ratio; actual dimensions update on metadata load
   const videoItems: GalleryImage[] = videos.map((src) => ({ src, w: 4, h: 5 }));
-  const allInitial = useRef(shuffle([...images, ...videoItems]));
-  const [items, setItems] = useState(allInitial.current);
+  const [items, setItems] = useState(() => shuffle([...images, ...videoItems]));
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [loadedSet, setLoadedSet] = useState<Set<number>>(new Set());
 
@@ -386,12 +387,13 @@ export default function GalleryClient({
                         }}
                       />
                     )}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={item.src}
                       alt=""
-                      loading={i < 8 ? "eager" : "lazy"}
-                      decoding="async"
+                      fill
+                      sizes="(min-width: 1280px) 20vw, (min-width: 900px) 25vw, (min-width: 640px) 33vw, 50vw"
+                      loading={i < EAGER_GALLERY_IMAGES ? "eager" : "lazy"}
+                      fetchPriority={i < EAGER_GALLERY_IMAGES ? "high" : "auto"}
                       onLoad={() =>
                         setLoadedSet((prev) => {
                           const next = new Set(prev);
@@ -400,8 +402,6 @@ export default function GalleryClient({
                         })
                       }
                       style={{
-                        width: "100%",
-                        height: "100%",
                         objectFit: "cover",
                         display: "block",
                         position: "absolute",
