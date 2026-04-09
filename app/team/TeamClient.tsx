@@ -306,7 +306,7 @@ function YearSection({ year, data }: { year: string; data: YearData }) {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ delay: mi * 0.04, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <MemberCard member={member} year={year} priority={si === 0 && mi < 8} />
+                <MemberCard member={member} year={year} priority={si === 0 && mi < 12} />
               </motion.div>
             ))}
           </div>
