@@ -297,14 +297,7 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                   </div>
 
                   {rest.length > 0 && (
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                        gap: 32,
-                        marginTop: 8,
-                      }}
-                    >
+                    <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
                       {rest.map((ev, i) => <EventCard key={ev.id} ev={ev} index={i} />)}
                     </div>
                   )}
