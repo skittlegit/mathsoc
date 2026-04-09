@@ -53,7 +53,6 @@ function DetailSkeleton() {
           style={{
             borderTop: "1px solid rgba(255,255,255,0.06)",
             paddingTop: 40,
-            maxWidth: 680,
           }}
         >
           {[1, 2, 3].map((i) => (

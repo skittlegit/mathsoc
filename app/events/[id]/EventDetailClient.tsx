@@ -31,7 +31,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
 
   return (
     <div style={{ minHeight: "100vh", paddingBottom: 100 }}>
-      {/* ── Hero cover ── */}
+      {/* ── Hero cover (photo) ── */}
       {event.photo && (
         <div style={{ position: "relative", width: "100%" }}>
           <motion.div
@@ -85,17 +85,83 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
         </div>
       )}
 
-      {/* No image — just back link */}
+      {/* ── Hero cover (no photo — typographic banner) ── */}
       {!event.photo && (
-        <div className="page-container" style={{ paddingTop: 104 }}>
-          <BackLink />
+        <div style={{ position: "relative", width: "100%" }}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            style={{
+              position: "relative",
+              width: "100%",
+              aspectRatio: "21/9",
+              minHeight: 280,
+              maxHeight: 520,
+              overflow: "hidden",
+              background: "#03050d",
+              display: "flex",
+              alignItems: "flex-end",
+            }}
+          >
+            {/* Large faded event title in background */}
+            <span
+              className="font-bold uppercase select-none"
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: "clamp(1.75rem, 5.5vw, 3.5rem)",
+                fontSize: "clamp(4rem, 14vw, 14rem)",
+                letterSpacing: "0.04em",
+                lineHeight: 0.9,
+                color: "rgba(255,255,255,0.04)",
+                pointerEvents: "none",
+                userSelect: "none",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {event.full}
+            </span>
+            {/* Subtle dot grid */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.018) 1px, transparent 1px)",
+                backgroundSize: "32px 32px",
+                pointerEvents: "none",
+              }}
+            />
+          </motion.div>
+          {/* Gradient fade */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 120,
+              background: "linear-gradient(to top, #000 0%, transparent 100%)",
+              pointerEvents: "none",
+            }}
+          />
+          {/* Back link */}
+          <div
+            className="page-container"
+            style={{ position: "absolute", top: 0, left: 0, right: 0, paddingTop: 96 }}
+          >
+            <BackLink shadow />
+          </div>
         </div>
       )}
 
       {/* ── Header + body ── */}
       <div
         className="page-container"
-        style={{ marginTop: event.photo ? -20 : 32, position: "relative", zIndex: 2 }}
+        style={{ marginTop: -20, position: "relative", zIndex: 2 }}
       >
         {/* Title */}
         <motion.h1
