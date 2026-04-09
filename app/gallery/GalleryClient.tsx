@@ -24,11 +24,17 @@ function shuffle<T>(arr: T[], seed = 42): T[] {
 }
 
 /* ─── Inline auto-play video ─── */
-function GalleryVideo({ src }: { src: string }) {
+function GalleryVideo({ src, onDimensions }: { src: string; onDimensions?: (w: number, h: number) => void }) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const handleMeta = () => {
+      if (el.videoWidth && el.videoHeight && onDimensions) {
+        onDimensions(el.videoWidth, el.videoHeight);
+      }
+    };
+    el.addEventListener("loadedmetadata", handleMeta);
     const obs = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) el.play().catch(() => {});
@@ -37,8 +43,8 @@ function GalleryVideo({ src }: { src: string }) {
       { threshold: 0.1 }
     );
     obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+    return () => { obs.disconnect(); el.removeEventListener("loadedmetadata", handleMeta); };
+  }, [onDimensions]);
   return (
     <video
       ref={ref}
@@ -262,10 +268,23 @@ export default function GalleryClient({
   videos: string[];
 }) {
   // Merge images and video placeholders into a single shuffled list
-  const videoItems: GalleryImage[] = videos.map((src) => ({ src, w: 16, h: 9 }));
-  const all = shuffle([...images, ...videoItems]);
+  // Default videos to 4:5 portrait-ish ratio; actual dimensions update on metadata load
+  const videoItems: GalleryImage[] = videos.map((src) => ({ src, w: 4, h: 5 }));
+  const allInitial = useRef(shuffle([...images, ...videoItems]));
+  const [items, setItems] = useState(allInitial.current);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [loadedSet, setLoadedSet] = useState<Set<number>>(new Set());
+
+  // Update aspect ratio once video metadata loads
+  const handleVideoDimensions = useCallback((idx: number, w: number, h: number) => {
+    setItems((prev) => {
+      const next = [...prev];
+      if (next[idx] && next[idx].w !== w) {
+        next[idx] = { ...next[idx], w, h };
+      }
+      return next;
+    });
+  }, []);
 
   return (
     <div style={{ paddingTop: 72, minHeight: "100vh" }}>
@@ -329,14 +348,14 @@ export default function GalleryClient({
           @media (min-width: 1280px) { .masonry-grid { column-count: 5 !important; } }
         ` }} />
         <div className="masonry-grid" style={{ columnCount: 2, columnGap: 6 }}>
-          {all.map((item, i) => {
+          {items.map((item, i) => {
             const isVideo = /\.(mp4|webm|mov)$/i.test(
               decodeURIComponent(item.src)
             );
             const aspectRatio = `${item.w} / ${item.h}`;
             return (
               <motion.div
-                key={i}
+                key={item.src}
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-20px" }}
@@ -353,7 +372,7 @@ export default function GalleryClient({
                 }}
               >
                 {isVideo ? (
-                  <GalleryVideo src={item.src} />
+                  <GalleryVideo src={item.src} onDimensions={(w, h) => handleVideoDimensions(i, w, h)} />
                 ) : (
                   <>
                     {/* Skeleton shimmer — exact same aspect ratio */}
@@ -404,8 +423,8 @@ export default function GalleryClient({
       <AnimatePresence>
         {lightboxIdx !== null && (
           <Lightbox
-            src={all[lightboxIdx].src}
-            all={all}
+            src={items[lightboxIdx].src}
+            all={items}
             onClose={() => setLightboxIdx(null)}
             onNavigate={(idx) => setLightboxIdx(idx)}
           />

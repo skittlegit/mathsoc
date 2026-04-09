@@ -160,7 +160,7 @@ function MemberPhoto({ src, alt, init }: { src: string; alt: string; init: strin
       alt={alt}
       fill
       sizes="(max-width: 768px) 50vw, 200px"
-      loading="eager"
+      loading="lazy"
       onError={() => setFailed(true)}
       style={{
         objectFit: "cover",

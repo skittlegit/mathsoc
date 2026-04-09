@@ -508,59 +508,114 @@ export default function Home() {
             </div>
           </Reveal>
 
-          {/* Top — statement + CTA */}
-          <div className="mb-20">
-            <Reveal delay={0.1}>
-              <p
-                style={{
-                  fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
-                  lineHeight: 1.55,
-                  color: "rgba(255,255,255,0.82)",
-                  fontWeight: 400,
-                  maxWidth: "38ch",
-                }}
-              >
-                We&apos;re{" "}
-                <span style={{ color: "rgba(255,255,255,0.96)", fontWeight: 600 }}>MathSoc</span>{" "}
-                — the Mathematics Society at Mahindra University. A community
-                united by curiosity, rigor, and a passion for mathematical
-                sciences beyond the classroom.
-              </p>
-            </Reveal>
-            <Reveal delay={0.2}>
-              <Link
-                href="/events"
-                className="inline-flex items-center gap-3 mt-10 group"
-                style={{ textDecoration: "none" }}
-              >
-                <span
+          {/* Split — statement on left, stats on right */}
+          <div className="grid md:grid-cols-[1fr_auto] gap-16 md:gap-24 mb-24">
+            {/* Statement */}
+            <div>
+              <Reveal delay={0.1}>
+                <p
                   style={{
-                    fontSize: "0.6rem",
-                    letterSpacing: "0.25em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.6)",
-                    fontWeight: 600,
-                    transition: "color 0.2s",
+                    fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
+                    lineHeight: 1.55,
+                    color: "rgba(255,255,255,0.82)",
+                    fontWeight: 400,
                   }}
-                  className="group-hover:text-white"
                 >
-                  View Our Events
-                </span>
-                <span
+                  We&apos;re{" "}
+                  <span style={{ color: "rgba(255,255,255,0.96)", fontWeight: 600 }}>MathSoc</span>{" "}
+                  — the Mathematics Society at Mahindra University. A community
+                  united by curiosity, rigor, and a passion for mathematical
+                  sciences beyond the classroom.
+                </p>
+              </Reveal>
+              <Reveal delay={0.2}>
+                <p
+                  className="mt-6"
                   style={{
-                    fontSize: "1rem",
-                    color: "rgba(255,255,255,0.4)",
-                    transition: "transform 0.3s, color 0.2s",
+                    fontSize: "clamp(0.88rem, 1.3vw, 1rem)",
+                    lineHeight: 2,
+                    color: "rgba(255,255,255,0.5)",
                   }}
-                  className="group-hover:translate-x-1 group-hover:text-white inline-block"
                 >
-                  →
-                </span>
-              </Link>
+                  From problem-solving sessions and inter-college competitions
+                  to research discussions and social mixers — we make mathematics
+                  a living, breathing pursuit.
+                </p>
+              </Reveal>
+              <Reveal delay={0.3}>
+                <Link
+                  href="/events"
+                  className="inline-flex items-center gap-3 mt-10 group"
+                  style={{ textDecoration: "none" }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.6rem",
+                      letterSpacing: "0.25em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,255,255,0.6)",
+                      fontWeight: 600,
+                      transition: "color 0.2s",
+                    }}
+                    className="group-hover:text-white"
+                  >
+                    View Our Events
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "1rem",
+                      color: "rgba(255,255,255,0.4)",
+                      transition: "transform 0.3s, color 0.2s",
+                    }}
+                    className="group-hover:translate-x-1 group-hover:text-white inline-block"
+                  >
+                    →
+                  </span>
+                </Link>
+              </Reveal>
+            </div>
+
+            {/* Stats aside */}
+            <Reveal delay={0.25} direction="right">
+              <aside
+                className="flex flex-row md:flex-col gap-10 md:gap-14 md:border-l md:pl-12"
+                style={{ borderColor: "rgba(255,255,255,0.06)" }}
+              >
+                {[
+                  { value: "2023", label: "Founded" },
+                  { value: "50+", label: "Members" },
+                  { value: "20+", label: "Events Hosted" },
+                ].map((stat) => (
+                  <div key={stat.label}>
+                    <span
+                      className="font-bold block"
+                      style={{
+                        fontSize: "clamp(1.8rem, 3vw, 2.4rem)",
+                        letterSpacing: "-0.02em",
+                        color: "rgba(255,255,255,0.88)",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {stat.value}
+                    </span>
+                    <span
+                      className="block mt-2"
+                      style={{
+                        fontSize: "0.44rem",
+                        letterSpacing: "0.35em",
+                        textTransform: "uppercase",
+                        color: "rgba(255,255,255,0.4)",
+                      }}
+                    >
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </aside>
             </Reveal>
           </div>
 
-          {/* Bottom — event photo (full-width, cinematic) */}
+          {/* Cinematic event photo */}
           {eventPhoto && (
             <Reveal direction="fade" delay={0.15}>
               <Link href="/events" className="block group">
@@ -626,7 +681,7 @@ export default function Home() {
           </Reveal>
 
           <Reveal>
-            <div className="mt-8 max-w-3xl">
+            <div className="mt-8">
               <p style={{ fontSize: "1.05rem", lineHeight: 2, color: "rgba(255,255,255,0.65)" }}>
                 We&apos;ve sat through enough lectures to know that math
                 isn&apos;t about memorizing formulas — it&apos;s about the
