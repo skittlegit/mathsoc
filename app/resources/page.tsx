@@ -2,8 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-
-const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
+import { EASE } from "@/lib/types";
 
 const RESOURCES = [
   {
@@ -123,7 +122,7 @@ function ResourceSection({
       className="mb-14 md:mb-24"
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: index * 0.1, ease }}
+      transition={{ duration: 0.7, delay: index * 0.1, ease: EASE }}
     >
       <h2
         className="font-semibold mb-10"
@@ -145,7 +144,7 @@ function ResourceSection({
             rel="noopener noreferrer"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.15 + i * 0.06, duration: 0.6, ease }}
+            transition={{ delay: 0.15 + i * 0.06, duration: 0.6, ease: EASE }}
             className="group p-6 transition-colors duration-300 block"
             style={{
               border: "1px solid rgba(255,255,255,0.04)",
@@ -200,11 +199,11 @@ export default function ResourcesPage() {
   return (
     <div className="pt-24 md:pt-44 pb-24 overflow-x-hidden">
       {/* Page Hero */}
-      <div className="px-7 md:px-14 max-w-6xl mx-auto mb-10 md:mb-20">
+      <div className="page-container mb-10 md:mb-20">
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease }}
+          transition={{ duration: 0.6, ease: EASE }}
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
@@ -225,7 +224,7 @@ export default function ResourcesPage() {
           }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.8, ease }}
+          transition={{ delay: 0.1, duration: 0.8, ease: EASE }}
         >
           Resources
         </motion.h1>
@@ -248,7 +247,7 @@ export default function ResourcesPage() {
       </div>
 
       {/* Resource Sections */}
-      <div className="px-7 md:px-14 max-w-6xl mx-auto">
+      <div className="page-container">
         {RESOURCES.map((section, i) => (
           <ResourceSection key={section.category} section={section} index={i} />
         ))}

@@ -2,14 +2,13 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { EASE } from "@/lib/types";
 
 export interface GalleryImage {
   src: string;
   w: number;
   h: number;
 }
-
-const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /* ─── Deterministic shuffle ─── */
 function shuffle<T>(arr: T[], seed = 42): T[] {
@@ -196,7 +195,7 @@ function Lightbox({
         initial={{ scale: 0.92, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.92, opacity: 0 }}
-        transition={{ duration: 0.25, ease }}
+        transition={{ duration: 0.25, ease: EASE }}
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: "90vw",
@@ -270,11 +269,11 @@ export default function GalleryClient({
   return (
     <div style={{ paddingTop: 72, minHeight: "100vh" }}>
       {/* Header */}
-      <div className="px-7 md:px-14 max-w-6xl mx-auto" style={{ paddingTop: 48, paddingBottom: 32 }}>
+      <div className="page-container" style={{ paddingTop: 48, paddingBottom: 32 }}>
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease }}
+          transition={{ duration: 0.6, ease: EASE }}
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
@@ -297,7 +296,7 @@ export default function GalleryClient({
           }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.8, ease }}
+          transition={{ delay: 0.1, duration: 0.8, ease: EASE }}
         >
           Gallery
         </motion.h1>

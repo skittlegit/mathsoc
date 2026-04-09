@@ -1,20 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { EASE } from "@/lib/types";
 import type { EventItem } from "@/lib/types";
-
-const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function EventDetailClient({ event }: { event: EventItem }) {
   const galleryItems = event.gallery ?? [];
   const bodyText = event.content || event.desc;
   const [lightbox, setLightbox] = useState<number | null>(null);
 
+  /* Keyboard nav for lightbox */
+  const handleKey = useCallback(
+    (e: KeyboardEvent) => {
+      if (lightbox === null) return;
+      if (e.key === "Escape") setLightbox(null);
+      if (e.key === "ArrowRight") setLightbox((lightbox + 1) % galleryItems.length);
+      if (e.key === "ArrowLeft") setLightbox((lightbox - 1 + galleryItems.length) % galleryItems.length);
+    },
+    [lightbox, galleryItems.length],
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [handleKey]);
+
   return (
     <div style={{ minHeight: "100vh", paddingBottom: 100 }}>
-      {/* Hero cover — edge-to-edge with gradient overlay */}
+      {/* ── Hero cover ── */}
       {event.photo && (
         <div style={{ position: "relative", width: "100%" }}>
           <motion.div
@@ -46,7 +61,7 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
               }}
             />
           </motion.div>
-          {/* Gradient fade into content */}
+          {/* Gradient fade */}
           <div
             style={{
               position: "absolute",
@@ -54,84 +69,45 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
               left: 0,
               right: 0,
               height: 120,
-              background:
-                "linear-gradient(to top, #000 0%, transparent 100%)",
+              background: "linear-gradient(to top, #000 0%, transparent 100%)",
               pointerEvents: "none",
             }}
           />
           {/* Back link over image */}
           <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              paddingTop: 96,
-            }}
-            className="px-7 md:px-14 max-w-6xl mx-auto"
+            className="page-container"
+            style={{ position: "absolute", top: 0, left: 0, right: 0, paddingTop: 96 }}
           >
-            <Link
-              href="/events"
-              style={{
-                fontSize: "0.52rem",
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.6)",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                textDecoration: "none",
-                textShadow: "0 1px 8px rgba(0,0,0,0.5)",
-              }}
-            >
-              ← All Events
-            </Link>
+            <BackLink shadow />
           </div>
         </div>
       )}
 
       {/* No image — just back link */}
       {!event.photo && (
-        <div
-          className="px-7 md:px-14 max-w-6xl mx-auto"
-          style={{ paddingTop: 104 }}
-        >
-          <Link
-            href="/events"
-            style={{
-              fontSize: "0.52rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.55)",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              textDecoration: "none",
-            }}
-          >
-            ← All Events
-          </Link>
+        <div className="page-container" style={{ paddingTop: 104 }}>
+          <BackLink />
         </div>
       )}
 
-      {/* Header section */}
+      {/* ── Header + body ── */}
       <div
-        className="px-7 md:px-14 max-w-6xl mx-auto"
+        className="page-container"
         style={{ marginTop: event.photo ? -20 : 32, position: "relative", zIndex: 2 }}
       >
-        {/* Title first — big and dominant */}
+        {/* Title */}
         <motion.h1
           className="font-bold uppercase"
           style={{
             fontSize: "clamp(2rem, 6vw, 5.5rem)",
             letterSpacing: "0.06em",
             lineHeight: 0.95,
-            color: "rgba(255,255,255,0.94)",
+            color: "var(--c-text)",
             marginBottom: 24,
           }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.7, ease }}
+          transition={{ delay: 0.1, duration: 0.7, ease: EASE }}
         >
           {event.full}
         </motion.h1>
@@ -141,66 +117,31 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            marginBottom: 48,
-            flexWrap: "wrap",
-          }}
+          className="flex items-center gap-3 flex-wrap"
+          style={{ marginBottom: 48 }}
         >
-          <span
-            style={{
-              fontSize: "0.82rem",
-              color: "rgba(255,255,255,0.55)",
-              fontWeight: 600,
-            }}
-          >
+          <span style={{ fontSize: "0.82rem", color: "var(--c-text-muted)", fontWeight: 600 }}>
             {event.date}
           </span>
           {event.location && (
             <>
-              <span
-                style={{
-                  width: 3,
-                  height: 3,
-                  borderRadius: "50%",
-                  background: "rgba(255,255,255,0.15)",
-                  display: "inline-block",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "0.72rem",
-                  color: "rgba(255,255,255,0.55)",
-                  fontFamily: "var(--font-jetbrains-mono)",
-                  letterSpacing: "0.1em",
-                }}
-              >
+              <span className="sep-dot" />
+              <span className="meta-mono" style={{ fontSize: "0.72rem" }}>
                 {event.location}
               </span>
             </>
           )}
           {event.link && (
             <>
-              <span
-                style={{
-                  width: 3,
-                  height: 3,
-                  borderRadius: "50%",
-                  background: "rgba(255,255,255,0.15)",
-                  display: "inline-block",
-                }}
-              />
+              <span className="sep-dot" />
               <a
                 href={event.link.startsWith("http") ? event.link : `https://${event.link}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="meta-mono"
                 style={{
                   fontSize: "0.72rem",
-                  color: "rgba(255,255,255,0.65)",
-                  fontFamily: "var(--font-jetbrains-mono)",
-                  letterSpacing: "0.1em",
+                  color: "var(--c-text-3)",
                   textDecoration: "underline",
                   textUnderlineOffset: "3px",
                   textDecorationColor: "rgba(255,255,255,0.2)",
@@ -210,74 +151,42 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
               </a>
             </>
           )}
-          <span
-            style={{
-              fontSize: "0.45rem",
-              letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.5)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              padding: "2px 10px",
-              textTransform: "uppercase",
-            }}
-          >
-            {event.tag}
-          </span>
+          <span className="tag-badge">{event.tag}</span>
+          {event.author && (
+            <>
+              <span className="sep-dot" />
+              <span className="meta-mono" style={{ fontSize: "0.65rem", fontStyle: "italic" }}>
+                by {event.author}
+              </span>
+            </>
+          )}
         </motion.div>
 
         {/* Body content */}
         <motion.div
+          className="prose-body"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.7, ease }}
-          style={{
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-            paddingTop: 40,
-            overflowWrap: "break-word",
-            wordBreak: "break-word",
-          }}
+          transition={{ delay: 0.25, duration: 0.7, ease: EASE }}
+          style={{ borderTop: "1px solid var(--c-border)", paddingTop: 40 }}
         >
           {bodyText.split("\n").map((para, i) =>
-            para.trim() ? (
-              <p
-                key={i}
-                style={{
-                  color: "rgba(255,255,255,0.8)",
-                  fontSize: "1rem",
-                  lineHeight: 1.9,
-                  marginBottom: 20,
-                  maxWidth: "72ch",
-                }}
-              >
-                {para}
-              </p>
-            ) : (
-              <div key={i} style={{ height: 8 }} />
-            )
+            para.trim() ? <p key={i}>{para}</p> : <div key={i} style={{ height: 8 }} />,
           )}
         </motion.div>
       </div>
 
-      {/* Event Gallery */}
+      {/* ── Event Gallery ── */}
       {galleryItems.length > 0 && (
         <div style={{ marginTop: 80 }}>
-          <div
-            className="px-7 md:px-14 max-w-6xl mx-auto"
-            style={{ marginBottom: 24 }}
-          >
-            <span
-              style={{
-                fontSize: "0.48rem",
-                letterSpacing: "0.35em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.5)",
-              }}
-            >
+          <div className="page-container" style={{ marginBottom: 24 }}>
+            <span className="eyebrow">
               Event Gallery · {galleryItems.length} photos
             </span>
           </div>
 
           <div
-            className="px-7 md:px-14 max-w-6xl mx-auto"
+            className="page-container"
             style={{
               columnCount: galleryItems.length === 1 ? 1 : galleryItems.length === 2 ? 2 : undefined,
               columns: galleryItems.length > 2 ? "280px 3" : undefined,
@@ -306,18 +215,9 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                   src={src}
                   alt=""
                   loading="lazy"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    display: "block",
-                    transition: "transform 0.4s ease",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.03)")
-                  }
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.transform = "scale(1)")
-                  }
+                  style={{ width: "100%", height: "auto", display: "block", transition: "transform 0.4s ease" }}
+                  onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+                  onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
                 />
               </motion.div>
             ))}
@@ -325,26 +225,16 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
         </div>
       )}
 
-      {/* Lightbox */}
+      {/* ── Lightbox ── */}
       <AnimatePresence>
         {lightbox !== null && (
           <motion.div
+            className="lightbox-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={() => setLightbox(null)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 200,
-              background: "rgba(0,0,0,0.92)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 24,
-              cursor: "zoom-out",
-            }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <motion.img
@@ -355,85 +245,30 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              style={{
-                maxWidth: "90vw",
-                maxHeight: "85vh",
-                objectFit: "contain",
-                borderRadius: 2,
-              }}
+              style={{ maxWidth: "90vw", maxHeight: "85vh", objectFit: "contain", borderRadius: 2 }}
               onClick={(e) => e.stopPropagation()}
             />
-            {/* Nav arrows */}
             {galleryItems.length > 1 && (
               <>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setLightbox(
-                      (lightbox - 1 + galleryItems.length) %
-                        galleryItems.length
-                    );
-                  }}
-                  style={{
-                    position: "absolute",
-                    left: 16,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "rgba(255,255,255,0.08)",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: 44,
-                    height: 44,
-                    cursor: "pointer",
-                    color: "rgba(255,255,255,0.6)",
-                    fontSize: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                  className="lightbox-nav"
+                  style={{ left: 16 }}
+                  onClick={(e) => { e.stopPropagation(); setLightbox((lightbox - 1 + galleryItems.length) % galleryItems.length); }}
                 >
                   ‹
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setLightbox((lightbox + 1) % galleryItems.length);
-                  }}
-                  style={{
-                    position: "absolute",
-                    right: 16,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "rgba(255,255,255,0.08)",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: 44,
-                    height: 44,
-                    cursor: "pointer",
-                    color: "rgba(255,255,255,0.6)",
-                    fontSize: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                  className="lightbox-nav"
+                  style={{ right: 16 }}
+                  onClick={(e) => { e.stopPropagation(); setLightbox((lightbox + 1) % galleryItems.length); }}
                 >
                   ›
                 </button>
               </>
             )}
-            {/* Close */}
             <button
               onClick={() => setLightbox(null)}
-              style={{
-                position: "absolute",
-                top: 16,
-                right: 16,
-                background: "none",
-                border: "none",
-                color: "rgba(255,255,255,0.5)",
-                fontSize: 24,
-                cursor: "pointer",
-              }}
+              style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: 24, cursor: "pointer" }}
             >
               ×
             </button>
@@ -441,5 +276,27 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+/* ── Back link ── */
+function BackLink({ shadow = false }: { shadow?: boolean }) {
+  return (
+    <Link
+      href="/events"
+      className="eyebrow"
+      style={{
+        fontSize: "0.52rem",
+        letterSpacing: "0.2em",
+        color: "rgba(255,255,255,0.6)",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        textDecoration: "none",
+        ...(shadow ? { textShadow: "0 1px 8px rgba(0,0,0,0.5)" } : {}),
+      }}
+    >
+      ← All Events
+    </Link>
   );
 }
