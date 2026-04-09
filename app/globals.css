@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
-@theme inline {
+/* ── Font theme variables ── */
+:root {
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-jetbrains-mono);
+
+  /* ── Event / shared color tokens ── */
+  --c-text:          rgba(255, 255, 255, 0.92);
+  --c-text-2:        rgba(255, 255, 255, 0.75);
+  --c-text-3:        rgba(255, 255, 255, 0.55);
+  --c-text-muted:    rgba(255, 255, 255, 0.45);
+  --c-border:        rgba(255, 255, 255, 0.08);
+  --c-border-subtle: rgba(255, 255, 255, 0.04);
 }
 
 html {
@@ -162,7 +171,25 @@ textarea:focus-visible {
 
 /* ── Page container ── */
 .page-container {
-  @apply px-7 md:px-14 max-w-6xl mx-auto;
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
+  }
+}
+
+/* ── Event card description — consistent across all card sizes ── */
+.ev-card-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--c-text-3);
 }
 
 /* ── Eyebrow label ── */

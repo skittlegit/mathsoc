@@ -111,7 +111,7 @@ function FeaturedCard({ ev }: { ev: EventItem }) {
             {ev.full}
           </h2>
 
-          <p style={{ fontSize: "0.9rem", color: "var(--c-text-3)", lineHeight: 1.7 }}>
+          <p className="ev-card-desc">
             {ev.desc && ev.desc.length > 200 ? ev.desc.slice(0, 200).trim() + "…" : ev.desc}
           </p>
         </div>
@@ -148,7 +148,7 @@ function EventCard({ ev, index }: { ev: EventItem; index: number }) {
           {ev.full}
         </h3>
 
-        <p style={{ fontSize: "0.8rem", color: "var(--c-text-muted)", lineHeight: 1.65 }}>
+        <p className="ev-card-desc" style={{ fontSize: "0.8rem" }}>
           {ev.desc && ev.desc.length > 120 ? ev.desc.slice(0, 120).trim() + "…" : ev.desc}
         </p>
       </motion.article>

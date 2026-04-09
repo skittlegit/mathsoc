@@ -583,8 +583,8 @@ export default function Home() {
               >
                 {[
                   { value: "2023", label: "Founded" },
-                  { value: "50+", label: "Members" },
-                  { value: "20+", label: "Events Hosted" },
+                  { value: "20+", label: "Members" },
+                  { value: "10+", label: "Events Hosted" },
                 ].map((stat) => (
                   <div key={stat.label}>
                     <span
