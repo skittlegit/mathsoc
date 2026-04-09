@@ -329,7 +329,7 @@ export default function TeamClient({
 
   return (
     <div style={{ paddingTop: 72, minHeight: "100vh" }}>
-      <div className="page-container" style={{ paddingTop: 48, paddingBottom: 20 }}>
+      <div className="px-7 md:px-14 max-w-6xl mx-auto" style={{ paddingTop: 48, paddingBottom: 20 }}>
         {/* Header */}
         <motion.span
           initial={{ opacity: 0, x: -20 }}
@@ -417,7 +417,7 @@ export default function TeamClient({
       </div>
 
       {/* Team grid */}
-      <div className="page-container" style={{ paddingBottom: 80 }}>
+      <div className="px-7 md:px-14 max-w-6xl mx-auto" style={{ paddingBottom: 80 }}>
         {activeYear && dataByYear[activeYear] && (
           <YearSection year={activeYear} data={dataByYear[activeYear]} />
         )}

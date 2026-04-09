@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { EASE } from "@/lib/types";
+
+const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -20,11 +21,11 @@ export default function ContactPage() {
   return (
     <div className="pt-32 md:pt-44 pb-24 overflow-x-hidden">
       {/* Page Hero */}
-      <div className="page-container mb-20">
+      <div className="px-7 md:px-14 max-w-6xl mx-auto mb-20">
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
+          transition={{ duration: 0.6, ease }}
           style={{
             fontSize: "0.56rem",
             letterSpacing: "0.4em",
@@ -45,19 +46,19 @@ export default function ContactPage() {
           }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.8, ease: EASE }}
+          transition={{ delay: 0.1, duration: 0.8, ease }}
         >
           Contact
         </motion.h1>
       </div>
 
-      <div className="page-container">
+      <div className="px-7 md:px-14 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-12 md:gap-20">
           {/* Form */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8, ease: EASE }}
+            transition={{ delay: 0.2, duration: 0.8, ease }}
           >
             <p
               className="mb-12 max-w-xl"
@@ -214,7 +215,7 @@ export default function ContactPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: EASE }}
+            transition={{ delay: 0.4, duration: 0.8, ease }}
             className="space-y-12"
           >
             <div>

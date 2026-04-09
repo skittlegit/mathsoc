@@ -9,7 +9,6 @@ import {
 import { useEvents } from "@/lib/EventsContext";
 import { useAnnouncements } from "@/lib/AnnouncementsContext";
 import BlackjackGame from "./components/BlackjackGame";
-import { EASE } from "@/lib/types";
 
 /* ═══════════════════════════════════════════════
    DATA
@@ -29,6 +28,8 @@ const MARQUEE_ITEMS = [
   "ℝ Real Numbers",
   "ℂ Complex Analysis",
 ];
+
+const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /* ═══════════════════════════════════════════════
    LOADING SCREEN
@@ -149,7 +150,7 @@ function Reveal({
       initial={initial}
       whileInView={animate}
       viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.9, delay, ease: EASE }}
+      transition={{ duration: 0.9, delay, ease }}
       className={className}
     >
       {children}
@@ -243,7 +244,7 @@ export default function Home() {
         />
 
         {/* Both sides constrained to same max-width as Events/Resources */}
-        <div className="relative z-10 min-h-screen page-container flex flex-col md:flex-row">
+        <div className="relative z-10 min-h-screen px-7 md:px-14 max-w-6xl mx-auto flex flex-col md:flex-row">
 
           {/* ── LEFT: Branding ── */}
           <div className="relative flex-1 flex flex-col justify-center pt-32 pb-10 md:py-0 min-h-[60vh] md:min-h-0 md:pr-14">
@@ -255,7 +256,7 @@ export default function Home() {
               className="flex items-center gap-4 mb-10"
               initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 2.8, duration: 0.7, ease: EASE }}
+              transition={{ delay: 2.8, duration: 0.7, ease }}
             >
               <div style={{ width: 1, height: 28, background: "rgba(255,255,255,0.15)", flexShrink: 0 }} />
               <span
@@ -282,7 +283,7 @@ export default function Home() {
               }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.9, duration: 0.9, ease: EASE }}
+              transition={{ delay: 2.9, duration: 0.9, ease }}
             >
               The<br />Mathematics<br />
               <span style={{ color: "rgba(255,255,255,0.45)" }}>Society</span>
@@ -368,7 +369,7 @@ export default function Home() {
             style={{ width: 1, height: 220, background: "rgba(255,255,255,0.05)", flexShrink: 0 }}
             initial={{ opacity: 0, scaleY: 0 }}
             animate={{ opacity: 1, scaleY: 1 }}
-            transition={{ delay: 3.1, duration: 0.8, ease: EASE }}
+            transition={{ delay: 3.1, duration: 0.8, ease }}
           />
 
           {/* ── RIGHT: Blackjack ── */}
@@ -378,7 +379,7 @@ export default function Home() {
               style={{ maxWidth: 300 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3.0, duration: 0.9, ease: EASE }}
+              transition={{ delay: 3.0, duration: 0.9, ease }}
             >
               {/* Label */}
               <div
@@ -407,7 +408,7 @@ export default function Home() {
             background: "rgba(255,255,255,0.015)",
           }}
         >
-          <div className="page-container py-5">
+          <div className="px-7 md:px-14 max-w-6xl mx-auto py-5">
             {announcements.map((a) => (
               <div
                 key={a.id}

@@ -13,7 +13,7 @@ type Result = "blackjack" | "win" | "push" | "bust" | "dealer-bust" | "lose" | n
 const SUITS: Suit[] = ["♠", "♥", "♦", "♣"];
 const RANKS: Rank[] = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 const RED = new Set<Suit>(["♥", "♦"]);
-import { EASE } from "@/lib/types";
+const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 function makeDeck(): Card[] {
   const d: Card[] = [];
@@ -66,7 +66,7 @@ function HiddenCard({ delay = 0 }: { delay?: number }) {
     <motion.div
       initial={{ y: -20, opacity: 0, rotateY: 90 }}
       animate={{ y: 0, opacity: 1, rotateY: 0 }}
-      transition={{ duration: 0.35, delay, ease: EASE }}
+      transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
         background: "linear-gradient(145deg, #0d1c40, #122060)",
@@ -95,7 +95,7 @@ function FaceCard({ card, delay = 0 }: { card: Card; delay?: number }) {
     <motion.div
       initial={{ y: -20, opacity: 0, rotateY: 90 }}
       animate={{ y: 0, opacity: 1, rotateY: 0 }}
-      transition={{ duration: 0.35, delay, ease: EASE }}
+      transition={{ duration: 0.35, delay, ease }}
       style={{
         width: W, height: H, flexShrink: 0,
         background: "#f5f5f0",

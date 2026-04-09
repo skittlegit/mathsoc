@@ -1,5 +1,3 @@
-export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
 export interface EventItem {
   id: string;
   slug: string;
@@ -11,12 +9,11 @@ export interface EventItem {
   desc: string;
   tag: string;
   photo?: string;
-  photoPosition?: string;
-  photoScale?: number;
+  photoPosition?: string; // e.g. "50% 30%" for object-position
+  photoScale?: number; // e.g. 1.5 for 150% zoom
   content?: string;
   gallery?: string[];
-  link?: string;
-  author?: string;
+  link?: string; // optional external URL (e.g. mcse.in)
 }
 
 export interface Announcement {

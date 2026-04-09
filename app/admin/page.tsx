@@ -23,7 +23,6 @@ interface EventItem {
   content?: string;
   gallery?: string[];
   link?: string;
-  author?: string;
 }
 
 const TAGS = ["Competition", "Academic", "Orientation", "Community Service"];
@@ -43,7 +42,6 @@ const emptyEvent: EventItem = {
   content: "",
   gallery: [],
   link: "",
-  author: "",
 };
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -239,7 +237,6 @@ export default function AdminPage() {
         ...(form.content ? { content: form.content } : {}),
         gallery: Array.isArray(form.gallery) ? form.gallery : [],
         ...(form.link ? { link: form.link } : {}),
-        ...(form.author ? { author: form.author } : {}),
       };
 
       await setDoc(doc(db, "events", id), payload);
@@ -576,16 +573,6 @@ export default function AdminPage() {
               value={form.link ?? ""}
               onChange={(e) => setForm({ ...form, link: e.target.value })}
               placeholder="e.g. mcse.in"
-            />
-          </div>
-
-          <div style={{ marginBottom: 14 }}>
-            <label style={lbl}>Author (optional)</label>
-            <input
-              style={inputBase}
-              value={form.author ?? ""}
-              onChange={(e) => setForm({ ...form, author: e.target.value })}
-              placeholder="e.g. John Doe"
             />
           </div>
 
@@ -1267,7 +1254,6 @@ export default function AdminPage() {
                       >
                         {ev.date}
                         {ev.location ? ` · ${ev.location}` : ""}
-                        {ev.author ? ` · by ${ev.author}` : ""}
                       </p>
                     </div>
 

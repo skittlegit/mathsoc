@@ -12,7 +12,7 @@
       "label": "Core Leads",
       "members": [
         { "name": "Venkat Vinesh", "role": "President", "img": "/team/2024/venkat.png", "linkedin": "https://www.linkedin.com/in/venkat-vinesh/", "email": "se23ucse001@mahindrauniversity.edu.in" },
-        { "name": "Mohan Pritam K", "role": "Vice President", "img": "/team/2025/pritam.png", "instagram": "https://www.instagram.com/mohanpritamk", "linkedin": "https://www.linkedin.com/in/mohan-pritam-k-318a26328", "email": "mohanpritamk@gmail.com"  },
+        { "name": "Mohan Pritam K", "role": "Vice President", "img": "/team/2025/mohan.png", "instagram": "https://www.instagram.com/mohanpritamk", "linkedin": "https://www.linkedin.com/in/mohan-pritam-k-318a26328", "email": "mohanpritamk@gmail.com"  },
         { "name": "Amithi Shangari", "role": "Head of Subject Groups", "img": "/team/2024/amithi.jpeg", "instagram": "https://www.instagram.com/amithii_s", "linkedin": "https://www.linkedin.com/in/amithishangari", "email": "se2shangari.amithi@gmail.com" },
         { "name": "Aashna Reddy", "role": "Logistics Head", "img": "/team/2025/aashna.png", "email": "se24ucam008@mahindrauniversity.edu.in " },
         { "name": "Nitin Sailapathi", "role": "Social Media Head", "img": "/team/2024/nitin.jpeg", "instagram": "https://www.instagram.com/nitin.___.06/", "linkedin": "https://www.linkedin.com/in/nitin-sailapathi-652009331", "email": "nitin06sailapathi@gmail.com" },
@@ -49,11 +49,11 @@
     {
       "label": "Advisors",
       "members": [
-        { "name": "Utkarsh Mangal", "role": "Student Mentor", "img": "utkarshmangal.png", "instagram": "https://www.instagram.com/_utkarsh_mangal/", "linkedin": "https://www.linkedin.com/in/utkarsh-mangal2/", "email": "se22ucam015@mahindrauniversity.edu.in" },
+        { "name": "Utkarsh Mangal", "role": "Student Mentor", "img": "/team/2024/utkarshmangal.png", "instagram": "https://www.instagram.com/_utkarsh_mangal/", "linkedin": "https://www.linkedin.com/in/utkarsh-mangal2/", "email": "se22ucam015@mahindrauniversity.edu.in" },
         { "name": "Bobba Dilip Reddy", "role": "Math Wizard", "img": "/team/2025/dilip.jpg", "instagram": "https://www.instagram.com/bobbadilipreddy/", "linkedin": "https://www.linkedin.com/in/dilip-reddy-bobba-459543333/", "email": "se23ucse038@mahindrauniversity.edu.in" },
         { "name": "Saiankit Shankar", "role": "Advisor",  "img": "/team/2024/ankitreddy.png", "instagram": "https://www.instagram.com/ankit.reddy_/", "linkedin": "https://www.linkedin.com/in/saiankit-shankar/", "email": "se23ucse160@mahindrauniversity.edu.in" },
         { "name": "Pranav Reddy Mitta", "role": "Advisor", "img": "/team/2025/pranav.jpeg", "instagram": "https://www.instagram.com/pranavreddy.m/", "linkedin": "https://www.linkedin.com/in/pranavreddymitta/", "website": "https://itsbypranav.com", "email": "pranavreddymitta@gmail.com" },
-        { "name": "Nihaal Patnaik", "role": "Financial Mathematics", "img": "nihaal.jpg", "instagram": "https://www.instagram.com/nihaal4312", "linkedin": "https://www.linkedin.com/in/nihaal-patnaik-378010250/", "email": "se22ucse050@mahindrauniversity.edu.in" }
+        { "name": "Nihaal Patnaik", "role": "Financial Mathematics", "img": "/team/2024/nihaal.jpg", "instagram": "https://www.instagram.com/nihaal4312", "linkedin": "https://www.linkedin.com/in/nihaal-patnaik-378010250/", "email": "se22ucse050@mahindrauniversity.edu.in" }
       ]
     }
   ]

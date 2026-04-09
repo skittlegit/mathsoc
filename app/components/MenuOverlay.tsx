@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { EASE } from "@/lib/types";
+
+const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const MENU_LINKS = [
   { label: "Events", href: "/events" },
@@ -52,7 +53,7 @@ export default function MenuOverlay({
                 transition={{
                   delay: 0.12 + i * 0.07,
                   duration: 0.6,
-                  ease: EASE,
+                  ease,
                 }}
               >
                 <Link

@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { EASE } from "@/lib/types";
 import type { EventItem } from "@/lib/types";
+
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function EventDetailClient({ event }: { event: EventItem }) {
   const galleryItems = event.gallery ?? [];
