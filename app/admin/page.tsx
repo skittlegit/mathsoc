@@ -24,6 +24,7 @@ interface EventItem {
   gallery?: string[];
   link?: string;
   author?: string;
+  coverEvent?: boolean;
 }
 
 const TAGS = ["Competition", "Academic", "Orientation", "Community Service"];
@@ -44,6 +45,7 @@ const emptyEvent: EventItem = {
   gallery: [],
   link: "",
   author: "",
+  coverEvent: false,
 };
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -253,6 +255,7 @@ export default function AdminPage() {
         gallery: Array.isArray(form.gallery) ? form.gallery : [],
         ...(form.link ? { link: form.link } : {}),
         ...(form.author?.trim() ? { author: form.author.trim() } : {}),
+        coverEvent: !!form.coverEvent,
       };
 
       await setDoc(doc(db, "events", id), payload);
@@ -297,6 +300,26 @@ export default function AdminPage() {
       await fetchEvents();
     } catch {
       setSaveError("Delete failed");
+    }
+  };
+
+  const handleSetCover = async (ev: EventItem) => {
+    try {
+      const prevCovers = events.filter((e) => e.year === ev.year && e.coverEvent && e.id !== ev.id);
+      await Promise.all(prevCovers.map((e) => setDoc(doc(db, "events", e.id), { coverEvent: false }, { merge: true })));
+      await setDoc(doc(db, "events", ev.id), { coverEvent: true }, { merge: true });
+      await fetchEvents();
+    } catch {
+      setSaveError("Failed to set cover event");
+    }
+  };
+
+  const handleUnsetCover = async (ev: EventItem) => {
+    try {
+      await setDoc(doc(db, "events", ev.id), { coverEvent: false }, { merge: true });
+      await fetchEvents();
+    } catch {
+      setSaveError("Failed to unset cover event");
     }
   };
 
@@ -1177,10 +1200,29 @@ export default function AdminPage() {
               .
             </p>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {events.map((ev) => {
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {[...new Set(events.map((e) => e.year))].sort((a, b) => b - a).map((year) => {
+                const yearEvs = events.filter((e) => e.year === year);
+                const hasCover = yearEvs.some((e) => e.coverEvent);
+                return (
+                  <div key={year}>
+                    {/* Year header */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "rgba(255,255,255,0.25)", letterSpacing: "0.12em" }}>
+                        {year}
+                      </span>
+                      {!hasCover && (
+                        <span style={{ fontSize: "0.48rem", letterSpacing: "0.1em", color: "rgba(255,180,50,0.5)" }}>
+                          no cover set
+                        </span>
+                      )}
+                      <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    {yearEvs.map((ev) => {
                 const isActive = form.id === ev.id && editing;
                 const justSaved = lastSavedId === ev.id;
+                const isCover = !!ev.coverEvent;
                 return (
                   <div
                     key={ev.id}
@@ -1199,6 +1241,8 @@ export default function AdminPage() {
                         ? "1px solid rgba(255,255,255,0.1)"
                         : justSaved
                         ? "1px solid rgba(34,197,94,0.15)"
+                        : isCover
+                        ? "1px solid rgba(255,200,0,0.12)"
                         : "1px solid rgba(255,255,255,0.03)",
                       transition: "background 0.8s ease, border-color 0.5s",
                     }}
@@ -1285,6 +1329,23 @@ export default function AdminPage() {
                             ✓ Updated
                           </span>
                         )}
+                        {isCover && (
+                          <span
+                            style={{
+                              fontSize: "0.44rem",
+                              letterSpacing: "0.15em",
+                              textTransform: "uppercase",
+                              color: "rgba(255,220,100,0.9)",
+                              background: "rgba(255,200,0,0.08)",
+                              padding: "2px 8px",
+                              borderRadius: 2,
+                              flexShrink: 0,
+                              border: "1px solid rgba(255,200,0,0.18)",
+                            }}
+                          >
+                            ◆ Cover
+                          </span>
+                        )}
                         <span
                           style={{
                             fontSize: "0.44rem",
@@ -1321,6 +1382,25 @@ export default function AdminPage() {
                         alignItems: "center",
                       }}
                     >
+                      {/* Cover toggle */}
+                      <button
+                        onClick={() => isCover ? handleUnsetCover(ev) : handleSetCover(ev)}
+                        style={{
+                          padding: "6px 12px",
+                          fontSize: "0.55rem",
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          background: isCover ? "rgba(255,200,0,0.08)" : "transparent",
+                          border: `1px solid ${isCover ? "rgba(255,200,0,0.2)" : "rgba(255,255,255,0.06)"}`,
+                          borderRadius: "3px",
+                          color: isCover ? "rgba(255,220,100,0.8)" : "rgba(255,255,255,0.25)",
+                          cursor: "pointer",
+                          fontFamily: "var(--font-space-grotesk)",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {isCover ? "◆ Cover" : "Set Cover"}
+                      </button>
                       {!isActive && (
                         <button
                           onClick={() => startEdit(ev)}
@@ -1394,6 +1474,10 @@ export default function AdminPage() {
                           Delete
                         </button>
                       )}
+                    </div>
+                  </div>
+                );
+              })}
                     </div>
                   </div>
                 );

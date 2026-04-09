@@ -286,6 +286,10 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
               const yearEvents = filtered.filter((e) => e.year === year).sort((a, b) => b.date.localeCompare(a.date));
               if (yearEvents.length === 0) return null;
 
+              const coverIdx = yearEvents.findIndex((e) => e.coverEvent);
+              const featured = coverIdx >= 0 ? yearEvents[coverIdx] : yearEvents[0];
+              const rest = yearEvents.filter((e) => e.id !== featured.id);
+
               return (
                 <div key={year} style={{ marginBottom: 72 }}>
                   <div style={{ borderTop: "1px solid var(--c-border-subtle)", paddingTop: 16, marginBottom: 32 }}>
@@ -298,13 +302,11 @@ export default function EventsClient({ events }: { events: EventItem[] }) {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 56 }}>
-                    {/* First event = featured hero, rest = compact grid */}
-                    {yearEvents.length > 0 && (
-                      <FeaturedCard ev={yearEvents[0]} eager={true} />
-                    )}
-                    {yearEvents.length > 1 && (
+                    {/* Cover event = featured hero, rest = compact grid */}
+                    <FeaturedCard ev={featured} eager={true} />
+                    {rest.length > 0 && (
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 32 }}>
-                        {yearEvents.slice(1).map((ev, i) => (
+                        {rest.map((ev, i) => (
                           <EventCard key={ev.id} ev={ev} index={i} />
                         ))}
                       </div>

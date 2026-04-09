@@ -15,6 +15,7 @@ export interface EventItem {
   gallery?: string[];
   link?: string; // optional external URL (e.g. mcse.in)
   author?: string; // optional event author
+  coverEvent?: boolean;
 }
 
 export interface Announcement {
