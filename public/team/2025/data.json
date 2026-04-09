@@ -12,19 +12,18 @@
       "label": "Core Leads",
       "members": [
         { "name": "Venkat Vinesh", "role": "President", "img": "/team/2024/venkat.png", "linkedin": "https://www.linkedin.com/in/venkat-vinesh/", "email": "se23ucse001@mahindrauniversity.edu.in" },
-        { "name": "Mohan Pritam K", "role": "Vice President", "img": "/team/2024/mohan.jpg", "instagram": "https://www.instagram.com/mohanpritamk", "linkedin": "https://www.linkedin.com/in/mohan-pritam-k-318a26328", "email": "mohanpritamk@gmail.com"  },
+        { "name": "Mohan Pritam K", "role": "Vice President", "img": "/team/2025/pritam.jpg", "instagram": "https://www.instagram.com/mohanpritamk", "linkedin": "https://www.linkedin.com/in/mohan-pritam-k-318a26328", "email": "mohanpritamk@gmail.com"  },
         { "name": "Amithi Shangari", "role": "Head of Subject Groups", "img": "/team/2024/amithi.jpeg", "instagram": "https://www.instagram.com/amithii_s", "linkedin": "https://www.linkedin.com/in/amithishangari", "email": "se2shangari.amithi@gmail.com" },
         { "name": "Aashna Reddy", "role": "Logistics Head", "img": "/team/2025/aashna.png", "email": "se24ucam008@mahindrauniversity.edu.in " },
         { "name": "Nitin Sailapathi", "role": "Social Media Head", "img": "/team/2024/nitin.jpeg", "instagram": "https://www.instagram.com/nitin.___.06/", "linkedin": "https://www.linkedin.com/in/nitin-sailapathi-652009331", "email": "nitin06sailapathi@gmail.com" },
         { "name": "Deepak Aeleni", "role": "Design & Tech Head", "img": "/team/2025/deepak.png", "instagram": "https://www.instagram.com/skittlllle/", "linkedin": "https://www.linkedin.com/in/deepakaeleni/", "website": "https://bydeepak.com", "email": "se23uari005@mahindrauniversity.edu.in" },
-        { "name": "Uddish", "role": "Marketing Head", "img": "/team/2024/uddish.png", "instagram": "https://www.instagram.com/uddish_03", "linkedin": "https://www.linkedin.com/in/uddish-maini-3b9563356", "email": "mainiuddish@gmail.com" },
-        { "name": "Bhavyasri", "role": "Finance Head", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in//", "email": "" }
+        { "name": "Uddish", "role": "Finance & Marketing Head", "img": "/team/2024/uddish.png", "instagram": "https://www.instagram.com/uddish_03", "linkedin": "https://www.linkedin.com/in/uddish-maini-3b9563356", "email": "mainiuddish@gmail.com" }
       ]
     },
     {
       "label": "Secondary Leads",
       "members": [
-        { "name": "Aakash Akolkar", "role": "Logistics Vice Head", "img": "/team/2025/", "instagram": "https://www.instagram.com//", "linkedin": "https://www.linkedin.com/in//", "email": "" },
+        { "name": "Aakash Akolkar", "role": "Logistics Vice Head", "img": "/team/2025/aakash.jpg", "instagram": "https://www.instagram.com/aakashakolkar95._/", "linkedin": "https://www.linkedin.com/in/aakash-akolkar/", "email": "se24ucam044@mahindrauniversity.edu.in" },
         { "name": "Rishita Sarda", "role": "Content Vice Head", "img": "/team/2025/rishita.jpeg", "email": "rishu.r.sarda@gmail.com" },
         { "name": "Hinduja", "role": "Media Vice Head", "img": "/team/2024/hinduja2.jpg", "instagram": "https://www.instagram.com/hiinduja_", "linkedin": "https://www.linkedin.com/in/hinduja-reddy-b87b8932b", "email": "hiinduja.13@gmail.com" },
         { "name": "Tanvi Kotari", "role": "Design Vice Head", "img": "/team/2025/tanvi.jpg", "email": "se24ucam010@mahindrauniversity.edu.in" },
