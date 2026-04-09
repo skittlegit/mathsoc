@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { EventItem } from "@/lib/types";
 
@@ -58,20 +59,25 @@ function EventImage({
   ev,
   ratio = "3/2",
   eager = false,
+  sizes,
 }: {
   ev: EventItem;
   ratio?: string;
   eager?: boolean;
+  sizes?: string;
 }) {
   if (!ev.photo) return null;
   return (
     <div className="ev-img-wrap" style={{ aspectRatio: ratio }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={ev.photo}
         alt={ev.full}
+        fill
+        sizes={sizes || "(min-width: 768px) 33vw, 100vw"}
         loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
         style={{
+          objectFit: "cover",
           objectPosition: ev.photoPosition || "center",
           transform: `scale(${ev.photoScale || 1})`,
           transformOrigin: ev.photoPosition || "center",
@@ -91,7 +97,7 @@ function FeaturedCard({ ev, eager = false }: { ev: EventItem; eager?: boolean })
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE }}
       >
-        <EventImage ev={ev} ratio="16/9" eager={eager} />
+        <EventImage ev={ev} ratio="16/9" eager={eager} sizes="(min-width: 768px) 72rem, 100vw" />
 
         <div style={{ marginTop: 20 }}>
           <div className="mb-3">

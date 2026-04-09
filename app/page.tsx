@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   motion,
   AnimatePresence,
@@ -30,6 +31,7 @@ const MARQUEE_ITEMS = [
 ];
 
 const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const MARQUEE_DOUBLED = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
 /* ═══════════════════════════════════════════════
    LOADING SCREEN
@@ -160,7 +162,7 @@ function Reveal({
 
 
 /* ═══════════════════════════════════════════════
-   FLOATING MATH SYMBOLS
+   FLOATING MATH SYMBOLS (CSS-only animation)
 ═══════════════════════════════════════════════ */
 
 const FLOATERS = ["∑", "∫", "π", "√", "∞", "∂", "∇", "Δ", "∀", "ℝ", "θ", "ℂ"];
@@ -174,29 +176,21 @@ function FloatingSymbols() {
         const dur = 12 + (i * 3.7) % 10;
         const delay = (i * 1.1) % 5;
         return (
-          <motion.span
+          <span
             key={sym + i}
-            className="absolute select-none"
+            className="absolute select-none float-sym"
             style={{
               left: `${x}%`,
               top: `${y}%`,
               fontSize: `${1 + (i % 3) * 0.4}rem`,
               color: "rgba(255,255,255,0.03)",
               fontWeight: 700,
-            }}
-            animate={{
-              y: [-10, 10, -10],
-              opacity: [0.03, 0.06, 0.03],
-            }}
-            transition={{
-              duration: dur,
-              delay,
-              repeat: Infinity,
-              ease: "easeInOut",
+              animationDuration: `${dur}s`,
+              animationDelay: `${delay}s`,
             }}
           >
             {sym}
-          </motion.span>
+          </span>
         );
       })}
     </div>
@@ -211,7 +205,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const { events: allEvents } = useEvents();
   const { announcements } = useAnnouncements();
-  const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+  const doubled = MARQUEE_DOUBLED;
 
   const eventPhoto = (() => {
     const ev = allEvents.find((e) => e.photo);
@@ -629,15 +623,13 @@ export default function Home() {
                     borderRadius: 3,
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={eventPhoto.photo}
                     alt={eventPhoto.full}
+                    fill
+                    sizes="(min-width: 768px) 72rem, 100vw"
                     style={{
-                      width: "100%",
-                      height: "100%",
                       objectFit: "cover",
-                      display: "block",
                       transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
                     }}
                     className="group-hover:scale-[1.03]"

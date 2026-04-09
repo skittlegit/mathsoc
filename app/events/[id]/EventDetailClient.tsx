@@ -173,8 +173,6 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
           style={{
             borderTop: "1px solid var(--c-border)",
             paddingTop: 40,
-            maxWidth: 680,
-            width: "100%",
           }}
         >
           {bodyText.split("\n").map((para, i) =>
@@ -217,14 +215,16 @@ export default function EventDetailClient({ event }: { event: EventItem }) {
                   borderRadius: 2,
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={src}
                   alt=""
+                  width={840}
+                  height={560}
                   loading="lazy"
+                  sizes="(min-width: 768px) 33vw, 100vw"
                   style={{ width: "100%", height: "auto", display: "block", transition: "transform 0.4s ease" }}
-                  onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                  onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                  onMouseOver={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1.03)")}
+                  onMouseOut={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1)")}
                 />
               </motion.div>
             ))}

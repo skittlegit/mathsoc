@@ -51,36 +51,18 @@ export default function RootLayout({
     >
       <head />
       <body className="min-h-full grain">
-        {/* Fixed ambient background — multi-layer depth */}
-        <div className="pointer-events-none fixed inset-0 z-0" style={{ background: "#000" }}>
-          {/* Bottom-right: deep blue glow */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(ellipse 65% 75% at 100% 100%, #001358 0%, #000922 22%, transparent 58%)",
-            }}
-          />
-          {/* Top-left: matching deep blue glow */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(ellipse 35% 38% at 0% 0%, #001358 0%, #000922 20%, transparent 48%)",
-            }}
-          />
-          {/* Center-bottom: faint atmospheric warmth */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(ellipse 90% 50% at 50% 100%, rgba(0,6,26,0.55) 0%, transparent 65%)",
-            }}
-          />
-        </div>
+        {/* Fixed ambient background — combined gradient layers */}
+        <div
+          className="pointer-events-none fixed inset-0 z-0"
+          style={{
+            background: `
+              radial-gradient(ellipse 65% 75% at 100% 100%, #001358 0%, #000922 22%, transparent 58%),
+              radial-gradient(ellipse 35% 38% at 0% 0%, #001358 0%, #000922 20%, transparent 48%),
+              radial-gradient(ellipse 90% 50% at 50% 100%, rgba(0,6,26,0.55) 0%, transparent 65%),
+              #000
+            `,
+          }}
+        />
         <Navbar />
         <EventsProvider>
           <AnnouncementsProvider>

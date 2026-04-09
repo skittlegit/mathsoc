@@ -41,6 +41,7 @@ export default function Navbar() {
               src="/mathsoclogowhite.png"
               alt="MathSoc"
               fill
+              sizes="32px"
               style={{ objectFit: "contain" }}
             />
           </div>
