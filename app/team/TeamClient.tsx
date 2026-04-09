@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 /* ─── Types ─── */
 export interface TeamMember {
@@ -154,19 +155,16 @@ function MemberPhoto({ src, alt, init }: { src: string; alt: string; init: strin
     );
   }
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={src}
       alt={alt}
+      fill
+      sizes="(max-width: 768px) 50vw, 200px"
       loading="eager"
-      decoding="async"
       onError={() => setFailed(true)}
       style={{
-        width: "100%",
-        height: "100%",
         objectFit: "cover",
         objectPosition: "center top",
-        display: "block",
       }}
     />
   );

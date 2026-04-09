@@ -215,7 +215,6 @@ textarea:focus-visible {
 }
 
 .prose-body p {
-  max-width: 72ch;
   margin-bottom: 1em;
 }
 

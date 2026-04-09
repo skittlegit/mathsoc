@@ -371,7 +371,7 @@ export default function GalleryClient({
                     <img
                       src={item.src}
                       alt=""
-                      loading="eager"
+                      loading={i < 8 ? "eager" : "lazy"}
                       decoding="async"
                       onLoad={() =>
                         setLoadedSet((prev) => {

@@ -103,6 +103,7 @@ export default function AdminPage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
+  const [adminTab, setAdminTab] = useState<"events" | "announcements">("events");
 
   /* Announcements state */
   const [announcements, setAnnouncements] = useState<{ id: string; title: string; location: string; date: string; time: string; link: string; prizePool: string; active: boolean; createdAt: string }[]>([]);
@@ -444,21 +445,48 @@ export default function AdminPage() {
           >
             Admin Panel
           </span>
-          <h1
-            className="font-bold uppercase mt-3"
-            style={{
-              fontSize: "clamp(2.2rem, 7vw, 4rem)",
-              letterSpacing: "0.12em",
-              color: "rgba(255,255,255,0.9)",
-              lineHeight: 0.95,
-            }}
-          >
-            Events
-          </h1>
+
+          {/* Tab switcher */}
+          <div style={{ display: "flex", gap: 4, marginTop: 16 }}>
+            {(["events", "announcements"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setAdminTab(tab)}
+                style={{
+                  padding: "10px 24px",
+                  fontSize: "0.62rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  background: adminTab === tab ? "rgba(255,255,255,0.08)" : "transparent",
+                  border: `1px solid ${adminTab === tab ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)"}`,
+                  borderRadius: "4px",
+                  color: adminTab === tab ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.3)",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-space-grotesk)",
+                  transition: "all 0.15s",
+                }}
+              >
+                {tab === "events" ? "Events" : "Announcements"}
+                {tab === "announcements" && announcements.filter((a) => a.active).length > 0 && (
+                  <span style={{
+                    marginLeft: 8,
+                    fontSize: "0.48rem",
+                    padding: "2px 6px",
+                    borderRadius: 2,
+                    background: "rgba(34,197,94,0.15)",
+                    color: "rgb(134,239,172)",
+                  }}>
+                    {announcements.filter((a) => a.active).length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ══════════════════ FORM ══════════════════ */}
-        <form
+        {adminTab === "events" && (<><form
           onSubmit={handleSubmit}
           style={{
             padding: "28px",
@@ -1358,9 +1386,11 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+        </>)}
 
         {/* ══════════════════ ANNOUNCEMENTS ══════════════════ */}
-        <div style={{ marginTop: 56 }}>
+        {adminTab === "announcements" && (
+        <div style={{ marginTop: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
             <span style={{ fontSize: "0.52rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
               Announcements
@@ -1529,6 +1559,7 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+        )}
       </div>
 
       {/* ══════════════════ GALLERY LIGHTBOX ══════════════════ */}
